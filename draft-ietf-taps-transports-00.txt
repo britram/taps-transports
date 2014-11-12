@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                  G. Fairhurst, Ed.
+Internet-Draft                                    University of Aberdeen
+Intended status: Informational                          B. Trammell, Ed.
+Expires: May 18, 2015                                 M. Kuehlewind, Ed.
+                                                              ETH Zurich
+                                                       November 14, 2014
+
+
+  Services provided by IETF transport protocols and congestion control
+                               mechanisms
+                     draft-ietf-taps-transports-00
+
+Abstract
+
+   This document describes services provided by existing IETF protocols
+   and congestion control mechanisms.  It is designed to help
+   application and network stack programmers and to inform the work of
+   the IETF TAPS Working Group.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on May 18, 2015.
+
+Copyright Notice
+
+   Copyright (c) 2014 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 1]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Introduction
+
+   Most Internet applications make use of the Transport Services
+   provided by TCP (a reliable, in-order stream protocol) or UDP (an
+   unreliable datagram protocol).  We use the term "Transport Service"
+   to mean the end-to-end service provided to an application by the
+   transport layer.  That service can only be provided correctly if
+   information is supplied from the application.  The application may
+   determine the information to be supplied at design time, compile
+   time, or run time, and may include guidance on whether an aspect of
+   the service is required, a preference by the application, or
+   something in between.  Examples of (aspects/components) of Transport
+   Services are reliable delivery, ordered delivery, content privacy to
+   in-path devices, integrity protection, and minimal latency.
+
+   The IETF has defined a wide variety of transport protocols beyond TCP
+   and UDP, such as TCP, SCTP, DCCP, MP-TCP, and UDP-Lite.  Transport
+   services may be provided directly by these transport protocols, or
+   layered on top of them using protocols such as WebSockets (which runs
+   over TCP) or RTP (over TCP or UDP).  Services built on top of UDP or
+   UDP-Lite typically also need to specify a congestion control
+   mechanism, such as TFRC or the LEDBAT congestion control mechanism.
+   This extends the set of available Transport Services beyond those
+   provided to applications by TCP and UDP.
+
+   Transport protocols can aslo be differentiated by the aspects of the
+   services they provide: for instance, SCTP offers a message-based
+   service that does not suffer head-of-line blocking when used with
+   multiple stream, because it can accept blocks of data out of order,
+   UDP-Lite provides partial integrity protection when used over link-
+   layer services that can support this, and LEDBAT can provide low-
+   priority "scavenger" communication.
+
+2.  Terminology
+
+   The following terms are defined throughout this document, and in
+   subsequent documents produced by TAPS describing the composition and
+   decomposition of transport services.
+
+   The terminology below is that as was presented at the TAPS WG meeting
+   in Honolulu.  While the factoring of the terminology seems
+   uncontroversial, thre may be some entities which still require names
+   (e.g. information about the interface between the transport and lower
+   layers which could lead to the availablity or unavailibility of
+   certain transport protocol features)
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 2]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+   Transport Service (Component/Aspect): :a specific feature a transport
+   service provides to its clients end-to-end.  Examples include
+   confidentiality, reliable delivery, ordered delivery, message-versus-
+   stream orientation, etc.
+
+   Transport Service: :a set of transport service (components/aspect),
+   without an association to any given framing protocol, which provides
+   a complete service to an application.
+
+   Transport Protocol: :an implementation that provides one or more
+   different transport services using a specific framing and header
+   format on the wire.
+
+   Transport Protocol Feature: :an implementation of a transport service
+   (component/aspect) within a protocol
+
+   Transport Service Instance: :an arrangement of transport protocols
+   with a selected set of features and configuration parameters that
+   implements a single transport service, e.g. a protocol stack (RTP
+   over UDP)
+
+   Application: :an entity that uses the transport layer for end-to-end
+   delivery data across the network.
+
+3.  Existing Transport Protocols
+
+   (An introductory matrix table goes here)
+
+3.1.  Template: Imaginary Transport Protocol (ITP)
+
+   (This subsection is a rough template provide initial guidance to
+   subsection authors on how a subsection should be structured and what
+   information should be provided.  It will be removed once a real
+   transport protocol has been fully described in the draft; that
+   protocol's description can then be used as template for the others.)
+
+3.1.1.  Introduction and Applicability
+
+   (This subsection should be at most three paragraphs: what's the
+   protocol called, where can one read about it, what does it do, where
+   is it deployed, and what applications is it used for.)
+
+   The Imaginary Transport Protocol (ITP) [reference] provides a
+   unidirectional, connectionless, message-oriented, partially-reliable
+   transport for fixed-sized messages over IP, using protocol number
+   257.  It is intended primarily for use in bidirectional constant-bit-
+   rate (CBR) unicast media transmission.  It is not widely implemented
+   within the Internet, as I just made it up, and it has several fatal
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 3]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+   design flaws, including requiring an illegal protocol number for its
+   operation.
+
+3.1.2.  Base Features
+
+   (This subsection should describe each base feature of the base
+   protocol which may be interesting for decomposing the service(s) it
+   provides.  Base features are those which require no (1) optional API
+   interactions in normal usage or (2) additional headers on the wire.
+   Dividing descriptions of features into subsections is desirable but
+   optional, snce these features may depend on each other.  Each feature
+   should be covered by about two paragraphs.)
+
+   ITP's features include time- and retransmission-limited partial
+   reliability and constant-sized message-oriented framing.  All ITP
+   messages are 392 octets long, with 8 bytes of header and 384 bytes of
+   payload.  Each message has a message sequence number; ITP
+   acknowledgment messages are 16 octets long.  Each message will be
+   retransmitted up to two times (for three total transmissions)if not
+   acknowledged, or if not acknowledged within an application-defined
+   time.  Further details of ITP's acknowledgment and message sequence
+   number management scheme are found in [reference].
+
+   ITP provides no additional congestion control features, since the
+   limited retransmission facility was deemed incapable of contributing
+   to congestion collapse.
+
+3.1.3.  Optional Features
+
+   (This subsection should describe each optional feature of the
+   protocol which may be interesting for decomposing the service(s) it
+   provides, as above.)
+
+   ITP's retransmission can be optionally completely disabled at the
+   sender-side, though the receiver will continue to send
+   acknowledgments.  This optional operation mode has no other effect
+
+3.1.4.  Application Interface Considerations
+
+   (This subsection should describe features the protocol requires of
+   the API.  How is the protocol, along with its optional features,
+   normally used by the application?  Does it use the sockets API; if
+   so, are there socket options?)
+
+   ITP can be used via the sockets interface on systems which support
+   it, by using the SOCK_IMAGINARY socket type.  Regardless of the size
+   of the buffer passed to sendmsg(2), the message will be truncated or
+
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 4]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+   zero-padded to 384 octets in the ITP message, and recvmsg(2) always
+   returns 384 bytes.
+
+   No information about the ack stream is available; retransmission is
+   disabled via setsockopt(2).
+
+3.1.5.  Interactions with other protocols
+
+   (If the protocol uses other protocols to provide additional service
+   components - commonly, this would include (D)TLS encapsulation - that
+   should be noted here)
+
+   ITP can be encapsulated within DTLS to provide confidentiality,
+   integrity, and authentication, as described in [reference].
+
+3.1.6.  Candidate Components
+
+   (This subsection should list candidate components derived from the
+   features above.)
+
+   o  Time- and retransmission-limited reliability
+
+   o  Unidirectional transmission
+
+   o  Fixed-length message-oriented transmission
+
+3.2.  Transmission Control Protocol (TCP)
+
+   (Volunteer: Mirja Kuehlewind)
+
+3.3.  User Datagram Protocol
+
+   (Volunteer: Kevin Fall)
+
+3.4.  Realtime Transport Protocol
+
+   (Volunteer: Varun Singh)
+
+3.5.  Stream Control Transmission Protocol
+
+   (Volunteers: Michael Tuexen, Karen Nielsen)
+
+4.  Transport Service Components
+
+   (drawn from the candidate components in the previous section)
+
+
+
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 5]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+5.  Matrix of Protocols and Components
+
+   (a comprehensive matrix table goes here; Volunteer: Dave Thaler)
+
+6.  IANA Considerations
+
+   This document has no considerations for IANA.
+
+7.  Security Considerations
+
+   This document surveys existing transport protocols and protocols
+   providing transport-like services; the (components/aspects) of those
+   services include confidentiality, integrity, and authenticity.
+
+8.  Acknowledgments
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
+              1981.
+
+   [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
+              (IPv6) Specification", RFC 2460, December 1998.
+
+9.2.  Informative References
+
+   [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
+              August 1980.
+
+   [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
+              793, September 1981.
+
+   [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
+              RFC 896, January 1984.
+
+   [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
+              Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
+
+   [RFC4960]  Stewart, R., "Stream Control Transmission Protocol", RFC
+              4960, September 2007.
+
+   [RFC5348]  Floyd, S., Handley, M., Padhye, J., and J. Widmer, "TCP
+              Friendly Rate Control (TFRC): Protocol Specification", RFC
+              5348, September 2008.
+
+
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 6]
+
+Internet-Draft               TAPS Transports               November 2014
+
+
+   [RFC5405]  Eggert, L. and G. Fairhurst, "Unicast UDP Usage Guidelines
+              for Application Designers", BCP 145, RFC 5405, November
+              2008.
+
+Authors' Addresses
+
+   Godred Fairhurst (editor)
+   University of Aberdeen
+   School of Engineering, Fraser Noble Building
+   Aberdeen AB24 3UE
+
+   Email: gorry@erg.abdn.ac.uk
+
+
+   Brian Trammell (editor)
+   ETH Zurich
+   Gloriastrasse 35
+   8092 Zurich
+   Switzerland
+
+   Email: ietf@trammell.ch
+
+
+   Mirja Kuehlewind (editor)
+   ETH Zurich
+   Gloriastrasse 35
+   8092 Zurich
+   Switzerland
+
+   Email: mirja.kuehlewind@tik.ee.ethz.ch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires May 18, 2015                  [Page 7]
