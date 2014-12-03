@@ -139,6 +139,53 @@ ITP can be encapsulated within DTLS to provide confidentiality, integrity, and a
 
 (Volunteer: Mirja Kuehlewind)
 
+TCP is a reliable transport protocol that is widely used in the Internet.
+Reliability is implemented by sending an acknowledgment (ACK) on the reception of a data segment and retransmitting (potentially) lost data when no new acknowledgment is received. 
+For this purpose a data segment can be identified by a sequence number (SEQ). 
+Each new payload byte increases the SEQ by one. 
+The ACK contains, morerover, an acknowledgment number that announces the next in-order SEQ expected by the receiver. 
+To reduce signaling overhead, a TCP receiver might not acknowledge each received segment separately but multiple at once. 
+A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms [rfc5681, rfc1122]. 
+<!-- Most operating systems implement a maximum delay of 100ms today. There are hardware implementation for high speed networks that accumulate even more. 
+Loss is assumed by the sender if three duplicated ACKs are received or no ACK is received for a certain time.--> 
+Duplicated ACKs are triggered at the receiver by the arrival of out-of-order data segments and thereby do not acknowledge new data but repeat the previous acknowledgment number.  
+<!-- If this data does not carry the next expected SEQ, the receiver will send out an ACK with the same acknowledgment number again. 
+This is called a duplicated ACK. --> 
+When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
+Additionally, TCP often implements Selective Acknowledgment (SACK) [rfc2018], where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
+Therefore when more than one packets was lost, the sender does not have to wait until an accumulated ACK announces the next whole in the sequence number space, but can retransmit lost packets immediately.
+
+
+When a loss is detected,  TCP congestion control [rfc5681] becomes active and usually reduces the sending rate.
+The sending rate is most often determined by a (sliding-) window. 
+Based on the packet conservation principle [Jacobson1988], new packets are only sent into the network when an old packets has exited. 
+This leads to TCP implementations that are mostly self-clocked and take actions only when an ACK is received.
+When no ACKs are received at all for a certain time larger than at least one  RTT, the RTO is triggered and the sending rate is reduced to a minimum value.
+The current sending window is the minimum of the receive window and the congestion window where % ($cwnd$) which maintains the number of packets which are currently allowed to be in flight.
+the receive window is announced by the receiver to not overload the receiver buffer.
+As long as flow control does not become active and not signal a smaller receive window to not overload the receiver, the sending window equals the congestion window.
+The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback.
+<!--In general, congestion control is based on some kind of network feedback.-->
+Inherently, the congestion control mechanism of a TPC sender assumes that loss occurs to due network congestion und therefore reacts each time congestion is notified.
+Note, congestion control usually at most reduces  once per  RTT as the congestion feedback has a signaling delay of one  RTT. 
+Unfortunately, congestion is not the only reason for the occurrence of loss. 
+Packets can be dropped for various reasons by different nodes on the network path, e.g due to bit errors.
+<!--In the Internet the non-congestion based loss rate is usually very low, thus it is common sense to always handle loss as congestion signal.-->
+
+<!-- delay, explicit signal -> thus connection-oriented like TCP. -->
+<!--Other mechanisms exist that try to avoid congestion losses and thus reduce the sending before a queue overflows by sensing an increase in end-to-end delay.
+Another opportunity can be realized based on network-support where network node explicitly provide a congestion notification, e.g. based in ECN.
+In any case, these congestion signal will be seen by the receiver and the transport protocol needs to provide a way to feed back this information to the sender that actually can control the sending rate.
+-> probing for newly available capacity induces (periodically) congestion... -->
+
+To determine e.g. a large enough value for the RTO, the  RTT needs to be measured by a  TCP sender.
+The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ  of all or a sample of packets or can use the TSOpt [rfc1323]. 
+With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
+By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
+Note that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO.
+<!--"Then a single subtract gives the sender an accurate RTT measurement for every ACK segment (which will correspond to every other data segment, with a sensible receiver)." [rfc1323]-->
+
+
 ## User Datagram Protocol
 
 (Volunteer: Kevin Fall)
