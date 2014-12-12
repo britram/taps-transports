@@ -153,11 +153,13 @@ communication networks, and in interconnected systems of such networks." [rfc793
 
 (we only talk about the mechanism here and not about the framing... is this right?)
 
-(subsection heading of this section might be individual for each protocol...?)
+(subsection headings of this section might be different for each protocol...?)
 
 #### Connection Establishment and Clearing
 
 (text on TCP handshake goes here)
+
+(text on the role of port numbers goes here)
 
 ### Data Communication
 
@@ -169,7 +171,7 @@ The ACK contains an acknowledgment number that announces the next in-order SEQ e
 To reduce signaling overhead, a TCP receiver might not acknowledge each received segment separately but multiple at once. 
 A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms [rfc5681, rfc1122]. 
 <!-- Most operating systems implement a maximum delay of 100ms today. There are hardware implementation for high speed networks that accumulate even more. -->
-Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time.
+Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time and the Retransmission Time-Out (RTO) triggers an interupt.
 If a seqment is detected to be lost, the sender will retransmit it.
 <!-- and retransmitting (potentially) lost data when no new acknowledgment is received. -->
 Duplicated ACKs are triggered at the receiver by the arrival of out-of-order data segments and thereby do not acknowledge new data but repeat the previous acknowledgment number.  
@@ -178,6 +180,13 @@ This is called a duplicated ACK. -->
 When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
 Additionally, TCP often implements Selective Acknowledgment (SACK) [rfc2018], where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
 Therefore when more than one packets got lost, the sender does not have to wait until an accumulated ACK announces the next whole in the sequence number space, but can retransmit lost packets immediately.
+
+To determine e.g. a large enough value for the RTO [rfc6298], the  RTT needs to be measured by a TCP sender.
+The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt [rfc7323]. 
+With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
+By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
+<!-- Note, that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO. -->
+<!--"Then a single subtract gives the sender an accurate RTT measurement for every ACK segment (which will correspond to every other data segment, with a sensible receiver)." [rfc7323]-->
 
 (talk about spurious retransmissions...?)
 
@@ -198,18 +207,9 @@ Unfortunately, congestion is not the only reason for the occurrence of loss.
 Packets can be dropped for various reasons by different nodes on the network path, e.g due to bit errors.-->
 <!--In the Internet the non-congestion based loss rate is usually very low, thus it is common sense to always handle loss as congestion signal.-->
 
-
-
-To determine e.g. a large enough value for the RTO [rfc6298], the  RTT needs to be measured by a TCP sender.
-The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt [rfc7323]. 
-With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
-By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
-<!-- Note, that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO. -->
-<!--"Then a single subtract gives the sender an accurate RTT measurement for every ACK segment (which will correspond to every other data segment, with a sensible receiver)." [rfc7323]-->
-
 (text on "On the Implementation of the TCP Urgent Mechanism" [rfc6093], "The TCP Authentication Option" [rfc5925], and "TCP Fast Open"...?)
 
-(What's still missing?)
+(What's still missing? Check TCP options...)
 
 ### Interfaces
 
