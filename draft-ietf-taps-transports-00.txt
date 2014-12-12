@@ -144,9 +144,11 @@ Internet-Draft               TAPS Transports               December 2014
 
 3.1.  Template: Imaginary Transport Protocol (ITP)
 
-   (This subsection is a rough template provide initial guidance to
+   (This subsection is a initial rough template to provide guidance to
    subsection authors on how a subsection should be structured and what
-   information should be provided.  It will be removed once a real
+   information should be provided.  Please don't use it yet, but do
+   think about whether it applies to the protocol section you're
+   writing, and if not, why not.  It will be removed once a real
    transport protocol has been fully described in the draft; that
    protocol's description can then be used as template for the others.
    In general, guidance for writing a transport protocol session is that
@@ -157,11 +159,9 @@ Internet-Draft               TAPS Transports               December 2014
    corner cases, if mentioned, should be further explained by
    reference.)
 
-3.1.1.  Introduction and Applicability
 
-   (This subsection should be at most three paragraphs: what's the
-   protocol called, where can one read about it, what does it do, where
-   is it deployed, and what applications is it used for.)
+
+
 
 
 
@@ -169,6 +169,12 @@ Fairhurst, et al.         Expires June 22, 2015                 [Page 3]
 
 Internet-Draft               TAPS Transports               December 2014
 
+
+3.1.1.  Introduction and Applicability
+
+   (This subsection should be at most three paragraphs: what's the
+   protocol called, where can one read about it, what does it do, where
+   is it deployed, and what applications is it used for.)
 
    The Imaginary Transport Protocol (ITP) [reference] provides a
    unidirectional, connectionless, message-oriented, partially-reliable
@@ -212,12 +218,6 @@ Internet-Draft               TAPS Transports               December 2014
    acknowledgments.  This optional operation mode has no other effect on
    the protocol on the wire.
 
-3.1.4.  Application Interface Considerations
-
-   (This subsection should describe features the protocol requires of
-   the API.  How is the protocol, along with its optional features,
-   normally used by the application?  Does it use the sockets API; if
-   so, are there socket options?)
 
 
 
@@ -225,6 +225,13 @@ Fairhurst, et al.         Expires June 22, 2015                 [Page 4]
 
 Internet-Draft               TAPS Transports               December 2014
 
+
+3.1.4.  Application Interface Considerations
+
+   (This subsection should describe features the protocol requires of
+   the API.  How is the protocol, along with its optional features,
+   normally used by the application?  Does it use the sockets API; if
+   so, are there socket options?)
 
    ITP can be used via the sockets interface on systems which support
    it, by using the SOCK_IMAGINARY socket type.  Regardless of the size
@@ -259,20 +266,13 @@ Internet-Draft               TAPS Transports               December 2014
 
    (Volunteer: Mirja Kuehlewind)
 
-3.3.  User Datagram Protocol
+   TCP is a stream-oriented transport protocol that is widely used in
+   the Internet.  In constrast to UDP, TCP provides reliability...
 
-   (Volunteer: Kevin Fall)
-
-3.4.  Realtime Transport Protocol
-
-   (Volunteer: Varun Singh)
-
-3.5.  Stream Control Transmission Protocol
-
-   (Volunteers: Michael Tuexen, Karen Nielsen)
-
-
-
+   "The Transmission Control Protocol (TCP) is intended for use as a
+   highly reliable host-to-host protocol between hosts in packet-
+   switched computer communication networks, and in interconnected
+   systems of such networks."  [RFC0793]
 
 
 
@@ -281,6 +281,126 @@ Fairhurst, et al.         Expires June 22, 2015                 [Page 5]
 
 Internet-Draft               TAPS Transports               December 2014
 
+
+   (Some more text here)
+
+3.2.1.  Detailed Description of Protocol Mechanisms
+
+   (we only talk about the mechanism here and not about the framing...
+   is this right?)
+
+   (subsection headings of this section might be different for each
+   protocol...?)
+
+3.2.1.1.  Connection Establishment and Clearing
+
+   (text on TCP handshake goes here)
+
+   (text on the role of port numbers goes here)
+
+3.2.2.  Data Communication
+
+   TCP partitions all data into segements that can be identified by a
+   sequence number (SEQ).  Each new payload byte increases the SEQ by
+   one.  The Maximum Segment Size (MSS) [RFC6691] is determined by the
+   capacilities of the lower layer, usually IP, and the length of the
+   TCP header as well as TCP options.  A TCP receiver sends an
+   acknowledgment (ACK) on the reception of a data segment.  The ACK
+   contains an acknowledgment number that announces the next in-order
+   SEQ expected by the receiver.  To reduce signaling overhead, a TCP
+   receiver might not acknowledge each received segment separately but
+   multiple at once.  A TCP receiver should at least acknowledge every
+   second packet and delay an acknowledgement not more that 500ms
+   [RFC1122] [RFC5681].  Loss is assumed by the sender if three
+   duplicated ACKs, that acknowledge the same SEQ, are received or no
+   ACK is received for a certain time and the Retransmission Time-Out
+   (RTO) triggers an interupt.  If a seqment is detected to be lost, the
+   sender will retransmit it.  Duplicated ACKs are triggered at the
+   receiver by the arrival of out-of-order data segments and thereby do
+   not acknowledge new data but repeat the previous acknowledgment
+   number.
+   When the missing data is received, a cumulative acknowledgment is
+   sent that acknowledges all (now) in-order segments received so far.
+   Additionally, TCP often implements Selective Acknowledgment (SACK)
+   [RFC2018], where, in case of duplicated ACKs, the received sequence
+   number ranges are announced to the sender.  Therefore when more than
+   one packets got lost, the sender does not have to wait until an
+   accumulated ACK announces the next whole in the sequence number
+   space, but can retransmit lost packets immediately.
+
+   To determine e.g. a large enough value for the RTO [RFC6298], the RTT
+   needs to be measured by a TCP sender.  The RTTM mechanism in TCP
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   either needs to store the sent-out time stamp and SEQ of all or a
+   sample of packets or can use the TSOpt [RFC7323].  With TSOpt the
+   sender adds the current time stamp to each packet and the receiver
+   reflects this time stamp in the respective ACK.  By subtracting the
+   reflected time stamp from the current system time the RTT can be
+   measured for each received ACK holding a valid TSOpt.
+
+   (talk about spurious retransmissions...?)
+
+   Further when a loss is detected, TCP congestion control [RFC5681]
+   becomes active and usually reduces the sending rate.  The sending
+   rate is most often determined by a (sliding-) window.  Based on the
+   packet conservation principle [Jacobson1988], new packets are only
+   sent into the network when an old packets has exited.  This leads to
+   TCP implementations that are mostly self-clocked and take actions
+   only when an ACK is received.  Initially, if enough data is
+   available, a TCP sender usually send 2-4 [RFC3390] or up to 10
+   segements back to back.  When no ACKs are received at all for a
+   certain time larger than at least one RTT, the RTO is triggered and
+   the sending rate is reduced to a minimum value.  The current sending
+   window is the minimum of the receive window and the congestion window
+   where the receive window is announced by the receiver to not overload
+   the receiver buffer.  As long as flow control does not become active
+   and not signal a smaller receive window to not overload the receiver,
+   the sending window equals the congestion window.  The congestion
+   window is estimated by the congestion control algorithm based on
+   implicit or explicit network feedback such as loss, delay
+   measurements, or Explicit Congestion Notofication (ECN) [RFC3168].
+
+   (text on "On the Implementation of the TCP Urgent Mechanism"
+   [RFC6093], "The TCP Authentication Option" [RFC5925], and "TCP Fast
+   Open"...?)
+
+   (What's still missing?  Check TCP options...)
+
+3.2.3.  Interfaces
+
+   (describe socket interface)
+
+3.2.4.  Candidate Components
+
+   Reliability, congestion control, connection-oriented, unicast...?
+
+3.3.  User Datagram Protocol
+
+   (Volunteer: Kevin Fall)
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+3.4.  Realtime Transport Protocol
+
+   (Volunteer: Varun Singh)
+
+3.5.  Stream Control Transmission Protocol
+
+   (Volunteers: Michael Tuexen, Karen Nielsen)
 
 4.  Transport Service Features
 
@@ -321,6 +441,15 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
               1981.
 
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 8]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
    [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
               (IPv6) Specification", RFC 2460, December 1998.
 
@@ -329,20 +458,24 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               August 1980.
 
-
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
    [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
               793, September 1981.
 
    [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
               RFC 896, January 1984.
+
+   [RFC1122]  Braden, R., "Requirements for Internet Hosts -
+              Communication Layers", STD 3, RFC 1122, October 1989.
+
+   [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
+              Selective Acknowledgment Options", RFC 2018, October 1996.
+
+   [RFC3168]  Ramakrishnan, K., Floyd, S., and D. Black, "The Addition
+              of Explicit Congestion Notification (ECN) to IP", RFC
+              3168, September 2001.
+
+   [RFC3390]  Allman, M., Floyd, S., and C. Partridge, "Increasing TCP's
+              Initial Window", RFC 3390, October 2002.
 
    [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
               Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
@@ -357,6 +490,35 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC5405]  Eggert, L. and G. Fairhurst, "Unicast UDP Usage Guidelines
               for Application Designers", BCP 145, RFC 5405, November
               2008.
+
+   [RFC5925]  Touch, J., Mankin, A., and R. Bonica, "The TCP
+              Authentication Option", RFC 5925, June 2010.
+
+   [RFC5681]  Allman, M., Paxson, V., and E. Blanton, "TCP Congestion
+              Control", RFC 5681, September 2009.
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 9]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   [RFC6093]  Gont, F. and A. Yourtchenko, "On the Implementation of the
+              TCP Urgent Mechanism", RFC 6093, January 2011.
+
+   [RFC6298]  Paxson, V., Allman, M., Chu, J., and M. Sargent,
+              "Computing TCP's Retransmission Timer", RFC 6298, June
+              2011.
+
+   [RFC6691]  Borman, D., "TCP Options and Maximum Segment Size (MSS)",
+              RFC 6691, July 2012.
+
+   [RFC7323]  Borman, D., Braden, B., Jacobson, V., and R.
+              Scheffenegger, "TCP Extensions for High Performance", RFC
+              7323, September 2014.
 
 Authors' Addresses
 
@@ -389,4 +551,10 @@ Authors' Addresses
 
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                [Page 10]

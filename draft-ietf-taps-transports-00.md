@@ -41,10 +41,20 @@ informative:
   RFC0768:
   RFC0793:
   RFC0896:
+  RFC1122:
+  RFC2018:
+  RFC3168:
+  RFC3390:
   RFC4340:
   RFC4960:
   RFC5348:
   RFC5405:
+  RFC5925:
+  RFC5681:
+  RFC6093:
+  RFC6298:
+  RFC6691:
+  RFC7323:
 
 --- abstract
 
@@ -91,7 +101,7 @@ This section enumerates existing transport protocols
 
 ## Template: Imaginary Transport Protocol (ITP)
 
-(This subsection is a rough template provide initial guidance to subsection authors on how a subsection should be structured and what information should be provided. It will be removed once a real transport protocol has been fully described in the draft; that protocol's description can then be used as template for the others. In general, guidance for writing a transport protocol session is that the description should be short, with enough detail to compare and contrast protocols and extract relevant transport service features, but not necessarily enough detail to implement the protocol or understand corner-cases its design. Implementation details and corner cases, if mentioned, should be further explained by reference.)
+(This subsection is a initial rough template to provide guidance to subsection authors on how a subsection should be structured and what information should be provided. Please don't use it yet, but do think about whether it applies to the protocol section you're writing, and if not, why not. It will be removed once a real transport protocol has been fully described in the draft; that protocol's description can then be used as template for the others. In general, guidance for writing a transport protocol session is that the description should be short, with enough detail to compare and contrast protocols and extract relevant transport service features, but not necessarily enough detail to implement the protocol or understand corner-cases its design. Implementation details and corner cases, if mentioned, should be further explained by reference.)
 
 ### Introduction and Applicability
 
@@ -144,7 +154,7 @@ In constrast to UDP, TCP provides reliability...
 
 "The Transmission Control Protocol (TCP) is intended for use as a highly
 reliable host-to-host protocol between hosts in packet-switched computer
-communication networks, and in interconnected systems of such networks." [rfc793]
+communication networks, and in interconnected systems of such networks." {{RFC0793}}
 
 (Some more text here)
 
@@ -165,11 +175,11 @@ communication networks, and in interconnected systems of such networks." [rfc793
 
 TCP partitions all data into segements that can be identified by a sequence number (SEQ).
 Each new payload byte increases the SEQ by one. 
-The Maximum Segment Size (MSS) [rfc6691] is determined by the capacilities of the lower layer, usually IP, and the length of the TCP header as well as TCP options.
+The Maximum Segment Size (MSS) {{RFC6691}} is determined by the capacilities of the lower layer, usually IP, and the length of the TCP header as well as TCP options.
 A TCP receiver sends an acknowledgment (ACK) on the reception of a data segment.
 The ACK contains an acknowledgment number that announces the next in-order SEQ expected by the receiver. 
 To reduce signaling overhead, a TCP receiver might not acknowledge each received segment separately but multiple at once. 
-A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms [rfc5681, rfc1122]. 
+A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms {{RFC1122}} {{RFC5681}}. 
 <!-- Most operating systems implement a maximum delay of 100ms today. There are hardware implementation for high speed networks that accumulate even more. -->
 Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time and the Retransmission Time-Out (RTO) triggers an interupt.
 If a seqment is detected to be lost, the sender will retransmit it.
@@ -178,11 +188,11 @@ Duplicated ACKs are triggered at the receiver by the arrival of out-of-order dat
 <!-- If this data does not carry the next expected SEQ, the receiver will send out an ACK with the same acknowledgment number again. 
 This is called a duplicated ACK. --> 
 When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
-Additionally, TCP often implements Selective Acknowledgment (SACK) [rfc2018], where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
+Additionally, TCP often implements Selective Acknowledgment (SACK) {{RFC2018}}, where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
 Therefore when more than one packets got lost, the sender does not have to wait until an accumulated ACK announces the next whole in the sequence number space, but can retransmit lost packets immediately.
 
-To determine e.g. a large enough value for the RTO [rfc6298], the  RTT needs to be measured by a TCP sender.
-The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt [rfc7323]. 
+To determine e.g. a large enough value for the RTO {{RFC6298}}, the  RTT needs to be measured by a TCP sender.
+The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt {{RFC7323}}. 
 With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
 By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
 <!-- Note, that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO. -->
@@ -190,16 +200,16 @@ By subtracting the reflected time stamp from the current system time the  RTT ca
 
 (talk about spurious retransmissions...?)
 
-Further when a loss is detected,  TCP congestion control [rfc5681] becomes active and usually reduces the sending rate.
+Further when a loss is detected,  TCP congestion control {{RFC5681}} becomes active and usually reduces the sending rate.
 The sending rate is most often determined by a (sliding-) window. 
 Based on the packet conservation principle [Jacobson1988], new packets are only sent into the network when an old packets has exited. 
 This leads to TCP implementations that are mostly self-clocked and take actions only when an ACK is received.
-Initially, if enough data is available, a TCP sender usually send 2-4 [rfc3390] or up to 10 [rfc3390] segements back to back.
+Initially, if enough data is available, a TCP sender usually send 2-4 {{RFC3390}} or up to 10 segements back to back.
 When no ACKs are received at all for a certain time larger than at least one  RTT, the RTO is triggered and the sending rate is reduced to a minimum value.
 The current sending window is the minimum of the receive window and the congestion window where 
 the receive window is announced by the receiver to not overload the receiver buffer.
 As long as flow control does not become active and not signal a smaller receive window to not overload the receiver, the sending window equals the congestion window.
-The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback such as loss, delay measurements, or Explicit Congestion Notofication (ECN) [rfc3168].
+The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback such as loss, delay measurements, or Explicit Congestion Notofication (ECN) {{RFC3168}}.
 <!--In general, congestion control is based on some kind of network feedback.-->
 <!-- Inherently, the congestion control mechanism of a TPC sender assumes that loss occurs to due network congestion und therefore reacts each time congestion is notified.
 Note, congestion control usually at most reduces once per RTT as the congestion feedback has a signaling delay of one RTT. 
@@ -207,7 +217,7 @@ Unfortunately, congestion is not the only reason for the occurrence of loss.
 Packets can be dropped for various reasons by different nodes on the network path, e.g due to bit errors.-->
 <!--In the Internet the non-congestion based loss rate is usually very low, thus it is common sense to always handle loss as congestion signal.-->
 
-(text on "On the Implementation of the TCP Urgent Mechanism" [rfc6093], "The TCP Authentication Option" [rfc5925], and "TCP Fast Open"...?)
+(text on "On the Implementation of the TCP Urgent Mechanism" {{RFC6093}}, "The TCP Authentication Option" {{RFC5925}}, and "TCP Fast Open"...?)
 
 (What's still missing? Check TCP options...)
 

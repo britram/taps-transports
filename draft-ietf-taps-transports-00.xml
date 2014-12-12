@@ -8,10 +8,20 @@
 <!ENTITY RFC0768 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0768.xml">
 <!ENTITY RFC0793 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0793.xml">
 <!ENTITY RFC0896 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0896.xml">
+<!ENTITY RFC1122 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.1122.xml">
+<!ENTITY RFC2018 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2018.xml">
+<!ENTITY RFC3168 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3168.xml">
+<!ENTITY RFC3390 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3390.xml">
 <!ENTITY RFC4340 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4340.xml">
 <!ENTITY RFC4960 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4960.xml">
 <!ENTITY RFC5348 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5348.xml">
 <!ENTITY RFC5405 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5405.xml">
+<!ENTITY RFC5925 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5925.xml">
+<!ENTITY RFC5681 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5681.xml">
+<!ENTITY RFC6093 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6093.xml">
+<!ENTITY RFC6298 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6298.xml">
+<!ENTITY RFC6691 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6691.xml">
+<!ENTITY RFC7323 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7323.xml">
 ]>
 
 <rfc ipr="trust200902" docName="draft-ietf-taps-transports-00" category="info">
@@ -115,7 +125,7 @@ e.g. a protocol stack (RTP over UDP)</t>
 
 <section anchor="template-imaginary-transport-protocol-itp" title="Template: Imaginary Transport Protocol (ITP)">
 
-<t>(This subsection is a rough template provide initial guidance to subsection authors on how a subsection should be structured and what information should be provided. It will be removed once a real transport protocol has been fully described in the draft; that protocol’s description can then be used as template for the others. In general, guidance for writing a transport protocol session is that the description should be short, with enough detail to compare and contrast protocols and extract relevant transport service features, but not necessarily enough detail to implement the protocol or understand corner-cases its design. Implementation details and corner cases, if mentioned, should be further explained by reference.)</t>
+<t>(This subsection is a initial rough template to provide guidance to subsection authors on how a subsection should be structured and what information should be provided. Please don’t use it yet, but do think about whether it applies to the protocol section you’re writing, and if not, why not. It will be removed once a real transport protocol has been fully described in the draft; that protocol’s description can then be used as template for the others. In general, guidance for writing a transport protocol session is that the description should be short, with enough detail to compare and contrast protocols and extract relevant transport service features, but not necessarily enough detail to implement the protocol or understand corner-cases its design. Implementation details and corner cases, if mentioned, should be further explained by reference.)</t>
 
 <section anchor="introduction-and-applicability" title="Introduction and Applicability">
 
@@ -172,6 +182,90 @@ e.g. a protocol stack (RTP over UDP)</t>
 
 <t>(Volunteer: Mirja Kuehlewind)</t>
 
+<t>TCP is a stream-oriented transport protocol that is widely used in the Internet.
+In constrast to UDP, TCP provides reliability… </t>
+
+<t>“The Transmission Control Protocol (TCP) is intended for use as a highly
+reliable host-to-host protocol between hosts in packet-switched computer
+communication networks, and in interconnected systems of such networks.” <xref target="RFC0793"/></t>
+
+<t>(Some more text here)</t>
+
+<section anchor="detailed-description-of-protocol-mechanisms" title="Detailed Description of Protocol Mechanisms">
+
+<t>(we only talk about the mechanism here and not about the framing… is this right?)</t>
+
+<t>(subsection headings of this section might be different for each protocol…?)</t>
+
+<section anchor="connection-establishment-and-clearing" title="Connection Establishment and Clearing">
+
+<t>(text on TCP handshake goes here)</t>
+
+<t>(text on the role of port numbers goes here)</t>
+
+</section>
+</section>
+<section anchor="data-communication" title="Data Communication">
+
+<t>TCP partitions all data into segements that can be identified by a sequence number (SEQ).
+Each new payload byte increases the SEQ by one. 
+The Maximum Segment Size (MSS) <xref target="RFC6691"/> is determined by the capacilities of the lower layer, usually IP, and the length of the TCP header as well as TCP options.
+A TCP receiver sends an acknowledgment (ACK) on the reception of a data segment.
+The ACK contains an acknowledgment number that announces the next in-order SEQ expected by the receiver. 
+To reduce signaling overhead, a TCP receiver might not acknowledge each received segment separately but multiple at once. 
+A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms <xref target="RFC1122"/> <xref target="RFC5681"/>. 
+<!-- Most operating systems implement a maximum delay of 100ms today. There are hardware implementation for high speed networks that accumulate even more. -->
+Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time and the Retransmission Time-Out (RTO) triggers an interupt.
+If a seqment is detected to be lost, the sender will retransmit it.
+<!-- and retransmitting (potentially) lost data when no new acknowledgment is received. -->
+Duplicated ACKs are triggered at the receiver by the arrival of out-of-order data segments and thereby do not acknowledge new data but repeat the previous acknowledgment number.<vspace />
+<!-- If this data does not carry the next expected SEQ, the receiver will send out an ACK with the same acknowledgment number again. 
+This is called a duplicated ACK. --> 
+When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
+Additionally, TCP often implements Selective Acknowledgment (SACK) <xref target="RFC2018"/>, where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
+Therefore when more than one packets got lost, the sender does not have to wait until an accumulated ACK announces the next whole in the sequence number space, but can retransmit lost packets immediately.</t>
+
+<t>To determine e.g. a large enough value for the RTO <xref target="RFC6298"/>, the  RTT needs to be measured by a TCP sender.
+The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt <xref target="RFC7323"/>. 
+With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
+By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
+<!-- Note, that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO. -->
+<!--"Then a single subtract gives the sender an accurate RTT measurement for every ACK segment (which will correspond to every other data segment, with a sensible receiver)." [rfc7323]--></t>
+
+<t>(talk about spurious retransmissions…?)</t>
+
+<t>Further when a loss is detected,  TCP congestion control <xref target="RFC5681"/> becomes active and usually reduces the sending rate.
+The sending rate is most often determined by a (sliding-) window. 
+Based on the packet conservation principle [Jacobson1988], new packets are only sent into the network when an old packets has exited. 
+This leads to TCP implementations that are mostly self-clocked and take actions only when an ACK is received.
+Initially, if enough data is available, a TCP sender usually send 2-4 <xref target="RFC3390"/> or up to 10 segements back to back.
+When no ACKs are received at all for a certain time larger than at least one  RTT, the RTO is triggered and the sending rate is reduced to a minimum value.
+The current sending window is the minimum of the receive window and the congestion window where 
+the receive window is announced by the receiver to not overload the receiver buffer.
+As long as flow control does not become active and not signal a smaller receive window to not overload the receiver, the sending window equals the congestion window.
+The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback such as loss, delay measurements, or Explicit Congestion Notofication (ECN) <xref target="RFC3168"/>.
+<!--In general, congestion control is based on some kind of network feedback.-->
+<!-- Inherently, the congestion control mechanism of a TPC sender assumes that loss occurs to due network congestion und therefore reacts each time congestion is notified.
+Note, congestion control usually at most reduces once per RTT as the congestion feedback has a signaling delay of one RTT. 
+Unfortunately, congestion is not the only reason for the occurrence of loss. 
+Packets can be dropped for various reasons by different nodes on the network path, e.g due to bit errors.-->
+<!--In the Internet the non-congestion based loss rate is usually very low, thus it is common sense to always handle loss as congestion signal.--></t>
+
+<t>(text on “On the Implementation of the TCP Urgent Mechanism” <xref target="RFC6093"/>, “The TCP Authentication Option” <xref target="RFC5925"/>, and “TCP Fast Open”…?)</t>
+
+<t>(What’s still missing? Check TCP options…)</t>
+
+</section>
+<section anchor="interfaces" title="Interfaces">
+
+<t>(describe socket interface)</t>
+
+</section>
+<section anchor="candidate-components-1" title="Candidate Components">
+
+<t>Reliability, congestion control, connection-oriented, unicast…?</t>
+
+</section>
 </section>
 <section anchor="user-datagram-protocol" title="User Datagram Protocol">
 
@@ -238,10 +332,20 @@ e.g. a protocol stack (RTP over UDP)</t>
 &RFC0768;
 &RFC0793;
 &RFC0896;
+&RFC1122;
+&RFC2018;
+&RFC3168;
+&RFC3390;
 &RFC4340;
 &RFC4960;
 &RFC5348;
 &RFC5405;
+&RFC5925;
+&RFC5681;
+&RFC6093;
+&RFC6298;
+&RFC6691;
+&RFC7323;
 
 
     </references>
