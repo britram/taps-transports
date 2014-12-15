@@ -1,7 +1,7 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-00
+docname: draft-ietf-taps-transports-01
 date: 2014-12-19
 category: info
 ipr: trust200902
@@ -77,23 +77,23 @@ The following terms are defined throughout this document, and in subsequent docu
 The terminology below is that as was presented at the TAPS WG meeting in Honolulu. While the factoring of the terminology seems uncontroversial, thre may be some entities which still require names (e.g. information about the interface between the transport and lower layers which could lead to the availablity or unavailibility of certain transport protocol features)
 
 Transport Service Feature: 
-:a specific feature a transport service provides to its clients end-to-end. Examples include confidentiality, reliable delivery, ordered delivery, message-versus-stream orientation, etc.
+: a specific feature a transport service provides to its clients end-to-end. Examples include confidentiality, reliable delivery, ordered delivery, message-versus-stream orientation, etc.
 
 Transport Service: 
-:a set of transport service features, without an association to any given framing protocol, which provides a complete service to an application.
+: a set of transport service features, without an association to any given framing protocol, which provides a complete service to an application.
 
 Transport Protocol: 
-:an implementation that provides one or more different transport services using a specific framing and header format on the wire.
+: an implementation that provides one or more different transport services using a specific framing and header format on the wire.
 
 Transport Protocol Component: 
-:an implementation of a transport service feature within a protocol
+: an implementation of a transport service feature within a protocol
 
 Transport Service Instance: 
-:an arrangement of transport protocols with a selected set of features and configuration parameters that implements a single transport service, 
+: an arrangement of transport protocols with a selected set of features and configuration parameters that implements a single transport service, 
 e.g. a protocol stack (RTP over UDP)
 
 Application: 
-:an entity that uses the transport layer for end-to-end delivery data across the network.
+: an entity that uses the transport layer for end-to-end delivery data across the network.
 
 # Existing Transport Protocols
 
