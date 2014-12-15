@@ -135,13 +135,10 @@ e.g. a protocol stack (RTP over UDP)</t>
 </list></t>
 
 </section>
-<section anchor="existing-transport-protocols" title="Existing Transport Protocols">
+<section anchor="transport-protocols" title="Transport Protocols">
 
 <t>This section provides a list of known IETF transport protocol and
 transport protocol frameworks.</t>
-
-</section>
-<section anchor="transport-protocols" title="Transport Protocols">
 
 <section anchor="transport-control-protocol-tcp" title="Transport Control Protocol (TCP)">
 

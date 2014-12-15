@@ -141,14 +141,12 @@ Internet-Draft               TAPS Transports               December 2014
    Application:   an entity that uses the transport layer for end-to-end
       delivery data across the network.
 
-3.  Existing Transport Protocols
+3.  Transport Protocols
 
    This section provides a list of known IETF transport protocol and
    transport protocol frameworks.
 
-4.  Transport Protocols
-
-4.1.  Transport Control Protocol (TCP)
+3.1.  Transport Control Protocol (TCP)
 
    TCP [RFC0793] provides a bidirectional byte-oriented stream over a
    connection- oriented protocol.  The protocol and API use the byte-
@@ -157,11 +155,13 @@ Internet-Draft               TAPS Transports               December 2014
    [EDITOR'S NOTE: Mirja Kuehlewind signed up as contributor for this
    section.]
 
-4.1.1.  Multipath TCP (MPTCP)
+3.1.1.  Multipath TCP (MPTCP)
 
+3.2.  Stream Control Transmission Protocol (SCTP)
 
-
-
+   SCTP [RFC4960] provides a bidirectional set of logical unicast
+   streams over one a connection-oriented protocol.  The protocol and
+   API use messages, rather than a byte-stream.  Each stream of messages
 
 
 
@@ -170,23 +170,18 @@ Fairhurst & Trammell      Expires June 18, 2015                 [Page 3]
 Internet-Draft               TAPS Transports               December 2014
 
 
-4.2.  Stream Control Transmission Protocol (SCTP)
-
-   SCTP [RFC4960] provides a bidirectional set of logical unicast
-   streams over one a connection-oriented protocol.  The protocol and
-   API use messages, rather than a byte-stream.  Each stream of messages
    is independently managed, therefore retransmission does not hold back
    data sent using other logical streams.
 
    [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
    contributors for these sections.]
 
-4.2.1.  Partial Reliability for SCTP (PR-SCTP)
+3.2.1.  Partial Reliability for SCTP (PR-SCTP)
 
    PR-SCTP [RFC3758] is a variant of SCTP that provides partial
    reliability.
 
-4.3.  User Datagram Protocol (UDP)
+3.3.  User Datagram Protocol (UDP)
 
    The User Datagram Protocol (UDP) [RFC0768] provides a unidirectional
    minimal message-passing transport that has no inherent congestion
@@ -195,7 +190,7 @@ Internet-Draft               TAPS Transports               December 2014
    [EDITOR'S NOTE: Kevin Fall signed up as contributor for this
    section.]
 
-4.3.1.  UDP-Lite
+3.3.1.  UDP-Lite
 
    A special class of applications can derive benefit from having
    partially-damaged payloads delivered, rather than discarded, when
@@ -204,7 +199,7 @@ Internet-Draft               TAPS Transports               December 2014
    User Datagram Protocol [RFC3828].  The service may be multicast and/
    or unicast.
 
-4.4.  Datagram Congestion Control Protocol (DCCP)
+3.4.  Datagram Congestion Control Protocol (DCCP)
 
    The Datagram Congestion Control Protocol (DCCP) [RFC4340] is a
    bidirectional transport protocol that provides unicast connections of
@@ -213,10 +208,15 @@ Internet-Draft               TAPS Transports               December 2014
    benefit from control over the tradeoff between timeliness and
    reliability.
 
-4.5.  Realtime Transport Protocol (RTP)
+3.5.  Realtime Transport Protocol (RTP)
 
    RTP provides an end-to-end network transport service, suitable for
    applications transmitting real-time data, such as audio, video or
+   data, over multicast or unicast network services, including TCP, UDP,
+   UDP-Lite, DCCP.
+
+   [EDITOR'S NOTE: Varun Singh signed up as contributor for this
+   section.]
 
 
 
@@ -226,31 +226,25 @@ Fairhurst & Trammell      Expires June 18, 2015                 [Page 4]
 Internet-Draft               TAPS Transports               December 2014
 
 
-   data, over multicast or unicast network services, including TCP, UDP,
-   UDP-Lite, DCCP.
-
-   [EDITOR'S NOTE: Varun Singh signed up as contributor for this
-   section.]
-
-4.6.  Hypertext Transport Protocol (HTTP) as a pseudotransport
+3.6.  Hypertext Transport Protocol (HTTP) as a pseudotransport
 
    [RFC3205]
 
-4.6.1.  WebSockets
+3.6.1.  WebSockets
 
    [RFC6455]
 
-5.  Transport Service Features
+4.  Transport Service Features
 
    Features as derived from the subsections above.
 
    This section is blank for now.
 
-6.  IANA Considerations
+5.  IANA Considerations
 
    This document has no considerations for IANA.
 
-7.  Security Considerations
+6.  Security Considerations
 
    This document surveys existing transport protocols and protocols
    providing transport-like services.  Confidentiality, integrity, and
@@ -259,21 +253,27 @@ Internet-Draft               TAPS Transports               December 2014
    providing these features.  Each RFC listed in this document discusses
    the security considerations of the specification it contains.
 
-8.  Contributors
+7.  Contributors
 
    Non-editor contributors of text will be listed here, as in the
    authors section.
 
-9.  Acknowledgments
+8.  Acknowledgments
 
    This work is partially supported by the European Commission under
    grant agreement FP7-ICT-318627 mPlane; support does not imply
    endorsement.  Special thanks to Mirja Kuehlewind for the terminology
    section and for leading the terminology discussion in Honolulu.
 
+9.  References
 
+9.1.  Normative References
 
+   [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
+              1981.
 
+   [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
+              (IPv6) Specification", RFC 2460, December 1998.
 
 
 
@@ -282,17 +282,7 @@ Fairhurst & Trammell      Expires June 18, 2015                 [Page 5]
 Internet-Draft               TAPS Transports               December 2014
 
 
-10.  References
-
-10.1.  Normative References
-
-   [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
-              1981.
-
-   [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
-              (IPv6) Specification", RFC 2460, December 1998.
-
-10.2.  Informative References
+9.2.  Informative References
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               August 1980.
@@ -330,14 +320,6 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
               Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
 
-
-
-
-Fairhurst & Trammell      Expires June 18, 2015                 [Page 6]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
    [RFC4960]  Stewart, R., "Stream Control Transmission Protocol", RFC
               4960, September 2007.
 
@@ -348,6 +330,13 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC5405]  Eggert, L. and G. Fairhurst, "Unicast UDP Usage Guidelines
               for Application Designers", BCP 145, RFC 5405, November
               2008.
+
+
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 6]
+
+Internet-Draft               TAPS Transports               December 2014
+
 
    [RFC5925]  Touch, J., Mankin, A., and R. Bonica, "The TCP
               Authentication Option", RFC 5925, June 2010.
@@ -382,18 +371,6 @@ Authors' Addresses
    Email: gorry@erg.abdn.ac.uk
 
 
-
-
-
-
-
-
-
-Fairhurst & Trammell      Expires June 18, 2015                 [Page 7]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
    Brian Trammell (editor)
    ETH Zurich
    Gloriastrasse 35
@@ -412,37 +389,4 @@ Internet-Draft               TAPS Transports               December 2014
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Fairhurst & Trammell      Expires June 18, 2015                 [Page 8]
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 7]
