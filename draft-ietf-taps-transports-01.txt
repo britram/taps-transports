@@ -1,0 +1,560 @@
+
+
+
+
+Network Working Group                                  G. Fairhurst, Ed.
+Internet-Draft                                    University of Aberdeen
+Intended status: Informational                          B. Trammell, Ed.
+Expires: June 22, 2015                                M. Kuehlewind, Ed.
+                                                              ETH Zurich
+                                                       December 19, 2014
+
+
+  Services provided by IETF transport protocols and congestion control
+                               mechanisms
+                     draft-ietf-taps-transports-01
+
+Abstract
+
+   This document describes services provided by existing IETF protocols
+   and congestion control mechanisms.  It is designed to help
+   application and network stack programmers and to inform the work of
+   the IETF TAPS Working Group.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on June 22, 2015.
+
+Copyright Notice
+
+   Copyright (c) 2014 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 1]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Introduction
+
+   Most Internet applications make use of the Transport Services
+   provided by TCP (a reliable, in-order stream protocol) or UDP (an
+   unreliable datagram protocol).  We use the term "Transport Service"
+   to mean the end-to-end service provided to an application by the
+   transport layer.  That service can only be provided correctly if
+   information is supplied from the application.  The application may
+   determine the information to be supplied at design time, compile
+   time, or run time, and may include guidance on whether some feature
+   is required, a preference by the application, or something in
+   between.  Examples of features of Transport Services are reliable
+   delivery, ordered delivery, content privacy to in-path devices,
+   integrity protection, and minimal latency.
+
+   The IETF has defined a wide variety of transport protocols beyond TCP
+   and UDP, such as TCP, SCTP, DCCP, MP-TCP, and UDP-Lite.  Transport
+   services may be provided directly by these transport protocols, or
+   layered on top of them using protocols such as WebSockets (which runs
+   over TCP) or RTP (over TCP or UDP).  Services built on top of UDP or
+   UDP-Lite typically also need to specify a congestion control
+   mechanism, such as TFRC or the LEDBAT congestion control mechanism.
+   This extends the set of available Transport Services beyond those
+   provided to applications by TCP and UDP.
+
+   Transport protocols can aslo be differentiated by the features of the
+   services they provide: for instance, SCTP offers a message-based
+   service that does not suffer head-of-line blocking when used with
+   multiple stream, because it can accept blocks of data out of order,
+   UDP-Lite provides partial integrity protection when used over link-
+   layer services that can support this, and LEDBAT can provide low-
+   priority "scavenger" communication.
+
+2.  Terminology
+
+   The following terms are defined throughout this document, and in
+   subsequent documents produced by TAPS describing the composition and
+   decomposition of transport services.
+
+   The terminology below is that as was presented at the TAPS WG meeting
+   in Honolulu.  While the factoring of the terminology seems
+   uncontroversial, thre may be some entities which still require names
+   (e.g. information about the interface between the transport and lower
+   layers which could lead to the availablity or unavailibility of
+   certain transport protocol features)
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 2]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   Transport Service Feature:   a specific feature a transport service
+      provides to its clients end-to-end.  Examples include
+      confidentiality, reliable delivery, ordered delivery, message-
+      versus-stream orientation, etc.
+
+   Transport Service:   a set of transport service features, without an
+      association to any given framing protocol, which provides a
+      complete service to an application.
+
+   Transport Protocol:   an implementation that provides one or more
+      different transport services using a specific framing and header
+      format on the wire.
+
+   Transport Protocol Component:   an implementation of a transport
+      service feature within a protocol
+
+   Transport Service Instance:   an arrangement of transport protocols
+      with a selected set of features and configuration parameters that
+      implements a single transport service, e.g. a protocol stack (RTP
+      over UDP)
+
+   Application:   an entity that uses the transport layer for end-to-end
+      delivery data across the network.
+
+3.  Existing Transport Protocols
+
+   This section provides a list of known IETF transport protocol and
+   transport protocol frameworks.
+
+3.1.  Transport Control Protocol (TCP)
+
+   TCP is a stream-oriented transport protocol that is widely used in
+   the Internet.  In constrast to UDP, TCP provides reliability...
+
+   "The Transmission Control Protocol (TCP) is intended for use as a
+   highly reliable host-to-host protocol between hosts in packet-
+   switched computer communication networks, and in interconnected
+   systems of such networks."  [RFC0793]
+
+   (Some more text here)
+
+3.1.1.  Detailed Description of Protocol Mechanisms
+
+   (we only talk about the mechanism here and not about the framing...
+   is this right?)
+
+   (subsection headings of this section might be different for each
+   protocol...?)
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 3]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+3.1.1.1.  Connection Establishment and Clearing
+
+   (text on TCP handshake goes here)
+
+   (text on the role of port numbers goes here)
+
+3.1.2.  Data Communication
+
+   TCP partitions all data into segements that can be identified by a
+   sequence number (SEQ).  Each new payload byte increases the SEQ by
+   one.  The Maximum Segment Size (MSS) [RFC6691] is determined by the
+   capacilities of the lower layer, usually IP, and the length of the
+   TCP header as well as TCP options.  A TCP receiver sends an
+   acknowledgment (ACK) on the reception of a data segment.  The ACK
+   contains an acknowledgment number that announces the next in-order
+   SEQ expected by the receiver.  To reduce signaling overhead, a TCP
+   receiver might not acknowledge each received segment separately but
+   multiple at once.  A TCP receiver should at least acknowledge every
+   second packet and delay an acknowledgement not more that 500ms
+   [RFC1122] [RFC5681].  Loss is assumed by the sender if three
+   duplicated ACKs, that acknowledge the same SEQ, are received or no
+   ACK is received for a certain time and the Retransmission Time-Out
+   (RTO) triggers an interupt.  If a seqment is detected to be lost, the
+   sender will retransmit it.  Duplicated ACKs are triggered at the
+   receiver by the arrival of out-of-order data segments and thereby do
+   not acknowledge new data but repeat the previous acknowledgment
+   number.
+   When the missing data is received, a cumulative acknowledgment is
+   sent that acknowledges all (now) in-order segments received so far.
+   Additionally, TCP often implements Selective Acknowledgment (SACK)
+   [RFC2018], where, in case of duplicated ACKs, the received sequence
+   number ranges are announced to the sender.  Therefore when more than
+   one packets got lost, the sender does not have to wait until an
+   accumulated ACK announces the next whole in the sequence number
+   space, but can retransmit lost packets immediately.
+
+   To determine e.g. a large enough value for the RTO [RFC6298], the RTT
+   needs to be measured by a TCP sender.  The RTTM mechanism in TCP
+   either needs to store the sent-out time stamp and SEQ of all or a
+   sample of packets or can use the TSOpt [RFC7323].  With TSOpt the
+   sender adds the current time stamp to each packet and the receiver
+   reflects this time stamp in the respective ACK.  By subtracting the
+   reflected time stamp from the current system time the RTT can be
+   measured for each received ACK holding a valid TSOpt.
+
+   (talk about spurious retransmissions...?)
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 4]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   Further when a loss is detected, TCP congestion control [RFC5681]
+   becomes active and usually reduces the sending rate.  The sending
+   rate is most often determined by a (sliding-) window.  Based on the
+   packet conservation principle [Jacobson1988], new packets are only
+   sent into the network when an old packets has exited.  This leads to
+   TCP implementations that are mostly self-clocked and take actions
+   only when an ACK is received.  Initially, if enough data is
+   available, a TCP sender usually send 2-4 [RFC3390] or up to 10
+   segements back to back.  When no ACKs are received at all for a
+   certain time larger than at least one RTT, the RTO is triggered and
+   the sending rate is reduced to a minimum value.  The current sending
+   window is the minimum of the receive window and the congestion window
+   where the receive window is announced by the receiver to not overload
+   the receiver buffer.  As long as flow control does not become active
+   and not signal a smaller receive window to not overload the receiver,
+   the sending window equals the congestion window.  The congestion
+   window is estimated by the congestion control algorithm based on
+   implicit or explicit network feedback such as loss, delay
+   measurements, or Explicit Congestion Notofication (ECN) [RFC3168].
+
+   (text on "On the Implementation of the TCP Urgent Mechanism"
+   [RFC6093], "The TCP Authentication Option" [RFC5925], and "TCP Fast
+   Open"...?)
+
+   (What's still missing?  Check TCP options...)
+
+3.1.3.  Interfaces
+
+   (describe socket interface)
+
+3.1.4.  Candidate Components
+
+   Reliability, congestion control, connection-oriented, unicast...?
+
+3.1.5.  Multipath TCP (MPTCP)
+
+   [RFC6824]
+
+3.2.  Stream Control Transmission Protocol (SCTP)
+
+   SCTP [RFC4960] provides a bidirectional set of logical unicast
+   streams over one a connection-oriented protocol.  The protocol and
+   API use messages, rather than a byte-stream.  Each stream of messages
+   is independently managed, therefore retransmission does not hold back
+   data sent using other logical streams.
+
+   [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
+   contributors for these sections.]
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 5]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+3.2.1.  Partial Reliability for SCTP (PR-SCTP)
+
+   PR-SCTP [RFC3758] is a variant of SCTP that provides partial
+   reliability.
+
+3.3.  User Datagram Protocol (UDP)
+
+   The User Datagram Protocol (UDP) [RFC0768] provides a unidirectional
+   minimal message-passing transport that has no inherent congestion
+   control mechanisms.  The service may be multicast and/or unicast.
+
+   [EDITOR'S NOTE: Kevin Fall signed up as contributor for this
+   section.]
+
+3.3.1.  UDP-Lite
+
+   A special class of applications can derive benefit from having
+   partially-damaged payloads delivered, rather than discarded, when
+   using paths that include error-prone links.  Such applications can
+   tolerate payload corruption and may choose to use the Lightweight
+   User Datagram Protocol [RFC3828].  The service may be multicast and/
+   or unicast.
+
+3.4.  Datagram Congestion Control Protocol (DCCP)
+
+   The Datagram Congestion Control Protocol (DCCP) [RFC4340] is a
+   bidirectional transport protocol that provides unicast connections of
+   congestion-controlled unreliable messages.  DCCP is suitable for
+   applications that transfer fairly large amounts of data and that can
+   benefit from control over the tradeoff between timeliness and
+   reliability.
+
+3.5.  Realtime Transport Protocol (RTP)
+
+   RTP provides an end-to-end network transport service, suitable for
+   applications transmitting real-time data, such as audio, video or
+   data, over multicast or unicast network services, including TCP, UDP,
+   UDP-Lite, DCCP.
+
+   [EDITOR'S NOTE: Varun Singh signed up as contributor for this
+   section.]
+
+3.6.  Hypertext Transport Protocol (HTTP) as a pseudotransport
+
+   [RFC3205]
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+3.6.1.  WebSockets
+
+   [RFC6455]
+
+3.7.  Transmission Control Protocol (TCP)
+
+3.8.  User Datagram Protocol
+
+   (Volunteer: Kevin Fall)
+
+3.9.  Realtime Transport Protocol
+
+   (Volunteer: Varun Singh)
+
+3.10.  Stream Control Transmission Protocol
+
+   (Volunteers: Michael Tuexen, Karen Nielsen)
+
+4.  Transport Service Features
+
+   (drawn from the candidate features provided by protocol components in
+   the previous section)
+
+5.  Complete Protocol Feature Matrix
+
+   (a comprehensive matrix table goes here; Volunteer: Dave Thaler)
+
+6.  IANA Considerations
+
+   This document has no considerations for IANA.
+
+7.  Security Considerations
+
+   This document surveys existing transport protocols and protocols
+   providing transport-like services.  Confidentiality, integrity, and
+   authenticity are among the features provided by those services.  This
+   document does not specify any new components or mechanisms for
+   providing these features.  Each RFC listed in this document discusses
+   the security considerations of the specification it contains.
+
+8.  Contributors
+
+   Non-editor contributors of text will be listed here, as in the
+   authors section.
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+9.  Acknowledgments
+
+   This work is partially supported by the European Commission under
+   grant agreement FP7-ICT-318627 mPlane; support does not imply
+   endorsement.
+
+10.  References
+
+10.1.  Normative References
+
+   [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
+              1981.
+
+   [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
+              (IPv6) Specification", RFC 2460, December 1998.
+
+10.2.  Informative References
+
+   [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
+              August 1980.
+
+   [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
+              793, September 1981.
+
+   [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
+              RFC 896, January 1984.
+
+   [RFC1122]  Braden, R., "Requirements for Internet Hosts -
+              Communication Layers", STD 3, RFC 1122, October 1989.
+
+   [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
+              Selective Acknowledgment Options", RFC 2018, October 1996.
+
+   [RFC3168]  Ramakrishnan, K., Floyd, S., and D. Black, "The Addition
+              of Explicit Congestion Notification (ECN) to IP", RFC
+              3168, September 2001.
+
+   [RFC3205]  Moore, K., "On the use of HTTP as a Substrate", BCP 56,
+              RFC 3205, February 2002.
+
+   [RFC3390]  Allman, M., Floyd, S., and C. Partridge, "Increasing TCP's
+              Initial Window", RFC 3390, October 2002.
+
+   [RFC3758]  Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., and P.
+              Conrad, "Stream Control Transmission Protocol (SCTP)
+              Partial Reliability Extension", RFC 3758, May 2004.
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 8]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   [RFC3828]  Larzon, L-A., Degermark, M., Pink, S., Jonsson, L-E., and
+              G. Fairhurst, "The Lightweight User Datagram Protocol
+              (UDP-Lite)", RFC 3828, July 2004.
+
+   [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
+              Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
+
+   [RFC4960]  Stewart, R., "Stream Control Transmission Protocol", RFC
+              4960, September 2007.
+
+   [RFC5348]  Floyd, S., Handley, M., Padhye, J., and J. Widmer, "TCP
+              Friendly Rate Control (TFRC): Protocol Specification", RFC
+              5348, September 2008.
+
+   [RFC5405]  Eggert, L. and G. Fairhurst, "Unicast UDP Usage Guidelines
+              for Application Designers", BCP 145, RFC 5405, November
+              2008.
+
+   [RFC5925]  Touch, J., Mankin, A., and R. Bonica, "The TCP
+              Authentication Option", RFC 5925, June 2010.
+
+   [RFC5681]  Allman, M., Paxson, V., and E. Blanton, "TCP Congestion
+              Control", RFC 5681, September 2009.
+
+   [RFC6093]  Gont, F. and A. Yourtchenko, "On the Implementation of the
+              TCP Urgent Mechanism", RFC 6093, January 2011.
+
+   [RFC6298]  Paxson, V., Allman, M., Chu, J., and M. Sargent,
+              "Computing TCP's Retransmission Timer", RFC 6298, June
+              2011.
+
+   [RFC6455]  Fette, I. and A. Melnikov, "The WebSocket Protocol", RFC
+              6455, December 2011.
+
+   [RFC6691]  Borman, D., "TCP Options and Maximum Segment Size (MSS)",
+              RFC 6691, July 2012.
+
+   [RFC6824]  Ford, A., Raiciu, C., Handley, M., and O. Bonaventure,
+              "TCP Extensions for Multipath Operation with Multiple
+              Addresses", RFC 6824, January 2013.
+
+   [RFC7323]  Borman, D., Braden, B., Jacobson, V., and R.
+              Scheffenegger, "TCP Extensions for High Performance", RFC
+              7323, September 2014.
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 9]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+Authors' Addresses
+
+   Godred Fairhurst (editor)
+   University of Aberdeen
+   School of Engineering, Fraser Noble Building
+   Aberdeen AB24 3UE
+
+   Email: gorry@erg.abdn.ac.uk
+
+
+   Brian Trammell (editor)
+   ETH Zurich
+   Gloriastrasse 35
+   8092 Zurich
+   Switzerland
+
+   Email: ietf@trammell.ch
+
+
+   Mirja Kuehlewind (editor)
+   ETH Zurich
+   Gloriastrasse 35
+   8092 Zurich
+   Switzerland
+
+   Email: mirja.kuehlewind@tik.ee.ethz.ch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                [Page 10]

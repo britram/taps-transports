@@ -44,7 +44,10 @@ informative:
   RFC1122:
   RFC2018:
   RFC3168:
+  RFC3205:
   RFC3390:
+  RFC3758:
+  RFC3828:
   RFC4340:
   RFC4960:
   RFC5348:
@@ -53,6 +56,7 @@ informative:
   RFC5681:
   RFC6093:
   RFC6298:
+  RFC6455:
   RFC6691:
   RFC6824:
   RFC7323:
