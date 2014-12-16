@@ -50,6 +50,7 @@ informative:
   RFC3828:
   RFC4340:
   RFC4960:
+  RFC5246:
   RFC5348:
   RFC5405:
   RFC5925:
@@ -57,6 +58,7 @@ informative:
   RFC6093:
   RFC6298:
   RFC6455:
+  RFC6347:
   RFC6691:
   RFC6824:
   RFC7323:
@@ -107,28 +109,43 @@ transport protocol frameworks.
 
 ## Transport Control Protocol (TCP)
 
-TCP is a stream-oriented transport protocol that is widely used in the Internet.
-In constrast to UDP, TCP provides reliability... 
+{{RFC0793}} introduces TCP as follows: "The 
+Transmission Control Protocol (TCP) is intended for use as a highly reliable host-to-host protocol between hosts 
+in packet-switched computer communication networks, and in interconnected 
+systems of such networks." Since its introduction, TCP has become the default connection-oriented, 
+stream-based transport protocol in the Internet, widely implemented by endpoints and 
+widely used by common application protocols. 
 
-"The Transmission Control Protocol (TCP) is intended for use as a highly
-reliable host-to-host protocol between hosts in packet-switched computer
-communication networks, and in interconnected systems of such networks." {{RFC0793}}
+### Protocol Description
 
-(Some more text here)
+TCP is a connection-oriented protocol, providing a three way handshake to allow a client and server to set up a connection, and mechanisms for orderly completion and immediate teardown of a connection. It provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers.
 
-### Detailed Description of Protocol Mechanisms
+TCP partitions a continuous stream of bytes into segments, sized to fit in the lower-layer (IP and MAC) packets and frames. Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment {{RFC2018}} extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission. 
 
-(we only talk about the mechanism here and not about the framing... is this right?)
+Receiver flow control is provided by a sliding window: at a given time, at most a given amount of unacknowledged data can be outstanding. The window scale option {{RFC7323}} provides for receiver windows greater than 64kB. A separate window is used for congestion control: each time congestion is detected, the congestion window is reduced. Senders interpret loss as a congestion signal; though the Explicit Congestion Notification (ECN) {{RFC3168}} mechanism was defined to provide early signaling, it is not yet widely deployed.
 
-(subsection headings of this section might be different for each protocol...?)
+By default, TCP segment partitioning attempts to minimize the number of segments for a given stream; Nagle's algorithm {{RFC0896}} modifies this behavior to transmit more immediately, supporting interactive sessions.
 
-#### Connection Establishment and Clearing
+### Interface description
 
-(text on TCP handshake goes here)
+In API implementations derived from the BSD Sockets API, TCP sockets are created using the `SOCK_STREAM` socket type. 
 
-(text on the role of port numbers goes here)
+(more on the API goes here)
 
-### Data Communication
+### Transport Protocol Components
+
+The transport protocol components provided by TCP are:
+
+- unicast
+- port multiplexing
+- reliable delivery
+- ordered delivery
+- segmented, single-stream-oriented delivery
+- congestion control
+
+(discussion of how to map this to features and TAPS: what does the higher layer need to decide? what can the transport layer decide based on global settings? what must the transport layer decide based on network characteristics?)
+
+<!--### Mirja's original text on Data Communication
 
 TCP partitions all data into segements that can be identified by a sequence number (SEQ).
 Each new payload byte increases the SEQ by one. 
@@ -136,25 +153,25 @@ The Maximum Segment Size (MSS) {{RFC6691}} is determined by the capacilities of 
 A TCP receiver sends an acknowledgment (ACK) on the reception of a data segment.
 The ACK contains an acknowledgment number that announces the next in-order SEQ expected by the receiver. 
 To reduce signaling overhead, a TCP receiver might not acknowledge each received segment separately but multiple at once. 
-A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms {{RFC1122}} {{RFC5681}}. 
+A TCP receiver should at least acknowledge every second packet and delay an acknowledgement not more that 500ms {{RFC1122}} {{RFC5681}}.--> 
 <!-- Most operating systems implement a maximum delay of 100ms today. There are hardware implementation for high speed networks that accumulate even more. -->
-Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time and the Retransmission Time-Out (RTO) triggers an interupt.
-If a seqment is detected to be lost, the sender will retransmit it.
+<!--Loss is assumed by the sender if three duplicated ACKs, that acknowledge the same SEQ, are received or no ACK is received for a certain time and the Retransmission Time-Out (RTO) triggers an interupt.
+If a seqment is detected to be lost, the sender will retransmit it.-->
 <!-- and retransmitting (potentially) lost data when no new acknowledgment is received. -->
-Duplicated ACKs are triggered at the receiver by the arrival of out-of-order data segments and thereby do not acknowledge new data but repeat the previous acknowledgment number.  
-<!-- If this data does not carry the next expected SEQ, the receiver will send out an ACK with the same acknowledgment number again. 
+<!-- Duplicated ACKs are triggered at the receiver by the arrival of out-of-order data segments and thereby do not acknowledge new data but repeat the previous acknowledgment number.  
+ --><!-- If this data does not carry the next expected SEQ, the receiver will send out an ACK with the same acknowledgment number again. 
 This is called a duplicated ACK. --> 
-When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
+<!-- When the missing data is received, a cumulative acknowledgment is sent that acknowledges all (now) in-order segments received so far.
 Additionally, TCP often implements Selective Acknowledgment (SACK) {{RFC2018}}, where, in case of duplicated ACKs, the received sequence number ranges are announced to the sender.
 Therefore when more than one packets got lost, the sender does not have to wait until an accumulated ACK announces the next whole in the sequence number space, but can retransmit lost packets immediately.
 
 To determine e.g. a large enough value for the RTO {{RFC6298}}, the  RTT needs to be measured by a TCP sender.
 The RTTM mechanism in TCP either needs to store the sent-out time stamp and SEQ of all or a sample of packets or can use the TSOpt {{RFC7323}}. 
 With TSOpt the sender adds the current time stamp to each packet and the receiver reflects this time stamp in the respective ACK. 
-By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt.
+By subtracting the reflected time stamp from the current system time the  RTT can be measured for each received ACK holding a valid TSOpt. -->
 <!-- Note, that in case of delayed or duplicated ACKs, the time stamp of the first unacknowledged packet is reflected which might inflate the  RTT measurement artificially but guarantees a large enough RTO. -->
 <!--"Then a single subtract gives the sender an accurate RTT measurement for every ACK segment (which will correspond to every other data segment, with a sensible receiver)." [rfc7323]-->
-
+<!-- 
 (talk about spurious retransmissions...?)
 
 Further when a loss is detected,  TCP congestion control {{RFC5681}} becomes active and usually reduces the sending rate.
@@ -166,29 +183,22 @@ When no ACKs are received at all for a certain time larger than at least one  RT
 The current sending window is the minimum of the receive window and the congestion window where 
 the receive window is announced by the receiver to not overload the receiver buffer.
 As long as flow control does not become active and not signal a smaller receive window to not overload the receiver, the sending window equals the congestion window.
-The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback such as loss, delay measurements, or Explicit Congestion Notofication (ECN) {{RFC3168}}.
+The congestion window is estimated by the congestion control algorithm based on implicit or explicit network feedback such as loss, delay measurements, or Explicit Congestion Notofication (ECN) {{RFC3168}}. -->
 <!--In general, congestion control is based on some kind of network feedback.-->
 <!-- Inherently, the congestion control mechanism of a TPC sender assumes that loss occurs to due network congestion und therefore reacts each time congestion is notified.
 Note, congestion control usually at most reduces once per RTT as the congestion feedback has a signaling delay of one RTT. 
 Unfortunately, congestion is not the only reason for the occurrence of loss. 
 Packets can be dropped for various reasons by different nodes on the network path, e.g due to bit errors.-->
 <!--In the Internet the non-congestion based loss rate is usually very low, thus it is common sense to always handle loss as congestion signal.-->
-
+<!-- 
 (text on "On the Implementation of the TCP Urgent Mechanism" {{RFC6093}}, "The TCP Authentication Option" {{RFC5925}}, and "TCP Fast Open"...?)
 
 (What's still missing? Check TCP options...)
+ -->
 
-### Interfaces
+## Multipath TCP (MP-TCP)
 
-(describe socket interface)
-
-### Candidate Components
-
-Reliability, congestion control, connection-oriented, unicast...?
-
-### Multipath TCP (MPTCP)
-
-{{RFC6824}}
+(a few sentences describing Multipath TCP {{RFC6824}} go here. Note that this adds transport-layer multihoming to the components TCP provides)
 
 ## Stream Control Transmission Protocol (SCTP)
 
@@ -240,6 +250,10 @@ Reliability, congestion control, connection-oriented, unicast...?
 
    [EDITOR'S NOTE: Varun Singh signed up as contributor for this section.]
 
+## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
+
+(A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here, and how they get used by other protocols to meet security goals as an add-on interlayer above transport.)
+
 ## Hypertext Transport Protocol (HTTP) as a pseudotransport
 
 {{RFC3205}}
@@ -247,22 +261,6 @@ Reliability, congestion control, connection-oriented, unicast...?
 ### WebSockets
 
 {{RFC6455}}
-
-
-## Transmission Control Protocol (TCP)
-
-
-## User Datagram Protocol
-
-(Volunteer: Kevin Fall)
-
-## Realtime Transport Protocol
-
-(Volunteer: Varun Singh)
-
-## Stream Control Transmission Protocol
-
-(Volunteers: Michael Tuexen, Karen Nielsen)
 
 # Transport Service Features
 
