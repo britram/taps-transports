@@ -54,6 +54,7 @@ informative:
   RFC6093:
   RFC6298:
   RFC6691:
+  RFC6824:
   RFC7323:
 
 --- abstract
@@ -97,57 +98,10 @@ Application:
 
 # Existing Transport Protocols
 
-This section enumerates existing transport protocols 
+This section provides a list of known IETF transport protocol and
+transport protocol frameworks.
 
-## Template: Imaginary Transport Protocol (ITP)
-
-(This subsection is a initial rough template to provide guidance to subsection authors on how a subsection should be structured and what information should be provided. Please don't use it yet, but do think about whether it applies to the protocol section you're writing, and if not, why not. It will be removed once a real transport protocol has been fully described in the draft; that protocol's description can then be used as template for the others. In general, guidance for writing a transport protocol session is that the description should be short, with enough detail to compare and contrast protocols and extract relevant transport service features, but not necessarily enough detail to implement the protocol or understand corner-cases its design. Implementation details and corner cases, if mentioned, should be further explained by reference.)
-
-### Introduction and Applicability
-
-(This subsection should be at most three paragraphs: what's the protocol called, where can one read about it, what does it do, where is it deployed, and what applications is it used for.)
-
-The Imaginary Transport Protocol (ITP) [reference] provides a unidirectional, connectionless, message-oriented, partially-reliable transport for fixed-sized messages over IP, using protocol number 257. It is intended primarily for use in bidirectional constant-bit-rate (CBR) unicast media transmission. It is not widely implemented within the Internet, as I just made it up, and it has several fatal design flaws, including requiring an illegal protocol number for its operation.
-
-### Core Features
-
-(This subsection should describe each base feature of the base protocol which may be interesting for decomposing the service(s) it provides. Base features are those which require no (1) optional API interactions in normal usage or (2) additional headers on the wire. Dividing descriptions of features into subsections is desirable but optional, snce these features may depend on each other. Each feature should be covered by about two paragraphs.)
-
-ITP's features include time- and retransmission-limited partial reliability and constant-sized message-oriented framing. All ITP messages are 392 octets long, with 8 octets of header and 384 octets of payload. Each message has a message sequence number; ITP acknowledgment messages are 16 octets long. Each message will be retransmitted up to two times (for three total transmissions) if not acknowledged, or if not acknowledged within an application-defined time. Further details of ITP's acknowledgment and message sequence number management scheme are found in [reference].
-
-ITP provides no additional congestion control features. 
-
-### Optional Features
-
-(This subsection should describe each optional feature of the protocol which may be interesting for decomposing the service(s) it provides, as above.)
-
-ITP's retransmission can be optionally completely disabled at the sender-side, though the receiver will continue to send acknowledgments. This optional operation mode has no other effect on the protocol on the wire.
-
-### Application Interface Considerations
-
-(This subsection should describe features the protocol requires of the API. How is the protocol, along with its optional features, normally used by the application? Does it use the sockets API; if so, are there socket options?)
-
-ITP can be used via the sockets interface on systems which support it, by using the SOCK_IMAGINARY socket type. Regardless of the size of the buffer passed to sendmsg(2), the message will be truncated or zero-padded to 384 octets in the ITP message, and recvmsg(2) always returns 384 bytes.
-
-No information about the ack stream is available; retransmission can be optionally disabled via setsockopt(2).
-
-### Interactions with other protocols
-
-(If the protocol uses other protocols to provide additional service components -- commonly, this would include (D)TLS encapsulation -- that should be noted here)
-
-ITP can be encapsulated within DTLS to provide confidentiality, integrity, and authentication, as described in [reference].
-
-### Candidate Components
-
-(This subsection should list candidate components derived from the features above.)
-
-- Time- and retransmission-limited reliability
-- Unidirectional transmission
-- Fixed-length message-oriented transmission
-
-## Transmission Control Protocol (TCP)
-
-(Volunteer: Mirja Kuehlewind)
+## Transport Control Protocol (TCP)
 
 TCP is a stream-oriented transport protocol that is widely used in the Internet.
 In constrast to UDP, TCP provides reliability... 
@@ -157,7 +111,6 @@ reliable host-to-host protocol between hosts in packet-switched computer
 communication networks, and in interconnected systems of such networks." {{RFC0793}}
 
 (Some more text here)
-
 
 ### Detailed Description of Protocol Mechanisms
 
@@ -225,10 +178,74 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
 (describe socket interface)
 
-
 ### Candidate Components
 
 Reliability, congestion control, connection-oriented, unicast...?
+
+### Multipath TCP (MPTCP)
+
+{{RFC6824}}
+
+## Stream Control Transmission Protocol (SCTP)
+
+   SCTP {{RFC4960}} provides a bidirectional set of logical unicast streams over one
+   a connection-oriented protocol.  The protocol and API use messages,
+   rather than a byte-stream.  Each stream of messages is independently
+   managed, therefore retransmission does not hold back data sent using
+   other logical streams.
+
+   [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
+
+### Partial Reliability for SCTP (PR-SCTP)
+
+   PR-SCTP {{RFC3758}} is a variant of SCTP that provides partial
+   reliability.
+
+## User Datagram Protocol (UDP)
+
+   The User Datagram Protocol (UDP) {{RFC0768}} provides a unidirectional minimal
+   message-passing transport that has no inherent congestion control
+   mechanisms.  The service may be multicast and/or unicast.
+
+   [EDITOR'S NOTE: Kevin Fall signed up as contributor for this section.]
+
+### UDP-Lite
+
+   A special class of applications can derive benefit from having
+   partially-damaged payloads delivered, rather than discarded, when
+   using paths that include error-prone links.  Such applications can
+   tolerate payload corruption and may choose to use the Lightweight
+   User Datagram Protocol {{RFC3828}}. The service may be multicast and/or
+   unicast.
+
+## Datagram Congestion Control Protocol (DCCP)
+
+   The Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is a
+   bidirectional transport protocol that provides unicast connections of
+   congestion-controlled unreliable messages.  DCCP is suitable for
+   applications that transfer fairly large amounts of data and that can
+   benefit from control over the tradeoff between timeliness and
+   reliability.
+
+## Realtime Transport Protocol (RTP)
+
+   RTP provides an end-to-end network transport service, suitable for
+   applications transmitting real-time data, such as audio, video or
+   data, over multicast or unicast network services, including TCP, UDP,
+   UDP-Lite, DCCP.
+
+   [EDITOR'S NOTE: Varun Singh signed up as contributor for this section.]
+
+## Hypertext Transport Protocol (HTTP) as a pseudotransport
+
+{{RFC3205}}
+
+### WebSockets
+
+{{RFC6455}}
+
+
+## Transmission Control Protocol (TCP)
 
 
 ## User Datagram Protocol
@@ -257,7 +274,7 @@ This document has no considerations for IANA.
 
 # Security Considerations
 
-This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new components or mechanisms for providing these features.
+This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new components or mechanisms for providing these features. Each RFC listed in this document discusses the security considerations of the specification it contains.
 
 # Contributors
 
@@ -266,6 +283,7 @@ Non-editor contributors of text will be listed here, as in the authors section.
 # Acknowledgments
 
 This work is partially supported by the European Commission under grant agreement FP7-ICT-318627 mPlane; support does not imply endorsement.
+
 
 
 
