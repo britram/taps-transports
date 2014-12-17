@@ -141,7 +141,7 @@ The transport protocol components provided by TCP are:
 - port multiplexing
 - reliable delivery
 - ordered delivery
-- segmented, single-stream-oriented delivery
+- segmented, stream-oriented delivery in a single stream
 - congestion control
 
 (discussion of how to map this to features and TAPS: what does the higher layer need to decide? what can the transport layer decide based on global settings? what must the transport layer decide based on network characteristics?)
@@ -211,10 +211,11 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
    [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
 
-### Partial Reliability for SCTP (PR-SCTP)
+### Protocol Description
 
-   PR-SCTP {{RFC3758}} is a variant of SCTP that provides partial
-   reliability.
+### Interface Description
+
+### Transport Protocol Components
 
 ## User Datagram Protocol (UDP)
 
@@ -224,7 +225,13 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
    [EDITOR'S NOTE: Kevin Fall signed up as contributor for this section.]
 
-### UDP-Lite
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
+
+## UDP-Lite
 
    A special class of applications can derive benefit from having
    partially-damaged payloads delivered, rather than discarded, when
@@ -232,6 +239,12 @@ Packets can be dropped for various reasons by different nodes on the network pat
    tolerate payload corruption and may choose to use the Lightweight
    User Datagram Protocol {{RFC3828}}. The service may be multicast and/or
    unicast.
+
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
 
 ## Datagram Congestion Control Protocol (DCCP)
 
@@ -241,6 +254,12 @@ Packets can be dropped for various reasons by different nodes on the network pat
    applications that transfer fairly large amounts of data and that can
    benefit from control over the tradeoff between timeliness and
    reliability.
+
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
 
 ## Realtime Transport Protocol (RTP)
 
@@ -255,13 +274,31 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
 (A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here, and how they get used by other protocols to meet security goals as an add-on interlayer above transport.)
 
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
+
 ## Hypertext Transport Protocol (HTTP) as a pseudotransport
 
 {{RFC3205}}
 
-### WebSockets
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
+
+## WebSockets
 
 {{RFC6455}}
+
+### Protocol Description
+
+### Interface Description
+
+### Transport Protocol Components
 
 # Transport Service Features
 

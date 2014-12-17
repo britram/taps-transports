@@ -145,7 +145,7 @@ widely used by common application protocols. </t>
 
 <t>Receiver flow control is provided by a sliding window: at a given time, at most a given amount of unacknowledged data can be outstanding. The window scale option <xref target="RFC7323"/> provides for receiver windows greater than 64kB. A separate window is used for congestion control: each time congestion is detected, the congestion window is reduced. Senders interpret loss as a congestion signal; though the Explicit Congestion Notification (ECN) <xref target="RFC3168"/> mechanism was defined to provide early signaling, it is not yet widely deployed.</t>
 
-<t>By default, TCP segment partitioning attempts to minimize the number of segments for a given stream; Nagle’s algorithm <xref target="RFC0896"/> modifies this behavior to transmit more immediately, supporting interactive sessions.</t>
+<t>By default, TCP segment partitioning uses Nagle’s algorithm <xref target="RFC0896"/> to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.</t>
 
 </section>
 <section anchor="interface-description" title="Interface description">
@@ -164,7 +164,7 @@ widely used by common application protocols. </t>
   <t>port multiplexing</t>
   <t>reliable delivery</t>
   <t>ordered delivery</t>
-  <t>segmented, single-stream-oriented delivery</t>
+  <t>segmented, stream-oriented delivery in a single stream</t>
   <t>congestion control</t>
 </list></t>
 
@@ -239,10 +239,13 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
 <t>[EDITOR’S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]</t>
 
-<section anchor="partial-reliability-for-sctp-pr-sctp" title="Partial Reliability for SCTP (PR-SCTP)">
+<section anchor="protocol-description-1" title="Protocol Description">
 
-<t>PR-SCTP <xref target="RFC3758"/> is a variant of SCTP that provides partial
-   reliability.</t>
+</section>
+<section anchor="interface-description-1" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-1" title="Transport Protocol Components">
 
 </section>
 </section>
@@ -254,6 +257,16 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
 <t>[EDITOR’S NOTE: Kevin Fall signed up as contributor for this section.]</t>
 
+<section anchor="protocol-description-2" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-2" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-2" title="Transport Protocol Components">
+
+</section>
+</section>
 <section anchor="udp-lite" title="UDP-Lite">
 
 <t>A special class of applications can derive benefit from having
@@ -262,6 +275,14 @@ Packets can be dropped for various reasons by different nodes on the network pat
    tolerate payload corruption and may choose to use the Lightweight
    User Datagram Protocol <xref target="RFC3828"/>. The service may be multicast and/or
    unicast.</t>
+
+<section anchor="protocol-description-3" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-3" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-3" title="Transport Protocol Components">
 
 </section>
 </section>
@@ -274,6 +295,15 @@ Packets can be dropped for various reasons by different nodes on the network pat
    benefit from control over the tradeoff between timeliness and
    reliability.</t>
 
+<section anchor="protocol-description-4" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-4" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-4" title="Transport Protocol Components">
+
+</section>
 </section>
 <section anchor="realtime-transport-protocol-rtp" title="Realtime Transport Protocol (RTP)">
 
@@ -289,14 +319,41 @@ Packets can be dropped for various reasons by different nodes on the network pat
 
 <t>(A few words on TLS <xref target="RFC5246"/> and DTLS <xref target="RFC6347"/> here, and how they get used by other protocols to meet security goals as an add-on interlayer above transport.)</t>
 
+<section anchor="protocol-description-5" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-5" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-5" title="Transport Protocol Components">
+
+</section>
 </section>
 <section anchor="hypertext-transport-protocol-http-as-a-pseudotransport" title="Hypertext Transport Protocol (HTTP) as a pseudotransport">
 
 <t><xref target="RFC3205"/></t>
 
+<section anchor="protocol-description-6" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-6" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-6" title="Transport Protocol Components">
+
+</section>
+</section>
 <section anchor="websockets" title="WebSockets">
 
 <t><xref target="RFC6455"/></t>
+
+<section anchor="protocol-description-7" title="Protocol Description">
+
+</section>
+<section anchor="interface-description-7" title="Interface Description">
+
+</section>
+<section anchor="transport-protocol-components-7" title="Transport Protocol Components">
 
 </section>
 </section>

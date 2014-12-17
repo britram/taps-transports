@@ -189,10 +189,11 @@ Internet-Draft               TAPS Transports               December 2014
    Explicit Congestion Notification (ECN) [RFC3168] mechanism was
    defined to provide early signaling, it is not yet widely deployed.
 
-   By default, TCP segment partitioning attempts to minimize the number
-   of segments for a given stream; Nagle's algorithm [RFC0896] modifies
-   this behavior to transmit more immediately, supporting interactive
-   sessions.
+   By default, TCP segment partitioning uses Nagle's algorithm [RFC0896]
+   to buffer data at the sender into large segments, potentially
+   incurring sender-side buffering delay; this algorithm can be disabled
+   by the sender to transmit more immediately, e.g. to enable smoother
+   interactive sessions.
 
 3.1.2.  Interface description
 
@@ -213,10 +214,9 @@ Internet-Draft               TAPS Transports               December 2014
 
    o  ordered delivery
 
-   o  segmented, single-stream-oriented delivery
+   o  segmented, stream-oriented delivery in a single stream
 
    o  congestion control
-
 
 
 
@@ -248,10 +248,11 @@ Internet-Draft               TAPS Transports               December 2014
    [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
    contributors for these sections.]
 
-3.3.1.  Partial Reliability for SCTP (PR-SCTP)
+3.3.1.  Protocol Description
 
-   PR-SCTP [RFC3758] is a variant of SCTP that provides partial
-   reliability.
+3.3.2.  Interface Description
+
+3.3.3.  Transport Protocol Components
 
 3.4.  User Datagram Protocol (UDP)
 
@@ -262,18 +263,17 @@ Internet-Draft               TAPS Transports               December 2014
    [EDITOR'S NOTE: Kevin Fall signed up as contributor for this
    section.]
 
-3.4.1.  UDP-Lite
+3.4.1.  Protocol Description
+
+3.4.2.  Interface Description
+
+3.4.3.  Transport Protocol Components
+
+3.5.  UDP-Lite
 
    A special class of applications can derive benefit from having
    partially-damaged payloads delivered, rather than discarded, when
    using paths that include error-prone links.  Such applications can
-   tolerate payload corruption and may choose to use the Lightweight
-   User Datagram Protocol [RFC3828].  The service may be multicast and/
-   or unicast.
-
-
-
-
 
 
 
@@ -282,7 +282,17 @@ Fairhurst, et al.         Expires June 22, 2015                 [Page 5]
 Internet-Draft               TAPS Transports               December 2014
 
 
-3.5.  Datagram Congestion Control Protocol (DCCP)
+   tolerate payload corruption and may choose to use the Lightweight
+   User Datagram Protocol [RFC3828].  The service may be multicast and/
+   or unicast.
+
+3.5.1.  Protocol Description
+
+3.5.2.  Interface Description
+
+3.5.3.  Transport Protocol Components
+
+3.6.  Datagram Congestion Control Protocol (DCCP)
 
    The Datagram Congestion Control Protocol (DCCP) [RFC4340] is a
    bidirectional transport protocol that provides unicast connections of
@@ -291,7 +301,13 @@ Internet-Draft               TAPS Transports               December 2014
    benefit from control over the tradeoff between timeliness and
    reliability.
 
-3.6.  Realtime Transport Protocol (RTP)
+3.6.1.  Protocol Description
+
+3.6.2.  Interface Description
+
+3.6.3.  Transport Protocol Components
+
+3.7.  Realtime Transport Protocol (RTP)
 
    RTP provides an end-to-end network transport service, suitable for
    applications transmitting real-time data, such as audio, video or
@@ -301,20 +317,50 @@ Internet-Draft               TAPS Transports               December 2014
    [EDITOR'S NOTE: Varun Singh signed up as contributor for this
    section.]
 
-3.7.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
+3.8.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
       pseudotransport
 
    (A few words on TLS [RFC5246] and DTLS [RFC6347] here, and how they
    get used by other protocols to meet security goals as an add-on
    interlayer above transport.)
 
-3.8.  Hypertext Transport Protocol (HTTP) as a pseudotransport
+3.8.1.  Protocol Description
+
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+3.8.2.  Interface Description
+
+3.8.3.  Transport Protocol Components
+
+3.9.  Hypertext Transport Protocol (HTTP) as a pseudotransport
 
    [RFC3205]
 
-3.8.1.  WebSockets
+3.9.1.  Protocol Description
+
+3.9.2.  Interface Description
+
+3.9.3.  Transport Protocol Components
+
+3.10.  WebSockets
 
    [RFC6455]
+
+3.10.1.  Protocol Description
+
+3.10.2.  Interface Description
+
+3.10.3.  Transport Protocol Components
 
 4.  Transport Service Features
 
@@ -329,15 +375,6 @@ Internet-Draft               TAPS Transports               December 2014
 
    This document has no considerations for IANA.
 
-
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
 7.  Security Considerations
 
    This document surveys existing transport protocols and protocols
@@ -346,6 +383,16 @@ Internet-Draft               TAPS Transports               December 2014
    document does not specify any new components or mechanisms for
    providing these features.  Each RFC listed in this document discusses
    the security considerations of the specification it contains.
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
+
+Internet-Draft               TAPS Transports               December 2014
+
 
 8.  Contributors
 
@@ -385,15 +432,6 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
               Selective Acknowledgment Options", RFC 2018, October 1996.
 
-
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
    [RFC3168]  Ramakrishnan, K., Floyd, S., and D. Black, "The Addition
               of Explicit Congestion Notification (ECN) to IP", RFC
               3168, September 2001.
@@ -403,6 +441,14 @@ Internet-Draft               TAPS Transports               December 2014
 
    [RFC3390]  Allman, M., Floyd, S., and C. Partridge, "Increasing TCP's
               Initial Window", RFC 3390, October 2002.
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 8]
+
+Internet-Draft               TAPS Transports               December 2014
+
 
    [RFC3758]  Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., and P.
               Conrad, "Stream Control Transmission Protocol (SCTP)
@@ -442,14 +488,6 @@ Internet-Draft               TAPS Transports               December 2014
               "Computing TCP's Retransmission Timer", RFC 6298, June
               2011.
 
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 8]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
    [RFC6455]  Fette, I. and A. Melnikov, "The WebSocket Protocol", RFC
               6455, December 2011.
 
@@ -458,6 +496,15 @@ Internet-Draft               TAPS Transports               December 2014
 
    [RFC6691]  Borman, D., "TCP Options and Maximum Segment Size (MSS)",
               RFC 6691, July 2012.
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                 [Page 9]
+
+Internet-Draft               TAPS Transports               December 2014
+
 
    [RFC6824]  Ford, A., Raiciu, C., Handley, M., and O. Bonaventure,
               "TCP Extensions for Multipath Operation with Multiple
@@ -501,4 +548,13 @@ Authors' Addresses
 
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 9]
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.         Expires June 22, 2015                [Page 10]
