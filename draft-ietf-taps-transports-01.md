@@ -124,7 +124,8 @@ TCP partitions a continuous stream of bytes into segments, sized to fit in the l
 
 Receiver flow control is provided by a sliding window: at a given time, at most a given amount of unacknowledged data can be outstanding. The window scale option {{RFC7323}} provides for receiver windows greater than 64kB. A separate window is used for congestion control: each time congestion is detected, the congestion window is reduced. Senders interpret loss as a congestion signal; though the Explicit Congestion Notification (ECN) {{RFC3168}} mechanism was defined to provide early signaling, it is not yet widely deployed.
 
-By default, TCP segment partitioning attempts to minimize the number of segments for a given stream; Nagle's algorithm {{RFC0896}} modifies this behavior to transmit more immediately, supporting interactive sessions.
+By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.
+
 
 ### Interface description
 
