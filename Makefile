@@ -12,11 +12,20 @@ clean:
 	if [ -e $(NAME).html ]; then rm $(NAME).html; fi
 	if [ -e $(NAME).pdf  ]; then rm $(NAME).pdf ; fi
 
-$(NAME).pdf: $(NAME).txt
-	$(CF) $(NAME).txt >$(NAME).pdf
+%.pdf: %.txt
+	$(CF) $< > $@
 
-$(NAME).txt: $(NAME).xml
-	$(X2R) $(NAME).xml $(NAME).txt
+%.txt: %.xml
+	$(X2R) $< $@
 
-$(NAME).xml: $(NAME).md
-	$(MD) <$(NAME).md | sed -e 's/xml.resource.org/xml2rfc.ietf.org/g' >$(NAME).xml
+%.xml: %.md
+	$(MD) < $< | sed -e 's/xml.resource.org/xml2rfc.ietf.org/g' > $@
+
+#$(NAME).pdf: $(NAME).txt
+#	$(CF) $(NAME).txt >$(NAME).pdf
+
+#$(NAME).txt: $(NAME).xml
+#	$(X2R) $(NAME).xml $(NAME).txt
+
+#$(NAME).xml: $(NAME).md
+#	$(MD) <$(NAME).md | sed -e 's/xml.resource.org/xml2rfc.ietf.org/g' >$(NAME).xml
