@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-01
-date: 2014-12-19
+docname: draft-ietf-taps-transports-02
+date: 2015-01-06
 category: info
 ipr: trust200902
 
@@ -41,6 +41,8 @@ informative:
   RFC0793:
   RFC0896:
   RFC1122:
+  RFC1191:
+  RFC1981:
   RFC2018:
   RFC2460:
   RFC3168:
@@ -53,6 +55,7 @@ informative:
   RFC4341:
   RFC4342:
   RFC4614:
+  RFC4821:
   RFC4960:
   RFC5097:
   RFC5246:
@@ -176,9 +179,11 @@ widely used by common applications.
 
 TCP is a connection-oriented protocol, providing a three way handshake to allow a client and server to set up a connection, and mechanisms for orderly completion and immediate teardown of a connection. TCP is defined by a family of RFCs {{RFC4614}}.
 
-TCP provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers.
+TCP provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers. The destination port during connection setup has a different role as it is often used to indicate the requested service.
 
-TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets, constrained by the maximum size of lower layer frame. PathMTU discovery is supported. Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment {{RFC2018}} extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission.
+TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets, constrained by the maximum size of lower layer frame. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
+
+Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment {{RFC2018}} extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission.
 
 Receiver flow control is provided by a sliding window: limiting the amount of unacknowledged data that can be outstanding at a given time. The window scale option {{RFC7323}} allows a receiver to use windows greater than
 64KB.
@@ -189,11 +194,13 @@ A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features are
 
 By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.
 
+[EDITOR’S NOTE: URGENT and PUSH flag]
+
 A TCP service is unicast.
 
 ### Interface description
 
-A TCP API is defined in [REF], but there is currently no API specified in the RFC series.
+A User/TCP Interface is defined in {{RFC0793}} providing six user commands: Open, Send, Receive, Close, Status. This interface does not handle configuration of TCP options or parameters beside the PUSH and URGENT flags.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are created using the `SOCK_STREAM` socket type.
 
@@ -206,13 +213,14 @@ The features used by a protocol instance may be set and tuned via this API.
 The transport protocol components provided by TCP are:
 
 - unicast
-- connection-oriented setup with feature negotiation
+- connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable delivery
 - ordered delivery
 - error detection (checksum)
-- segmented, stream-oriented delivery in a single stream
-- sender segment bundling (i.e. Nagle's algorithm)
+- segmentation
+- stream-oriented delivery in a single stream
+- application PDU bundling (Nagle's algorithm)
 - flow control
 - congestion control
 
