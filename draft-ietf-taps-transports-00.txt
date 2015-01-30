@@ -5,9 +5,8 @@
 Network Working Group                                  G. Fairhurst, Ed.
 Internet-Draft                                    University of Aberdeen
 Intended status: Informational                          B. Trammell, Ed.
-Expires: June 22, 2015                                M. Kuehlewind, Ed.
-                                                              ETH Zurich
-                                                       December 19, 2014
+Expires: June 18, 2015                                        ETH Zurich
+                                                       December 15, 2014
 
 
   Services provided by IETF transport protocols and congestion control
@@ -36,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on June 22, 2015.
+   This Internet-Draft will expire on June 18, 2015.
 
 Copyright Notice
 
@@ -53,7 +52,8 @@ Copyright Notice
 
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 1]
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 1]
 
 Internet-Draft               TAPS Transports               December 2014
 
@@ -66,33 +66,34 @@ Internet-Draft               TAPS Transports               December 2014
    Most Internet applications make use of the Transport Services
    provided by TCP (a reliable, in-order stream protocol) or UDP (an
    unreliable datagram protocol).  We use the term "Transport Service"
-   to mean the end-to-end service provided to an application by the
-   transport layer.  That service can only be provided correctly if
-   information is supplied from the application.  The application may
-   determine the information to be supplied at design time, compile
-   time, or run time, and may include guidance on whether some feature
-   is required, a preference by the application, or something in
-   between.  Examples of features of Transport Services are reliable
-   delivery, ordered delivery, content privacy to in-path devices,
-   integrity protection, and minimal latency.
+   to mean an end-to-end facility provided by the transport layer.  That
+   service can only be provided correctly if information is supplied
+   from the application.  The application may determine the information
+   to be supplied at design time, compile time, or run time and may
+   include guidance on whether an aspect of the service is required, a
+   preference by the application, or something in between.  Examples of
+   Transport service facilities are reliable delivery, ordered delivery,
+   content privacy to in-path devices, integrity protection, and minimal
+   latency.
 
-   The IETF has defined a wide variety of transport protocols beyond TCP
-   and UDP, such as TCP, SCTP, DCCP, MP-TCP, and UDP-Lite.  Transport
-   services may be provided directly by these transport protocols, or
-   layered on top of them using protocols such as WebSockets (which runs
-   over TCP) or RTP (over TCP or UDP).  Services built on top of UDP or
-   UDP-Lite typically also need to specify a congestion control
-   mechanism, such as TFRC or the LEDBAT congestion control mechanism.
-   This extends the set of available Transport Services beyond those
-   provided to applications by TCP and UDP.
+   Transport protocols such as SCTP, DCCP, MPTCP, UDP and UDP-Lite have
+   been defined at the transport layer.
 
-   Transport protocols can aslo be differentiated by the features of the
-   services they provide: for instance, SCTP offers a message-based
-   service that does not suffer head-of-line blocking when used with
-   multiple stream, because it can accept blocks of data out of order,
-   UDP-Lite provides partial integrity protection when used over link-
-   layer services that can support this, and LEDBAT can provide low-
-   priority "scavenger" communication.
+   In addition, a transport service may be built on top of these
+   transport protocols, using a fraemwork such as WebSockets, or RTP.
+   Service built on top of UDP or UDP-Lite typically also need to
+   specify a congestion control mechanism, such as TFRC or the LEDBAT
+   congestion control mechanism.  This extends the set of available
+   Transport Services beyond those provided to applications by TCP and
+   UDP.
+
+   Transport services can aslo be differentiated by the services they
+   provide: for instance, SCTP offers a message-based service that does
+   not suffer head-of-line blocking when used with multiple stream,
+   because it can accept blocks of data out of order, UDP-Lite provides
+   partial integrity protection when used over link-layer services that
+   can support this, and LEDBAT can provide low-priority "scavenger"
+   communication.
 
 2.  Terminology
 
@@ -104,219 +105,169 @@ Internet-Draft               TAPS Transports               December 2014
    in Honolulu.  While the factoring of the terminology seems
    uncontroversial, thre may be some entities which still require names
    (e.g. information about the interface between the transport and lower
+
+
+
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 2]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
    layers which could lead to the availablity or unavailibility of
    certain transport protocol features)
 
+   Transport Service Feature:   a specific feature a transport service
+      provides to its clients end-to-end.  Examples include
+      confidentiality, reliable delivery, ordered delivery, message-
+      versus-stream orientation, etc.
+
+   Transport Service:   a set of transport service features, without an
+      association to any given framing protocol, which provides a
+      complete service to an application.
+
+   Transport Protocol:   an implementation that provides one or more
+      different transport services using a specific framing and header
+      format on the wire.
+
+   Transport Protocol Component:   an implementation of a transport
+      service feature within a protocol
+
+   Transport Service Instance:   an arrangement of transport protocols
+      with a selected set of features and configuration parameters that
+      implements a single transport service, e.g. a protocol stack (RTP
+      over UDP)
+
+   Application:   an entity that uses the transport layer for end-to-end
+      delivery data across the network.
+
+3.  Transport Protocols
+
+   This section provides a list of known IETF transport protocol and
+   transport protocol frameworks.
+
+3.1.  Transport Control Protocol (TCP)
+
+   TCP [RFC0793] provides a bidirectional byte-oriented stream over a
+   connection- oriented protocol.  The protocol and API use the byte-
+   stream model.
+
+   [EDITOR'S NOTE: Mirja Kuehlewind signed up as contributor for this
+   section.]
+
+3.1.1.  Multipath TCP (MPTCP)
+
+3.2.  Stream Control Transmission Protocol (SCTP)
+
+   SCTP [RFC4960] provides a bidirectional set of logical unicast
+   streams over one a connection-oriented protocol.  The protocol and
+   API use messages, rather than a byte-stream.  Each stream of messages
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 2]
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 3]
 
 Internet-Draft               TAPS Transports               December 2014
 
 
-   Transport Service Feature: :a specific feature a transport service
-   provides to its clients end-to-end.  Examples include
-   confidentiality, reliable delivery, ordered delivery, message-versus-
-   stream orientation, etc.
+   is independently managed, therefore retransmission does not hold back
+   data sent using other logical streams.
 
-   Transport Service: :a set of transport service features, without an
-   association to any given framing protocol, which provides a complete
-   service to an application.
+   [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
+   contributors for these sections.]
 
-   Transport Protocol: :an implementation that provides one or more
-   different transport services using a specific framing and header
-   format on the wire.
+3.2.1.  Partial Reliability for SCTP (PR-SCTP)
 
-   Transport Protocol Component: :an implementation of a transport
-   service feature within a protocol
+   PR-SCTP [RFC3758] is a variant of SCTP that provides partial
+   reliability.
 
-   Transport Service Instance: :an arrangement of transport protocols
-   with a selected set of features and configuration parameters that
-   implements a single transport service, e.g. a protocol stack (RTP
-   over UDP)
+3.3.  User Datagram Protocol (UDP)
 
-   Application: :an entity that uses the transport layer for end-to-end
-   delivery data across the network.
+   The User Datagram Protocol (UDP) [RFC0768] provides a unidirectional
+   minimal message-passing transport that has no inherent congestion
+   control mechanisms.  The service may be multicast and/or unicast.
 
-3.  Existing Transport Protocols
+   [EDITOR'S NOTE: Kevin Fall signed up as contributor for this
+   section.]
 
-   This section enumerates existing transport protocols
+3.3.1.  UDP-Lite
 
-3.1.  Template: Imaginary Transport Protocol (ITP)
+   A special class of applications can derive benefit from having
+   partially-damaged payloads delivered, rather than discarded, when
+   using paths that include error-prone links.  Such applications can
+   tolerate payload corruption and may choose to use the Lightweight
+   User Datagram Protocol [RFC3828].  The service may be multicast and/
+   or unicast.
 
-   (This subsection is a rough template provide initial guidance to
-   subsection authors on how a subsection should be structured and what
-   information should be provided.  It will be removed once a real
-   transport protocol has been fully described in the draft; that
-   protocol's description can then be used as template for the others.
-   In general, guidance for writing a transport protocol session is that
-   the description should be short, with enough detail to compare and
-   contrast protocols and extract relevant transport service features,
-   but not necessarily enough detail to implement the protocol or
-   understand corner-cases its design.  Implementation details and
-   corner cases, if mentioned, should be further explained by
-   reference.)
+3.4.  Datagram Congestion Control Protocol (DCCP)
 
-3.1.1.  Introduction and Applicability
+   The Datagram Congestion Control Protocol (DCCP) [RFC4340] is a
+   bidirectional transport protocol that provides unicast connections of
+   congestion-controlled unreliable messages.  DCCP is suitable for
+   applications that transfer fairly large amounts of data and that can
+   benefit from control over the tradeoff between timeliness and
+   reliability.
 
-   (This subsection should be at most three paragraphs: what's the
-   protocol called, where can one read about it, what does it do, where
-   is it deployed, and what applications is it used for.)
+3.5.  Realtime Transport Protocol (RTP)
 
+   RTP provides an end-to-end network transport service, suitable for
+   applications transmitting real-time data, such as audio, video or
+   data, over multicast or unicast network services, including TCP, UDP,
+   UDP-Lite, DCCP.
+
+   [EDITOR'S NOTE: Varun Singh signed up as contributor for this
+   section.]
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 3]
+
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 4]
 
 Internet-Draft               TAPS Transports               December 2014
 
 
-   The Imaginary Transport Protocol (ITP) [reference] provides a
-   unidirectional, connectionless, message-oriented, partially-reliable
-   transport for fixed-sized messages over IP, using protocol number
-   257.  It is intended primarily for use in bidirectional constant-bit-
-   rate (CBR) unicast media transmission.  It is not widely implemented
-   within the Internet, as I just made it up, and it has several fatal
-   design flaws, including requiring an illegal protocol number for its
-   operation.
+3.6.  Hypertext Transport Protocol (HTTP) as a pseudotransport
 
-3.1.2.  Core Features
+   [RFC3205]
 
-   (This subsection should describe each base feature of the base
-   protocol which may be interesting for decomposing the service(s) it
-   provides.  Base features are those which require no (1) optional API
-   interactions in normal usage or (2) additional headers on the wire.
-   Dividing descriptions of features into subsections is desirable but
-   optional, snce these features may depend on each other.  Each feature
-   should be covered by about two paragraphs.)
+3.6.1.  WebSockets
 
-   ITP's features include time- and retransmission-limited partial
-   reliability and constant-sized message-oriented framing.  All ITP
-   messages are 392 octets long, with 8 octets of header and 384 octets
-   of payload.  Each message has a message sequence number; ITP
-   acknowledgment messages are 16 octets long.  Each message will be
-   retransmitted up to two times (for three total transmissions) if not
-   acknowledged, or if not acknowledged within an application-defined
-   time.  Further details of ITP's acknowledgment and message sequence
-   number management scheme are found in [reference].
-
-   ITP provides no additional congestion control features.
-
-3.1.3.  Optional Features
-
-   (This subsection should describe each optional feature of the
-   protocol which may be interesting for decomposing the service(s) it
-   provides, as above.)
-
-   ITP's retransmission can be optionally completely disabled at the
-   sender-side, though the receiver will continue to send
-   acknowledgments.  This optional operation mode has no other effect on
-   the protocol on the wire.
-
-3.1.4.  Application Interface Considerations
-
-   (This subsection should describe features the protocol requires of
-   the API.  How is the protocol, along with its optional features,
-   normally used by the application?  Does it use the sockets API; if
-   so, are there socket options?)
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 4]
-
-Internet-Draft               TAPS Transports               December 2014
-
-
-   ITP can be used via the sockets interface on systems which support
-   it, by using the SOCK_IMAGINARY socket type.  Regardless of the size
-   of the buffer passed to sendmsg(2), the message will be truncated or
-   zero-padded to 384 octets in the ITP message, and recvmsg(2) always
-   returns 384 bytes.
-
-   No information about the ack stream is available; retransmission can
-   be optionally disabled via setsockopt(2).
-
-3.1.5.  Interactions with other protocols
-
-   (If the protocol uses other protocols to provide additional service
-   components - commonly, this would include (D)TLS encapsulation - that
-   should be noted here)
-
-   ITP can be encapsulated within DTLS to provide confidentiality,
-   integrity, and authentication, as described in [reference].
-
-3.1.6.  Candidate Components
-
-   (This subsection should list candidate components derived from the
-   features above.)
-
-   o  Time- and retransmission-limited reliability
-
-   o  Unidirectional transmission
-
-   o  Fixed-length message-oriented transmission
-
-3.2.  Transmission Control Protocol (TCP)
-
-   (Volunteer: Mirja Kuehlewind)
-
-3.3.  User Datagram Protocol
-
-   (Volunteer: Kevin Fall)
-
-3.4.  Realtime Transport Protocol
-
-   (Volunteer: Varun Singh)
-
-3.5.  Stream Control Transmission Protocol
-
-   (Volunteers: Michael Tuexen, Karen Nielsen)
-
-
-
-
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 5]
-
-Internet-Draft               TAPS Transports               December 2014
-
+   [RFC6455]
 
 4.  Transport Service Features
 
-   (drawn from the candidate features provided by protocol components in
-   the previous section)
+   Features as derived from the subsections above.
 
-5.  Complete Protocol Feature Matrix
+   This section is blank for now.
 
-   (a comprehensive matrix table goes here; Volunteer: Dave Thaler)
-
-6.  IANA Considerations
+5.  IANA Considerations
 
    This document has no considerations for IANA.
 
-7.  Security Considerations
+6.  Security Considerations
 
    This document surveys existing transport protocols and protocols
    providing transport-like services.  Confidentiality, integrity, and
    authenticity are among the features provided by those services.  This
    document does not specify any new components or mechanisms for
-   providing these features.
+   providing these features.  Each RFC listed in this document discusses
+   the security considerations of the specification it contains.
 
-8.  Contributors
+7.  Contributors
 
    Non-editor contributors of text will be listed here, as in the
    authors section.
 
-9.  Acknowledgments
+8.  Acknowledgments
 
    This work is partially supported by the European Commission under
    grant agreement FP7-ICT-318627 mPlane; support does not imply
-   endorsement.
+   endorsement.  Special thanks to Mirja Kuehlewind for the terminology
+   section and for leading the terminology discussion in Honolulu.
 
-10.  References
+9.  References
 
-10.1.  Normative References
+9.1.  Normative References
 
    [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
               1981.
@@ -324,25 +275,47 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
               (IPv6) Specification", RFC 2460, December 1998.
 
-10.2.  Informative References
-
-   [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
-              August 1980.
 
 
-
-
-
-Fairhurst, et al.         Expires June 22, 2015                 [Page 6]
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 5]
 
 Internet-Draft               TAPS Transports               December 2014
 
+
+9.2.  Informative References
+
+   [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
+              August 1980.
 
    [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
               793, September 1981.
 
    [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
               RFC 896, January 1984.
+
+   [RFC1122]  Braden, R., "Requirements for Internet Hosts -
+              Communication Layers", STD 3, RFC 1122, October 1989.
+
+   [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
+              Selective Acknowledgment Options", RFC 2018, October 1996.
+
+   [RFC3168]  Ramakrishnan, K., Floyd, S., and D. Black, "The Addition
+              of Explicit Congestion Notification (ECN) to IP", RFC
+              3168, September 2001.
+
+   [RFC3205]  Moore, K., "On the use of HTTP as a Substrate", BCP 56,
+              RFC 3205, February 2002.
+
+   [RFC3390]  Allman, M., Floyd, S., and C. Partridge, "Increasing TCP's
+              Initial Window", RFC 3390, October 2002.
+
+   [RFC3758]  Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., and P.
+              Conrad, "Stream Control Transmission Protocol (SCTP)
+              Partial Reliability Extension", RFC 3758, May 2004.
+
+   [RFC3828]  Larzon, L-A., Degermark, M., Pink, S., Jonsson, L-E., and
+              G. Fairhurst, "The Lightweight User Datagram Protocol
+              (UDP-Lite)", RFC 3828, July 2004.
 
    [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
               Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
@@ -357,6 +330,36 @@ Internet-Draft               TAPS Transports               December 2014
    [RFC5405]  Eggert, L. and G. Fairhurst, "Unicast UDP Usage Guidelines
               for Application Designers", BCP 145, RFC 5405, November
               2008.
+
+
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 6]
+
+Internet-Draft               TAPS Transports               December 2014
+
+
+   [RFC5925]  Touch, J., Mankin, A., and R. Bonica, "The TCP
+              Authentication Option", RFC 5925, June 2010.
+
+   [RFC5681]  Allman, M., Paxson, V., and E. Blanton, "TCP Congestion
+              Control", RFC 5681, September 2009.
+
+   [RFC6093]  Gont, F. and A. Yourtchenko, "On the Implementation of the
+              TCP Urgent Mechanism", RFC 6093, January 2011.
+
+   [RFC6298]  Paxson, V., Allman, M., Chu, J., and M. Sargent,
+              "Computing TCP's Retransmission Timer", RFC 6298, June
+              2011.
+
+   [RFC6455]  Fette, I. and A. Melnikov, "The WebSocket Protocol", RFC
+              6455, December 2011.
+
+   [RFC6691]  Borman, D., "TCP Options and Maximum Segment Size (MSS)",
+              RFC 6691, July 2012.
+
+   [RFC7323]  Borman, D., Braden, B., Jacobson, V., and R.
+              Scheffenegger, "TCP Extensions for High Performance", RFC
+              7323, September 2014.
 
 Authors' Addresses
 
@@ -377,16 +380,13 @@ Authors' Addresses
    Email: ietf@trammell.ch
 
 
-   Mirja Kuehlewind (editor)
-   ETH Zurich
-   Gloriastrasse 35
-   8092 Zurich
-   Switzerland
-
-   Email: mirja.kuehlewind@tik.ee.ethz.ch
 
 
 
 
 
-Fairhurst, et al.         Expires June 22, 2015                 [Page 7]
+
+
+
+
+Fairhurst & Trammell      Expires June 18, 2015                 [Page 7]
