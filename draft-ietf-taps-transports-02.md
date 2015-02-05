@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-02
-date: 2015-01-06
+date: 2015-02-06
 category: info
 ipr: trust200902
 
@@ -160,7 +160,7 @@ encpasulation).
 This section provides a list of known IETF transport protocol and
 transport protocol frameworks.
 
-[Editor Note: Contributions to the sections in the list below are welcome]
+[Editor Note: Contributions to the subsections below are welcome]
 
 ## Transport Control Protocol (TCP)
 
@@ -188,13 +188,13 @@ Each byte in the stream is identified by a sequence number. The sequence number 
 Receiver flow control is provided by a sliding window: limiting the amount of unacknowledged data that can be outstanding at a given time. The window scale option {{RFC7323}} allows a receiver to use windows greater than
 64KB.
 
-All TCP senders provide Congestion Control: This uses a separate window, where each time congestion is detected, this congestion window is reduced. A receiver detects congestion using one of three mechanisms: A retransmission timer, loss (interpreted as a congestion signal), and Explicit Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see {{I-D.ietf-aqm-ecn-benefits}})
+All TCP senders provide Congestion Control: This uses a separate window, where each time congestion is detected, this congestion window is reduced. A receiver detects congestion using one of three mechanisms: A retransmission timer, detection of loss (interpreted as a congestion signal), or Explicit Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see {{I-D.ietf-aqm-ecn-benefits}})
 
 A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features are sender-side only, requiring no negotiation with the receiver; some are receiver-side only, some are explicitly negotiated during connection setup.
 
 By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.
 
-[EDITOR’S NOTE: URGENT and PUSH flag]
+[EDITOR’S NOTE: discuss URG and PSH flag]
 
 A TCP service is unicast.
 
@@ -224,14 +224,14 @@ The transport protocol components provided by TCP are:
 - flow control
 - congestion control
 
-(discussion of how to map this to features and TAPS: what does the higher
+[EDITOR'S NOTE: need a discussion of how to map this to features and TAPS: what does the higher
 layer need to decide? what can the transport layer decide based on global
 settings? what must the transport layer decide based on network
-characteristics?)
+characteristics?]
 
 ## Multipath TCP (MP-TCP)
 
-[Editor Note: a few sentences describing Multipath TCP {{RFC6824}} go
+[EDITOR'S NOTE: a few sentences describing Multipath TCP {{RFC6824}} go
 here. Note that this adds transport-layer multihoming to the components
 TCP provides]
 
@@ -273,7 +273,7 @@ The transport protocol components provided by SCTP are:
 - message-oriented delivery
 - congestion control
 
-[EDITOR'S NOTE: Please update list.]
+[EDITOR'S NOTE: update this list.]
 
 ## User Datagram Protocol (UDP)
 
@@ -508,6 +508,8 @@ pseudotransport
 
 {{RFC3205}}
 
+[EDITOR'S NOTE: No identified contributor for this section yet.]
+
 ### Protocol Description
 
 ### Interface Description
@@ -518,6 +520,8 @@ pseudotransport
 
 {{RFC6455}}
 
+[EDITOR'S NOTE: No identified contributor for this section yet.]
+
 ### Protocol Description
 
 ### Interface Description
@@ -526,12 +530,12 @@ pseudotransport
 
 # Transport Service Features
 
-(drawn from the candidate features provided by protocol components in the
-previous section -- please discussion on list)
+[EDITOR'S NOTE: this section will drawn from the candidate features provided by protocol components in the
+previous section -- please discuss on taps@ietf.org list]
 
 ## Complete Protocol Feature Matrix
 
-(a comprehensive matrix table goes here;  Volunteer: Dave Thaler)
+[EDITOR'S NOTE: Dave Thaler has signed up as a contributor for this section. Michael Welzl also has a beginning of a matrix which could be useful here.]
 
 # IANA Considerations
 
