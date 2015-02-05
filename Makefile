@@ -3,8 +3,9 @@ MD=kramdown-rfc2629
 X2R=xml2rfc
 CF=cupsfilter
 
-all: txt pdf
+all: txt xml pdf
 txt: $(NAME).txt
+xml: $(NAME).xml
 pdf: $(NAME).pdf
 clean:
 	if [ -e $(NAME).xml  ]; then rm $(NAME).xml ; fi
