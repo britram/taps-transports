@@ -248,7 +248,7 @@ SCTP {{RFC4960}} is an IETF standards track transport protocol that
 provides a bidirectional
 set of logical unicast meessage streams over
 a connection-oriented protocol.  
-Compared to TCp, this protocol and API use messages,
+Compared to TCP, this protocol and API use messages,
 rather than a byte-stream.  Each stream of messages is independently
 managed, therefore retransmission does not hold back data sent using
 other logical streams.
@@ -454,7 +454,7 @@ congestion-controlled unreliable messages.
 section.]
 
 The DCCP Problem Statement describes the goals that
-DCCP sought to address {{RFC 4336}}. It is suitable for
+DCCP sought to address {{RFC4336}}. It is suitable for
 applications that transfer fairly large amounts of data and that can
 benefit from control over the trade off between timeliness and
 reliability {{RFC4336}}.
@@ -628,50 +628,17 @@ previous section -- please discuss on taps@ietf.org list]
 
 The table below summarises protocol mechanisms that have been standardised. It does not make an assessment on whether specific implementations are fully compliant to these specifications.
 
-```
--------------------------------------------------------
-Mechanism       UDP     UDP-L   DCCP    SCTP    TCP
--------------------------------------------------------
-Unicast         Yes     Yes     Yes     Yes     Yes
-Mcast/IPv4Bcast Yes**   Yes     No      No      No
-Port Mux        Yes     Yes     Yes     Yes     Yes
--------------------------------------------------------
-Mode            Dgram   Dgram   Dgram   Stream  Stream
-Connected       No      No      Yes     Yes     Yes
-Data bundling   No      No      No      No      Yes
--------------------------------------------------------
-Feature Negot   No      No      Yes     Yes     Yes
-Options         No      No      Support Support Support
-Data priority   *       *       *       Yes     No
-Data bundling   No      No      No      No      Yes
--------------------------------------------------------
-Reliability     No      No      No      Part/Full Full
-Ordered deliv   No      No      No      Stream  Yes
-Corruption Tol.	No      Support	Support No      No
-Flow Control    No      No      Support Yes     Yes
-PMTU/PLPMTU     *       *       Yes     Yes     Yes
--------------------------------------------------------
-Cong Control    *       *       Yes     Yes     Yes
-ECN Support     *       *       Yes     No      Yes
--------------------------------------------------------
-NAT support     Limited Limited Support TBD     Support
-Security        DTLS    DTLS    DTLS    DTLS    TLS, AO
-UDP encaps      N/A     None    Yes     Yes     None
-RTP support     Support Support Support ?       Support
--------------------------------------------------------
-```
-<!---
 | Mechanism       | UDP     | UDP-L   | DCCP    | SCTP    | TCP     |
 |-----------------|---------|---------|---------|---------|---------|
 | Unicast         | Yes     | Yes     | Yes     | Yes     | Yes     |
-| Mcast/IPv4Bcast | Yes**   | Yes     | No      | No      | No      |
+| Mcast/IPv4Bcast | Yes(2)  | Yes     | No      | No      | No      |
 | Port Mux        | Yes     | Yes     | Yes     | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | Mode            | Dgram   | Dgram   | Dgram   | Stream  | Stream  |
 | Connected       | No      | No      | Yes     | Yes     | Yes     |
 | Data bundling   | No      | No      | No      | No      | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
-| Feature Negot   | No      | No      | Yes     | Yes     | Yes     |
+| Feature Nego    | No      | No      | Yes     | Yes     | Yes     |
 | Options         | No      | No      | Support | Support | Support |
 | Data priority   | *       | *       | *       | Yes     | No      |
 | Data bundling   | No      | No      | No      | No      | Yes     |
@@ -680,16 +647,19 @@ RTP support     Support Support Support ?       Support
 | Ordered deliv   | No      | No      | No      | Stream  | Yes     |
 | Corruption Tol. | No      | Support | Support | No      | No      |
 | Flow Control    | No      | No      | Support | Yes     | Yes     |
-| PMTU/PLPMTU     | *       | *       | Yes     | Yes     | Yes     |
+| PMTU/PLPMTU     | (1)     | (1)     | Yes     | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
-| Cong Control    | *       | *       | Yes     | Yes     | Yes     |
-| ECN Support     | *       | *       | Yes     | No      | Yes     |
+| Cong Control    | (1)     | (1)     | Yes     | Yes     | Yes     |
+| ECN Support     | (1)     | (1)     | Yes     | No      | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | NAT support     | Limited | Limited | Support | TBD     | Support |
 | Security        | DTLS    | DTLS    | DTLS    | DTLS    | TLS, AO |
 | UDP encaps      | N/A     | None    | Yes     | Yes     | None    |
 | RTP support     | Support | Support | Support | ?       | Support |
--->
+
+Note (1): this feature requires support in an upper layer protocol. 
+
+Note (2): this feature requires support in an upper layer protocol when used with IPv6.
 
 # IANA Considerations
 
@@ -701,7 +671,7 @@ This document surveys existing transport protocols and protocols providing trans
 
 # Contributors
 
-[EDITOR NOTE: Non-editor contributors of text will be listed here, as noted in the authors
+[EDITOR'S NOTE: Non-editor contributors of text will be listed here, as noted in the authors
 section.]
 
 # Acknowledgments
