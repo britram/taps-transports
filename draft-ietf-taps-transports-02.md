@@ -62,7 +62,10 @@ informative:
   RFC5348:
   RFC5405:
   RFC5595:
+  RFC5596:
   RFC5662:
+  RFC5672:
+  RFC6773:
   RFC5925:
   RFC5681:
   RFC6093:
@@ -122,7 +125,7 @@ The following terms are defined throughout this document, and in
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.
 
-[Editor Note: The terminology below was presented at the TAPS WG meeting
+[NOTE: The terminology below was presented at the TAPS WG meeting
 in Honolulu. While the factoring of the terminology seems uncontroversial,
 there may be some entities which still require names (e.g. information
 about the interface between the transport and lower layers which could
@@ -160,7 +163,7 @@ encpasulation).
 This section provides a list of known IETF transport protocol and
 transport protocol frameworks.
 
-[Editor Note: Contributions to the subsections below are welcome]
+[EDITOR'S NOTE: Contributions to the subsections below are welcome]
 
 ## Transport Control Protocol (TCP)
 
@@ -181,7 +184,7 @@ TCP is a connection-oriented protocol, providing a three way handshake to allow 
 
 TCP provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers. The destination port during connection setup has a different role as it is often used to indicate the requested service.
 
-TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets, constrained by the maximum size of lower layer frame. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
+TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
 
 Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment {{RFC2018}} extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission.
 
@@ -194,13 +197,17 @@ A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features are
 
 By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.
 
-[EDITOR’S NOTE: discuss URG and PSH flag]
+[EDITOR'S NOTE: add URGENT and PUSH flag (note {{RFC6093}} says SHOULD NOT use due to the range of TCP implementations that process TCP urgent indications differently.) ]
+
+A checksum provides an Integrity Check and is mandatory across the entire packet. The TCP checksum does not 
+support partial corruption protection as in DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data, but is relatively weak, and applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.
+
 
 A TCP service is unicast.
 
 ### Interface description
 
-A User/TCP Interface is defined in {{RFC0793}} providing six user commands: Open, Send, Receive, Close, Status. This interface does not handle configuration of TCP options or parameters beside the PUSH and URGENT flags.
+A User/TCP Interface is defined in {{RFC0793}} providing six user commands: Open, Send, Receive, Close, Status. This interface does not describe configuration of TCP options or parameters beside use of the PUSH and URGENT flags.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are created using the `SOCK_STREAM` socket type.
 
@@ -216,15 +223,15 @@ The transport protocol components provided by TCP are:
 - connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable delivery
-- ordered delivery
+- ordered delivery for each byte stream
 - error detection (checksum)
 - segmentation
 - stream-oriented delivery in a single stream
-- application PDU bundling (Nagle's algorithm)
+- data bundling (Nagle's algorithm)
 - flow control
 - congestion control
 
-[EDITOR'S NOTE: need a discussion of how to map this to features and TAPS: what does the higher
+[EDITOR'S NOTE: discussion of how to map this to features and TAPS: what does the higher
 layer need to decide? what can the transport layer decide based on global
 settings? what must the transport layer decide based on network
 characteristics?]
@@ -238,22 +245,30 @@ TCP provides]
 ## Stream Control Transmission Protocol (SCTP)
 
 SCTP {{RFC4960}} is an IETF standards track transport protocol that
-provides a bidirectional s
+provides a bidirectional
 set of logical unicast meessage streams over
-a connection-oriented protocol.  The protocol and API use messages,
+a connection-oriented protocol.  
+Compared to TCp, this protocol and API use messages,
 rather than a byte-stream.  Each stream of messages is independently
 managed, therefore retransmission does not hold back data sent using
 other logical streams.
 
+An SCTP Integrity Check is mandatory across the entire packet (it does not 
+support partial
+corruption protection as in DCCP/UD-Lite).
+
 The SCTP Partial Reliability Extension (SCTP-PR) is defined in
 {{RFC3758}}.
 
-[EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
-contributors for these sections.]
+SCTP supports PLPMTU discovery using padding chunks to construct path probes.
+
+[EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
 
 ### Protocol Description
 
 An SCTP service is unicast.
+
+PLPMTUD is required for SCTP.
 
 ### Interface Description
 
@@ -265,13 +280,16 @@ series.
 The transport protocol components provided by SCTP are:
 
 - unicast
-- connection-oriented setup with feature negotiation
+- connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable or partially reliable delivery
 - ordered delivery within a stream
 - support for multiple prioritised streams
+- flow control (slow receiver function)
 - message-oriented delivery
 - congestion control
+- application PDU bundling
+- integrity check
 
 [EDITOR'S NOTE: update this list.]
 
@@ -300,34 +318,49 @@ It provides multiplexing to multiple sockets on each host using port numbers.
 An active UDP session is identified by its four-tuple of local and remote IP
 addresses and local port and remote port numbers.
 
-UDP fragments packets into IP packets, constrained by the maximum size
-of lower layer frame.
+UDP maps each data segement into an IP packet, or a sequence of IP fragemnts. 
 
-Mechanisms for receiver flow control, congestion control, PathMTU
-discovery, support for ECN, etc need to be provided by
+UDP is connectionless. However, applications send a sequence of messages 
+that constitute a UDP flow.
+Therefore mechanisms for receiver flow control, congestion control, PathMTU
+discovery/PLPMTUD, support for ECN, etc need to be provided by
 upper layer protocols {{RFC5405}}.
+
+PMTU discovery and PLPMTU discovery may be used by upper layer protocols built on top of UDP {{RFC5405}}. 
 
 For IPv4 the UDP checksum is optional, but recommended for use in
 the general Internet {{RFC5405}}. {{RFC2460}} requires the use of this
 checksum for IPv6, but {{RFC6935}} permits this to be relaxed for
 specific types of application. The checksum support considerations
 for omitting the checksum are defined in
-{{RFC6936}}.
+{{RFC6936}}. 
 
-A UDP service may support IPv4 broadcast, multicast, anycast and unicast.
+This check protects from misdelivery of data corrupted data, but is relatively weak, and applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.
+
+A UDP service may support IPv4 broadcast, multicast, anycast and unicast, determined by the IP destination address.
 
 ### Interface Description
 
-There is no current API specified in the RFC Series, but guidance on
-use of common APIs is provided in {{RFC5405}}.
+{{RFC0768}} describes basic requirements for an API for UDP.
+Guidance on use of common APIs is provided in {{RFC5405}}.
+
+Many operating systems also allow a UDP socket to be connected,
+i.e., to bind a UDP socket to a specific pair of addresses and ports.
+This is similar to the corresponding TCP sockets API functionality.
+However, for UDP, this is only a local operation that serves to
+simplify the local send/receive functions and to filter the traffic
+for the specified addresses and ports {{RFC5405}}.
 
 ### Transport Protocol Components
 
 The transport protocol components provided by UDP are:
 
 - unicast
+- port multiplexing
 - IPv4 broadcast, multicast and anycast
-- non-reliable, non-ordered delivery
+- non-reliable delivery
+- flow control (slow receiver function)
+- non-ordered delivery
 - message-oriented delivery
 - optional checksum protection.
 
@@ -347,7 +380,7 @@ section.]
 
 UDP-Lite is a connection-less datagram protocol,
 with no connection setup or feature negotiation.
-The protocol and API use messages,
+The protocol use messages,
 rather than a byte-stream.  Each stream of messages is independently
 managed, therefore retransmission does not hold back data sent using
 other logical streams.
@@ -359,8 +392,7 @@ remote IP
 addresses and local port and remote port numbers.
 
 UDP-Lite fragments packets into IP packets, constrained by the maximum
-size
-of lower layer frame.
+size of IP packet.
 
 UDP-Lite changes the semantics of the UDP "payload length" field to
 that of a "checksum coverage length" field.  Otherwise, UDP-Lite is
@@ -370,17 +402,17 @@ assumptions regarding the correctness of the data received in the
 insensitive part of the UDP-Lite payload.
 
 As for UDP, mechanisms for receiver flow control, congestion control,
-PathMTU
+PMTU or PLPMTU
 discovery, support for ECN, etc need to be provided by
 upper layer protocols {{RFC5405}}.
 
 Examples of use include a class of applications that
 can derive benefit from having
 partially-damaged payloads delivered, rather than discarded. One
-use is to support are
-tolerate payload corruption and over paths that include error-prone links,
+use is to support error
+tolerate payload corruption when used over paths that include error-prone links,
 another
-application is when header integrity checks are required but
+application is when header integrity checks are required, but
 payload integrity is provided by some other mechanism (e.g. {{RFC6936}}.
 
 A UDP-Lite service may support IPv4 broadcast, multicast, anycast and
@@ -405,6 +437,7 @@ The transport protocol components provided by UDP-Lite are:
 
 - unicast
 - IPv4 broadcast, multicast and anycast
+- port multiplexing
 - non-reliable, non-ordered delivery
 - message-oriented delivery
 - partial integrity protection
@@ -415,13 +448,28 @@ The transport protocol components provided by UDP-Lite are:
 Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is an
 IETF standards track
 bidirectional transport protocol that provides unicast connections of
-congestion-controlled unreliable messages.  DCCP is suitable for
+congestion-controlled unreliable messages.  
+
+[EDITOR'S NOTE: Gorry Fairhurst signed up as a contributor for this
+section.]
+
+The DCCP Problem Statement describes the goals that
+DCCP sought to address {{RFC 4336}}. It is suitable for
 applications that transfer fairly large amounts of data and that can
 benefit from control over the trade off between timeliness and
 reliability {{RFC4336}}.
 
-[EDITOR'S NOTE: Gorry Fairhurst signed up as a contributor for this
-section.]
+It offers  low overhead, and many characteristics 
+common to UDP, but can avoid "Re-inventing the wheel"
+each time a new multimedia application emerges. 
+Specifically it includes core functions (feature 
+negotiation, path state management, RTT calculation, 
+PMTUD, etc): This allows applications to use a 
+compatible method defining how they send packets 
+and where suitable to choose common algorithms to
+manage their functions. 
+Examples of suitable applications include interactive applications,
+streaming media or on-line games {{RFC4336}}.
 
 
 ### Protocol Description
@@ -438,8 +486,13 @@ At connection setup, DCCP also exchanges the the service code {{RFC5595}}
 mechanism to allow transport instantiations to indicate
 the service treatment that is expected from the network.
 
-The protocol segments data into messages, sized to
-fit in IP packets, constrained by the maximum size of lower layer frame.
+The protocol segments data into messages, typically sized to
+fit in IP packets, but which may be fragemented providing they
+are less than the  A DCCP interface MAY allow applications to
+request fragmentation for packets larger than PMTU, but not
+larger than the maximum packet size allowed by the current 
+congestion control mechanism (CCMPS) {{RFC4340}}.
+
 Each message
 is identified by a sequence number. The sequence number is used to
 identify segments
@@ -447,7 +500,10 @@ in acknowledgments, to detect unacknowledged segments, to measure RTT,
 etc.
 The protocol may support ordered or unordered delivery of data, and does
 not
-itself provide retransmission.
+itself provide retransmission. There is a Data Checksum option, 
+which contains a strong CRC, lets endpoints
+detect application data corruption. It also supports
+reduced checksum coverage, a partial integrity mechanisms similar to UDP-lIte. 
 
 Receiver flow control is supported: limiting the amount of
 unacknowledged data
@@ -460,16 +516,41 @@ some are receiver-side only, some are explicitly negotiated during
 connection setup.
 
 DCCP supports negotiation of the congestion control profile,
+to provide Plug and Play congestion control mechanisms.
 examples of specified profiles include
 {{RFC4341}} {{RFC4342}} {{RFC5662}}.
 All IETF-defined methods provide Congestion Control.
 
-Examples of suitable applications include interactive applications,
-streaming media or on-line games {{RFC4336}}.
+DCCP use a Connect packet to start a session, and permits 
+half-connections that allow each client to choose 
+features it wishes to support. Simultaneous open 
+{{RFC5596}}, as in TCP, can enable interoperability in 
+the presence of middleboxes. The Connect packet includes 
+a Service Code field {{RFC5595}} designed to allow middle 
+boxes and endpoints to identify the characteristics 
+required by a session. A lightweight UDP-based encapsulation (DCCP-UDP) 
+has been defined {{RFC6773}} that permits DCCP to be 
+used over paths where it is not natively supported. 
+Support in NAPT/NATs is defined in {{RFC4340}} and {{RFC5595}}.
+
+Upper layer protocols specified on top of DCCP 
+include: DTLS {{RFC5595}}, RTP {{RFC5672}}, 
+ICE/SDP {{RFC6773}}.
 
 A DCCP service is unicast.
 
+A common packet format has allowed tools to evolve that can 
+read and interpret DCCP packets (e.g. Wireshark).
+
+
 ### Interface Description
+
+API charactersitics include:
+- Datagram transmission.
+- Notification of the current maximum packet size.
+- Send and reception of zero-length payloads.
+- Set the Slow Receiver flow control at areceiver.
+- Detct a Slow receiver at the sender.
 
 There is no current API specified in the RFC Series.
 
@@ -478,9 +559,13 @@ There is no current API specified in the RFC Series.
 The transport protocol components provided by DCCP are:
 
 - unicast
-- connection-oriented setup
-- feature negotiation
+- connection setup with feature negotiation and application-to-port mapping
+- Service Codes
+- port multiplexing
 - non-reliable, ordered delivery
+- flow control (slow receiver function)
+- drop notification
+- timestamps
 - message-oriented delivery
 - partial integrity protection
 
@@ -494,9 +579,11 @@ UDP-Lite, DCCP.
 [EDITOR'S NOTE: Varun Singh signed up as contributor for this section.]
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
-pseudotransport
+pseudo transport
 
-(A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here, and how they get used by other protocols to meet security goals as an add-on interlayer above transport.)
+[NOTE: A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here, 
+and how they get used by other protocols to meet security 
+goals as an add-on interlayer above transport.]
 
 ### Protocol Description
 
@@ -537,6 +624,73 @@ previous section -- please discuss on taps@ietf.org list]
 
 [EDITOR'S NOTE: Dave Thaler has signed up as a contributor for this section. Michael Welzl also has a beginning of a matrix which could be useful here.]
 
+[EDITOR'S NOTE: The below is a strawman proposal below by Gorry Fairhurst for initial discussion]
+
+The table below summarises protocol mechanisms that have been standardised. It does not make an assessment on whether specific implementations are fully compliant to these specifications.
+
+```
+-------------------------------------------------------
+Mechanism       UDP     UDP-L   DCCP    SCTP    TCP
+-------------------------------------------------------
+Unicast         Yes     Yes     Yes     Yes     Yes
+Mcast/IPv4Bcast Yes**   Yes     No      No      No
+Port Mux        Yes     Yes     Yes     Yes     Yes
+-------------------------------------------------------
+Mode            Dgram   Dgram   Dgram   Stream  Stream
+Connected       No      No      Yes     Yes     Yes
+Data bundling   No      No      No      No      Yes
+-------------------------------------------------------
+Feature Negot   No      No      Yes     Yes     Yes
+Options         No      No      Support Support Support
+Data priority   *       *       *       Yes     No
+Data bundling   No      No      No      No      Yes
+-------------------------------------------------------
+Reliability     No      No      No      Part/Full Full
+Ordered deliv   No      No      No      Stream  Yes
+Corruption Tol.	No      Support	Support No      No
+Flow Control    No      No      Support Yes     Yes
+PMTU/PLPMTU     *       *       Yes     Yes     Yes
+-------------------------------------------------------
+Cong Control    *       *       Yes     Yes     Yes
+ECN Support     *       *       Yes     No      Yes
+-------------------------------------------------------
+NAT support     Limited Limited Support TBD     Support
+Security        DTLS    DTLS    DTLS    DTLS    TLS, AO
+UDP encaps      N/A     None    Yes     Yes     None
+RTP support     Support Support Support ?       Support
+-------------------------------------------------------
+```
+<!---
+| Mechanism       | UDP     | UDP-L   | DCCP    | SCTP    | TCP     |
+|-----------------|---------|---------|---------|---------|---------|
+| Unicast         | Yes     | Yes     | Yes     | Yes     | Yes     |
+| Mcast/IPv4Bcast | Yes**   | Yes     | No      | No      | No      |
+| Port Mux        | Yes     | Yes     | Yes     | Yes     | Yes     |
+|-----------------|---------|---------|---------|---------|---------|
+| Mode            | Dgram   | Dgram   | Dgram   | Stream  | Stream  |
+| Connected       | No      | No      | Yes     | Yes     | Yes     |
+| Data bundling   | No      | No      | No      | No      | Yes     |
+|-----------------|---------|---------|---------|---------|---------|
+| Feature Negot   | No      | No      | Yes     | Yes     | Yes     |
+| Options         | No      | No      | Support | Support | Support |
+| Data priority   | *       | *       | *       | Yes     | No      |
+| Data bundling   | No      | No      | No      | No      | Yes     |
+|-----------------|---------|---------|---------|---------|---------|
+| Reliability     | None    | None    | None    | Select  | Full    |
+| Ordered deliv   | No      | No      | No      | Stream  | Yes     |
+| Corruption Tol. | No      | Support | Support | No      | No      |
+| Flow Control    | No      | No      | Support | Yes     | Yes     |
+| PMTU/PLPMTU     | *       | *       | Yes     | Yes     | Yes     |
+|-----------------|---------|---------|---------|---------|---------|
+| Cong Control    | *       | *       | Yes     | Yes     | Yes     |
+| ECN Support     | *       | *       | Yes     | No      | Yes     |
+|-----------------|---------|---------|---------|---------|---------|
+| NAT support     | Limited | Limited | Support | TBD     | Support |
+| Security        | DTLS    | DTLS    | DTLS    | DTLS    | TLS, AO |
+| UDP encaps      | N/A     | None    | Yes     | Yes     | None    |
+| RTP support     | Support | Support | Support | ?       | Support |
+-->
+
 # IANA Considerations
 
 This document has no considerations for IANA.
@@ -547,8 +701,8 @@ This document surveys existing transport protocols and protocols providing trans
 
 # Contributors
 
-Non-editor contributors of text will be listed here, as in the authors
-section.
+[EDITOR NOTE: Non-editor contributors of text will be listed here, as noted in the authors
+section.]
 
 # Acknowledgments
 
