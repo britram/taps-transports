@@ -634,14 +634,14 @@ The table below summarises protocol mechanisms that have been standardised. It d
 | Mcast/IPv4Bcast | Yes(2)  | Yes     | No      | No      | No      |
 | Port Mux        | Yes     | Yes     | Yes     | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
-| Mode            | Dgram   | Dgram   | Dgram   | Stream  | Stream  |
+| Mode            | Dgram   | Dgram   | Dgram   | Dgram   | Stream  |
 | Connected       | No      | No      | Yes     | Yes     | Yes     |
-| Data bundling   | No      | No      | No      | No      | Yes     |
+| Data bundling   | No      | No      | No      | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | Feature Nego    | No      | No      | Yes     | Yes     | Yes     |
 | Options         | No      | No      | Support | Support | Support |
 | Data priority   | *       | *       | *       | Yes     | No      |
-| Data bundling   | No      | No      | No      | No      | Yes     |
+| Data bundling   | No      | No      | No      | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | Reliability     | None    | None    | None    | Select  | Full    |
 | Ordered deliv   | No      | No      | No      | Stream  | Yes     |
@@ -650,7 +650,7 @@ The table below summarises protocol mechanisms that have been standardised. It d
 | PMTU/PLPMTU     | (1)     | (1)     | Yes     | Yes     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | Cong Control    | (1)     | (1)     | Yes     | Yes     | Yes     |
-| ECN Support     | (1)     | (1)     | Yes     | No      | Yes     |
+| ECN Support     | (1)     | (1)     | Yes     | TBD     | Yes     |
 |-----------------|---------|---------|---------|---------|---------|
 | NAT support     | Limited | Limited | Support | TBD     | Support |
 | Security        | DTLS    | DTLS    | DTLS    | DTLS    | TLS, AO |
