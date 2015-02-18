@@ -56,7 +56,9 @@ informative:
   RFC4342:
   RFC4614:
   RFC4821:
+  RFC4895:
   RFC4960:
+  RFC5061:
   RFC5097:
   RFC5246:
   RFC5348:
@@ -69,15 +71,20 @@ informative:
   RFC5925:
   RFC5681:
   RFC6093:
+  RFC6525:
   RFC6298:
   RFC6935:
   RFC6936:
   RFC6455:
   RFC6347:
+  RFC6458:
   RFC6691:
   RFC6824:
+  RFC6951:
+  RFC7053:
   RFC7323:
   I-D.ietf-aqm-ecn-benefits:
+  I-D.ietf-tsvwg-sctp-prpolicies:
 
 --- abstract
 
@@ -272,8 +279,54 @@ PLPMTUD is required for SCTP.
 
 ### Interface Description
 
-The SCTP API is described in the specifications published in the RFC
-series.
+{{RFC4960}} defines an abstract API for the base protocol.
+An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
+
+- the base protocol defined in {{RFC4960}}.
+- the SCTP Partial Reliability extension defined in {{RFC3758}}.
+- the SCTP Authentication extension defined in {{RFC4895}}.
+- the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+
+For the following SCTP protocol extensions the BSD Sockets API extension is
+defined in the document specifying the protocol extensions:
+
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+- the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+- the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
+- the additional PR-SCTP policies defined in {{I-D.ietf-tsvwg-sctp-prpolicies}}.
+
+Future documents describing SCTP protocol extensions are expected to describe
+the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
+
+The SCTP socket API supports two kinds of sockets:
+
+- one-to-one style sockets (by using the socket type `SOCK_STREAM`).
+- one-to-many style socket (by using the socket type `SOCK_SEQPACKET`).
+
+One-to-one style sockets are similar to TCP sockets, there is a 1:1 relationship
+between the sockets and the SCTP associations (except for listening sockets).
+One-to-many style SCTP sockets are similar to unconnected UDP sockets as there
+is a 1:n relationship between the sockets and the SCTP associations.
+
+The SCTP stack can provide information to the applications about state
+changes of the individual paths and the association whenever they occur.
+These events are delivered similar to user messages but are specifically
+marked as notifications.
+
+A couple of new functions have been introduced to support the use of
+multiple local and remote addresses.
+Additional SCTP-specific send and receive calls have been defined to allow
+dealing with the SCTP specific information without using ancillary data
+in the form of additional cmsgs, which are also defined.
+These functions provide support for detecting partial delivery of
+user messages and notifications.
+
+The SCTP socket API allows a fine-grained control of the protocol behaviour
+through an extensive set of socket options.
+
+The SCTP kernel implementations of FreeBSD, Linux and Solaris follow mostly
+the specified extension to the BSD Sockets API for the base protocol and the
+corresponding supported protocol extensions.
 
 ### Transport Protocol Components
 
@@ -283,12 +336,13 @@ The transport protocol components provided by SCTP are:
 - connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable or partially reliable delivery
-- ordered delivery within a stream
+- ordered and unordered delivery within a stream
 - support for multiple prioritised streams
 - flow control (slow receiver function)
 - message-oriented delivery
 - congestion control
 - application PDU bundling
+- application PDU fragmentation and reassembly
 - integrity check
 
 [EDITOR'S NOTE: update this list.]
