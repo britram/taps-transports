@@ -295,74 +295,86 @@ The transport protocol components provided by SCTP are:
 
 ## User Datagram Protocol (UDP)
 
-The User Datagram Protocol (UDP) {{RFC0768}} {{RFC2460}} is an
-IETF standards track transport
-protocol. It provides a uni-directional minimal
-message-passing transport that has no inherent congestion control
-mechanisms or other transport functions.  IETF guidance on the use of
-UDP is provided in
-{{RFC5405}}. UDP is widely implemented by endpoints and
-widely used by common applications.
+ The User Datagram Protocol (UDP) {{RFC0768}} {{RFC2460}} is an IETF
+ standards track transport protocol.  It provides a uni-directional,
+ datagram protocol which preserves message boundaries.  It provides
+ none of the following transport features: error correction,
+ congestion control, or flow control.  It can be used to send
+ broadcast datagrams (IPv4) or multicast datagrams (IPv4 and IPv6), in
+ addition to unicast (and anycast) datagrams.  IETF guidance on the
+ use of UDP is provided in{{RFC5405}}.  UDP is widely implemented and
+ widely used by common applications, especially DNS.
 
 [EDITOR'S NOTE: Kevin Fall signed up as a contributor for this section.]
 
 ### Protocol Description
 
-UDP is a connection-less datagram protocol, with no connection setup 
-or feature negotiation. The protocol and API use messages,
-rather than a byte-stream.  Each stream of messages is independently
-managed, therefore retransmission does not hold back data sent using
-other logical streams.
+UDP is a connection-less protocol which maintains message boundaries,
+with no connection setup or feature negotiation.  The protocol uses
+independent messages, ordinarily called datagrams.  The lack of error
+control and flow control implies messages may be damaged, re-ordered,
+lost, or duplicated in transit.  A receiving application unable to
+run sufficiently fast or frequently may miss messages.  The lack of
+congestion handling implies UDP traffic may cause the loss of
+messages from other protocols (e.g., TCP) when sharing the same
+network paths.  UDP traffic can also cause the loss of other UDP
+traffic in the same or other flows for the same reasons.
 
-It provides multiplexing to multiple sockets on each host using port numbers.
-An active UDP session is identified by its four-tuple of local and remote IP
-addresses and local port and remote port numbers.
+Messages with bit errors are ordinarily detected by an invalid end-
+to-end checksum and are discarded before being delivered to an
+application.  There are some exceptions to this general rule,
+however.  UDP-Lite (see {{RFC3828}}, and below) provides the ability for
+portions of the message contents to be exempt from checksum coverage.
+It is also possible to create UDP datagrams with no checksum, and
+while this is generally discouraged {{RFC1122}} {{RFC5405}}, certain
+special cases permit its use {{RFC6935}}.  The checksum support
+considerations for omitting the checksum are defined in {{RFC6936}}.
+Note that due to the relatively weak form of checksum used by UDP,
+applications that require end to end integrity of data are
+recommended to include a stronger integrity check of their payload
+data.
 
-UDP maps each data segement into an IP packet, or a sequence of IP fragemnts. 
-
-UDP is connectionless. However, applications send a sequence of messages 
-that constitute a UDP flow.
-Therefore mechanisms for receiver flow control, congestion control, PathMTU
-discovery/PLPMTUD, support for ECN, etc need to be provided by
-upper layer protocols {{RFC5405}}.
-
-PMTU discovery and PLPMTU discovery may be used by upper layer protocols built on top of UDP {{RFC5405}}. 
-
-For IPv4 the UDP checksum is optional, but recommended for use in
-the general Internet {{RFC5405}}. {{RFC2460}} requires the use of this
-checksum for IPv6, but {{RFC6935}} permits this to be relaxed for
-specific types of application. The checksum support considerations
-for omitting the checksum are defined in
-{{RFC6936}}. 
-
-This check protects from misdelivery of data corrupted data, but is relatively weak, and applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.
-
-A UDP service may support IPv4 broadcast, multicast, anycast and unicast, determined by the IP destination address.
+On transmission, UDP encapsulates each datagram into an IP packet,
+which may in turn be fragmented by IP.  Applications concerned with
+fragmentation or that have other requirements such as receiver flow
+control, congestion control, PathMTU discovery/PLPMTUD, support for
+ECN, etc need to be provided by protocols other than UDP {{RFC5405}}.
 
 ### Interface Description
 
 {{RFC0768}} describes basic requirements for an API for UDP.
 Guidance on use of common APIs is provided in {{RFC5405}}.
 
-Many operating systems also allow a UDP socket to be connected,
-i.e., to bind a UDP socket to a specific pair of addresses and ports.
-This is similar to the corresponding TCP sockets API functionality.
-However, for UDP, this is only a local operation that serves to
-simplify the local send/receive functions and to filter the traffic
-for the specified addresses and ports {{RFC5405}}.
+A UDP endpoint consists of a tuple of (IP address, port number).
+Demultiplexing using multiple abstract endpoints (sockets) on the
+same IP address are supported.  The same socket may be used by a
+single server to interact with multiple clients (note: this behavior
+differs from TCP, which uses a pair of tuples to identify a
+connection).  Multiple server instances (processes) binding the same
+socket can cooperate to service multiple clients-- the socket
+implementation arranges to not duplicate the same received unicast
+message to multiple server processes.
+
+Many operating systems also allow a UDP socket to be "connected",
+i.e., to bind a UDP socket to a specific (remote) UDP endpoint.
+Unlike TCP's connect primitive, for UDP, this is only a local
+operation that serves to simplify the local send/receive functions
+and to filter the traffic for the specified addresses and ports
+{{RFC5405}}.
 
 ### Transport Protocol Components
 
 The transport protocol components provided by UDP are:
 
-- unicast
-- port multiplexing
-- IPv4 broadcast, multicast and anycast
-- non-reliable delivery
-- flow control (slow receiver function)
-- non-ordered delivery
-- message-oriented delivery
-- optional checksum protection.
+-  unidirectional
+-  port multiplexing
+-  2-tuple endpoints
+-  IPv4 broadcast, multicast and anycast
+-  IPv6 multicast and anycast
+-  IPv6 jumbograms
+-  message-oriented delivery
+-  error detection (checksum)
+-  checksum optional
 
 ## Lightweight User Datagram Protocol (UDP-Lite)
 
@@ -671,8 +683,8 @@ This document surveys existing transport protocols and protocols providing trans
 
 # Contributors
 
-[EDITOR'S NOTE: Non-editor contributors of text will be listed here, as noted in the authors
-section.]
+- Kevin Fall <kfall@kfall.com>
+
 
 # Acknowledgments
 
