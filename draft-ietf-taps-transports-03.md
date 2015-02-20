@@ -251,14 +251,34 @@ TCP provides]
 
 ## Stream Control Transmission Protocol (SCTP)
 
-SCTP {{RFC4960}} is an IETF standards track transport protocol that
-provides a bidirectional
-set of logical unicast meessage streams over
-a connection-oriented protocol.  
-Compared to TCP, this protocol and API use messages,
-rather than a byte-stream.  Each stream of messages is independently
-managed, therefore retransmission does not hold back data sent using
-other logical streams.
+SCTP is a message oriented standards track transport protocol and the base
+protocol is specified in {{RFC4960}}.
+It supports multi-homing to handle path failures.
+An SCTP association has multiple unidirectional streams in each direction and
+provides in-sequence delivery of user messages only within each stream. This
+allows to minimize head of line blocking.
+SCTP is extensible and the currently defined extensions include mechanisms
+for dynamic re-configurations of streams {{RFC6525}} and
+IP-addresses {{RFC5061}}.
+Furthermore, the extension specified in {{RFC3758}} introduces the concept of
+partial reliability for user messages.
+
+SCTP was originally developed for transporting telephony signalling messages
+and is deployed in telephony signalling networks, especially in mobile telephony
+networks.
+Additionally, it is used in the WebRTC framework for data channels and is therefore deployed in all WEB-browsers supporting WebRTC.
+
+[EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
+
+### Protocol Description
+
+Bundling of small user messages.
+
+Fragmentation and reassembly of large messages.
+
+An SCTP service is unicast.
+
+PLPMTUD is required for SCTP.
 
 An SCTP Integrity Check is mandatory across the entire packet (it does not 
 support partial
@@ -268,14 +288,6 @@ The SCTP Partial Reliability Extension (SCTP-PR) is defined in
 {{RFC3758}}.
 
 SCTP supports PLPMTU discovery using padding chunks to construct path probes.
-
-[EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
-
-### Protocol Description
-
-An SCTP service is unicast.
-
-PLPMTUD is required for SCTP.
 
 ### Interface Description
 
@@ -344,6 +356,8 @@ The transport protocol components provided by SCTP are:
 - application PDU bundling
 - application PDU fragmentation and reassembly
 - integrity check
+- transport layer multihoming for resilience
+- transport layer mobility
 
 [EDITOR'S NOTE: update this list.]
 
