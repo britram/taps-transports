@@ -48,6 +48,7 @@ informative:
   RFC3168:
   RFC3205:
   RFC3390:
+  RFC3436:
   RFC3758:
   RFC3828:
   RFC4336:
@@ -55,6 +56,7 @@ informative:
   RFC4341:
   RFC4342:
   RFC4614:
+  RFC4820:
   RFC4821:
   RFC4895:
   RFC4960:
@@ -70,6 +72,7 @@ informative:
   RFC6773:
   RFC5925:
   RFC5681:
+  RFC6083:
   RFC6093:
   RFC6525:
   RFC6298:
@@ -84,7 +87,9 @@ informative:
   RFC7053:
   RFC7323:
   I-D.ietf-aqm-ecn-benefits:
+  I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-prpolicies:
+  I-D.ietf-tsvwg-sctp-ndata:
 
 --- abstract
 
@@ -272,22 +277,90 @@ Additionally, it is used in the WebRTC framework for data channels and is theref
 
 ### Protocol Description
 
-Bundling of small user messages.
+SCTP is a connection oriented protocol using a four way handshake to establish
+an SCTP association and a three way message exchange to gracefully shut it down.
+It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite do and
+only supports unicast.
 
-Fragmentation and reassembly of large messages.
+SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors.
+This is stronger than the 16-bit checksums used by TCP or UDP.
+However, a partial checksum coverage as provided by DCCP or UDP-Lite is not
+supported.
 
-An SCTP service is unicast.
+SCTP has been designed with extensibility in mind. Each SCTP packet starts with
+a single common header containing the port numbers, a verification tag and
+the CRC32c checksum.
+This common header is followed by a sequence of chunks.
+Each chunk consists of a type field, flags, a length field and a value.
+{{RFC4960}} defines how a receiver processes chunks with an unknown chunk type.
+The support of extensions can be negotiated during the SCTP handshake.
 
-PLPMTUD is required for SCTP.
+SCTP provides a message-oriented service. Multiple small user messages can
+be bundled into a single SCTP packet to improve the efficiency. User messages
+which would result in IP packets larger than the MTU will be fragmented at
+the sender side and reassembled at the receiver side. There is no protocol
+limit on the user message size.
+{{RFC4821}} defines a method to perform packetization layer path MTU discovery
+with probe packets using the padding chunks defined the {{RFC4820}}.
 
-An SCTP Integrity Check is mandatory across the entire packet (it does not 
-support partial
-corruption protection as in DCCP/UD-Lite).
+{{RFC4960}} specifies a TCP friendly congestion control to protect the network
+against overload. SCTP also uses a sliding window flow control to protect
+receivers against overflow.
 
-The SCTP Partial Reliability Extension (SCTP-PR) is defined in
-{{RFC3758}}.
+Each SCTP association has between 1 and 65536 uni-directional streams in
+each direction. The number of streams can be different in each direction.
+Every user-message is sent on a particular stream.
+User messages can be sent ordered or un-ordered upon request by the upper layer.
+Only all ordered messages sent on the same stream are delivered at the receiver
+in the same order as sent by the sender. For user messages not requiring
+fragmentation, this minimises head of line blocking. The base protocol defined
+in {{RFC4960}} doesn't allow interleaving of user-messages, which results in
+sending a large message on one stream can block the sending of user messages
+on other streams. {{I-D.ietf-tsvwg-sctp-ndata}} overcomes this limitation and
+also allows to specify a scheduler for the sender side streams selection.
+The stream re-configuration extension defined in {{RFC6525}} allows to reset
+streams during the lifetime of an association and to increase the number of
+streams, if the number of streams negotiated in the SCTP handshake is not
+sufficient.
 
-SCTP supports PLPMTU discovery using padding chunks to construct path probes.
+According to {{RFC4960}}, each user message sent is either delivered to
+the receiver or, in case of excessive retransmissions, the association is
+terminated in a non-graceful way, similar to the TCP behaviour.
+In addition to this reliable transfer, the partial reliability extension
+defined in {{RFC3758}} allows the sender to abandon user messages.
+The application can specify the policy for abandoning user messages.
+Examples for these policies include:
+
+- Limiting the time a user message is dealt with by the sender.
+- Limiting the number of retransmissions for each fragment of a user message.
+- Abandoning messages of lower priority in case of a send buffer shortage.
+
+SCTP supports multi-homing. Each SCTP end-point uses a list of IP-addresses
+and a single port number. These addresses can be any mixture of IPv4 and IPv6
+addresses.
+These addresses are negotiated during the handshake and the address
+re-configuration extension specified in {{RFC5061}} can be used to change
+these addresses during the livetime of an SCTP association.
+This allows for transport layer mobility.
+Multiple addresses are used for improved resilience.
+If a remote address becomes unreachable, the traffic is switched over to a
+reachable one, if one exists.
+Each SCTP end-point supervises continuously the reachability of all peer
+addresses using a heartbeat mechanism.
+
+For securing user messages, the use of TLS over SCTP has been specified in {{RFC3436}}. However, this solution does not support all services provided
+by SCTP (for example un-ordered delivery or partial reliability), and therefore
+the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
+limitations. When using DTLS over SCTP, the application can use almost all
+services provided by SCTP.
+
+For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
+SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
+as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
+is used with in the WebRTC context.
+
+Having a well defined API is also a feature provided by SCTP as described in
+the next subsection.
 
 ### Interface Description
 
