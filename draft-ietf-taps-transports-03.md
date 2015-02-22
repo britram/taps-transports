@@ -141,7 +141,7 @@ decomposition of transport services.
 in Honolulu. While the factoring of the terminology seems uncontroversial,
 there may be some entities which still require names (e.g. information
 about the interface between the transport and lower layers which could
-lead to the availablity or unavailibility of certain transport protocol
+lead to the availability or unavailability of certain transport protocol
 features). Comments are welcome via the TAPS mailing list.]
 
 Transport Service Feature:
@@ -168,7 +168,7 @@ e.g. a protocol stack (RTP over UDP).
 Application:
 : an entity that uses the transport layer for end-to-end delivery data
 across the network (this may also be an upper layer protocol or tunnel
-encpasulation).
+encapsulation).
 
 # Existing Transport Protocols
 
@@ -459,7 +459,7 @@ It provides multiplexing to multiple sockets on each host using port numbers.
 An active UDP session is identified by its four-tuple of local and remote IP
 addresses and local port and remote port numbers.
 
-UDP maps each data segement into an IP packet, or a sequence of IP fragemnts. 
+UDP maps each data segment into an IP packet, or a sequence of IP fragments. 
 
 UDP is connectionless. However, applications send a sequence of messages 
 that constitute a UDP flow.
@@ -628,7 +628,7 @@ mechanism to allow transport instantiations to indicate
 the service treatment that is expected from the network.
 
 The protocol segments data into messages, typically sized to
-fit in IP packets, but which may be fragemented providing they
+fit in IP packets, but which may be fragmented providing they
 are less than the  A DCCP interface MAY allow applications to
 request fragmentation for packets larger than PMTU, but not
 larger than the maximum packet size allowed by the current 
@@ -686,12 +686,12 @@ read and interpret DCCP packets (e.g. Wireshark).
 
 ### Interface Description
 
-API charactersitics include:
+API characteristics include:
 - Datagram transmission.
 - Notification of the current maximum packet size.
 - Send and reception of zero-length payloads.
-- Set the Slow Receiver flow control at areceiver.
-- Detct a Slow receiver at the sender.
+- Set the Slow Receiver flow control at a receiver.
+- Detect a Slow receiver at the sender.
 
 There is no current API specified in the RFC Series.
 
