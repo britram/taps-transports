@@ -48,6 +48,7 @@ informative:
   RFC3168:
   RFC3205:
   RFC3390:
+  RFC3436:
   RFC3758:
   RFC3828:
   RFC4336:
@@ -55,8 +56,11 @@ informative:
   RFC4341:
   RFC4342:
   RFC4614:
+  RFC4820:
   RFC4821:
+  RFC4895:
   RFC4960:
+  RFC5061:
   RFC5097:
   RFC5246:
   RFC5348:
@@ -68,16 +72,24 @@ informative:
   RFC6773:
   RFC5925:
   RFC5681:
+  RFC6083:
   RFC6093:
+  RFC6525:
   RFC6298:
   RFC6935:
   RFC6936:
   RFC6455:
   RFC6347:
+  RFC6458:
   RFC6691:
   RFC6824:
+  RFC6951:
+  RFC7053:
   RFC7323:
   I-D.ietf-aqm-ecn-benefits:
+  I-D.ietf-tsvwg-sctp-dtls-encaps:
+  I-D.ietf-tsvwg-sctp-prpolicies:
+  I-D.ietf-tsvwg-sctp-ndata:
 
 --- abstract
 
@@ -129,7 +141,7 @@ decomposition of transport services.
 in Honolulu. While the factoring of the terminology seems uncontroversial,
 there may be some entities which still require names (e.g. information
 about the interface between the transport and lower layers which could
-lead to the availablity or unavailibility of certain transport protocol
+lead to the availability or unavailability of certain transport protocol
 features). Comments are welcome via the TAPS mailing list.]
 
 Transport Service Feature:
@@ -156,7 +168,7 @@ e.g. a protocol stack (RTP over UDP).
 Application:
 : an entity that uses the transport layer for end-to-end delivery data
 across the network (this may also be an upper layer protocol or tunnel
-encpasulation).
+encapsulation).
 
 # Existing Transport Protocols
 
@@ -244,36 +256,162 @@ TCP provides]
 
 ## Stream Control Transmission Protocol (SCTP)
 
-SCTP {{RFC4960}} is an IETF standards track transport protocol that
-provides a bidirectional
-set of logical unicast meessage streams over
-a connection-oriented protocol.  
-Compared to TCP, this protocol and API use messages,
-rather than a byte-stream.  Each stream of messages is independently
-managed, therefore retransmission does not hold back data sent using
-other logical streams.
+SCTP is a message oriented standards track transport protocol and the base
+protocol is specified in {{RFC4960}}.
+It supports multi-homing to handle path failures.
+An SCTP association has multiple unidirectional streams in each direction and
+provides in-sequence delivery of user messages only within each stream. This
+allows to minimize head of line blocking.
+SCTP is extensible and the currently defined extensions include mechanisms
+for dynamic re-configurations of streams {{RFC6525}} and
+IP-addresses {{RFC5061}}.
+Furthermore, the extension specified in {{RFC3758}} introduces the concept of
+partial reliability for user messages.
 
-An SCTP Integrity Check is mandatory across the entire packet (it does not 
-support partial
-corruption protection as in DCCP/UD-Lite).
-
-The SCTP Partial Reliability Extension (SCTP-PR) is defined in
-{{RFC3758}}.
-
-SCTP supports PLPMTU discovery using padding chunks to construct path probes.
+SCTP was originally developed for transporting telephony signalling messages
+and is deployed in telephony signalling networks, especially in mobile telephony
+networks.
+Additionally, it is used in the WebRTC framework for data channels and is therefore deployed in all WEB-browsers supporting WebRTC.
 
 [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
 
 ### Protocol Description
 
-An SCTP service is unicast.
+SCTP is a connection oriented protocol using a four way handshake to establish
+an SCTP association and a three way message exchange to gracefully shut it down.
+It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite do and
+only supports unicast.
 
-PLPMTUD is required for SCTP.
+SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors.
+This is stronger than the 16-bit checksums used by TCP or UDP.
+However, a partial checksum coverage as provided by DCCP or UDP-Lite is not
+supported.
+
+SCTP has been designed with extensibility in mind. Each SCTP packet starts with
+a single common header containing the port numbers, a verification tag and
+the CRC32c checksum.
+This common header is followed by a sequence of chunks.
+Each chunk consists of a type field, flags, a length field and a value.
+{{RFC4960}} defines how a receiver processes chunks with an unknown chunk type.
+The support of extensions can be negotiated during the SCTP handshake.
+
+SCTP provides a message-oriented service. Multiple small user messages can
+be bundled into a single SCTP packet to improve the efficiency. User messages
+which would result in IP packets larger than the MTU will be fragmented at
+the sender side and reassembled at the receiver side. There is no protocol
+limit on the user message size.
+{{RFC4821}} defines a method to perform packetization layer path MTU discovery
+with probe packets using the padding chunks defined the {{RFC4820}}.
+
+{{RFC4960}} specifies a TCP friendly congestion control to protect the network
+against overload. SCTP also uses a sliding window flow control to protect
+receivers against overflow.
+
+Each SCTP association has between 1 and 65536 uni-directional streams in
+each direction. The number of streams can be different in each direction.
+Every user-message is sent on a particular stream.
+User messages can be sent ordered or un-ordered upon request by the upper layer.
+Only all ordered messages sent on the same stream are delivered at the receiver
+in the same order as sent by the sender. For user messages not requiring
+fragmentation, this minimises head of line blocking. The base protocol defined
+in {{RFC4960}} doesn't allow interleaving of user-messages, which results in
+sending a large message on one stream can block the sending of user messages
+on other streams. {{I-D.ietf-tsvwg-sctp-ndata}} overcomes this limitation and
+also allows to specify a scheduler for the sender side streams selection.
+The stream re-configuration extension defined in {{RFC6525}} allows to reset
+streams during the lifetime of an association and to increase the number of
+streams, if the number of streams negotiated in the SCTP handshake is not
+sufficient.
+
+According to {{RFC4960}}, each user message sent is either delivered to
+the receiver or, in case of excessive retransmissions, the association is
+terminated in a non-graceful way, similar to the TCP behaviour.
+In addition to this reliable transfer, the partial reliability extension
+defined in {{RFC3758}} allows the sender to abandon user messages.
+The application can specify the policy for abandoning user messages.
+Examples for these policies include:
+
+- Limiting the time a user message is dealt with by the sender.
+- Limiting the number of retransmissions for each fragment of a user message.
+- Abandoning messages of lower priority in case of a send buffer shortage.
+
+SCTP supports multi-homing. Each SCTP end-point uses a list of IP-addresses
+and a single port number. These addresses can be any mixture of IPv4 and IPv6
+addresses.
+These addresses are negotiated during the handshake and the address
+re-configuration extension specified in {{RFC5061}} can be used to change
+these addresses during the livetime of an SCTP association.
+This allows for transport layer mobility.
+Multiple addresses are used for improved resilience.
+If a remote address becomes unreachable, the traffic is switched over to a
+reachable one, if one exists.
+Each SCTP end-point supervises continuously the reachability of all peer
+addresses using a heartbeat mechanism.
+
+For securing user messages, the use of TLS over SCTP has been specified in {{RFC3436}}. However, this solution does not support all services provided
+by SCTP (for example un-ordered delivery or partial reliability), and therefore
+the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
+limitations. When using DTLS over SCTP, the application can use almost all
+services provided by SCTP.
+
+For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
+SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
+as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
+is used with in the WebRTC context.
+
+Having a well defined API is also a feature provided by SCTP as described in
+the next subsection.
 
 ### Interface Description
 
-The SCTP API is described in the specifications published in the RFC
-series.
+{{RFC4960}} defines an abstract API for the base protocol.
+An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
+
+- the base protocol defined in {{RFC4960}}.
+- the SCTP Partial Reliability extension defined in {{RFC3758}}.
+- the SCTP Authentication extension defined in {{RFC4895}}.
+- the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+
+For the following SCTP protocol extensions the BSD Sockets API extension is
+defined in the document specifying the protocol extensions:
+
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+- the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+- the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
+- the additional PR-SCTP policies defined in {{I-D.ietf-tsvwg-sctp-prpolicies}}.
+
+Future documents describing SCTP protocol extensions are expected to describe
+the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
+
+The SCTP socket API supports two kinds of sockets:
+
+- one-to-one style sockets (by using the socket type `SOCK_STREAM`).
+- one-to-many style socket (by using the socket type `SOCK_SEQPACKET`).
+
+One-to-one style sockets are similar to TCP sockets, there is a 1:1 relationship
+between the sockets and the SCTP associations (except for listening sockets).
+One-to-many style SCTP sockets are similar to unconnected UDP sockets as there
+is a 1:n relationship between the sockets and the SCTP associations.
+
+The SCTP stack can provide information to the applications about state
+changes of the individual paths and the association whenever they occur.
+These events are delivered similar to user messages but are specifically
+marked as notifications.
+
+A couple of new functions have been introduced to support the use of
+multiple local and remote addresses.
+Additional SCTP-specific send and receive calls have been defined to allow
+dealing with the SCTP specific information without using ancillary data
+in the form of additional cmsgs, which are also defined.
+These functions provide support for detecting partial delivery of
+user messages and notifications.
+
+The SCTP socket API allows a fine-grained control of the protocol behaviour
+through an extensive set of socket options.
+
+The SCTP kernel implementations of FreeBSD, Linux and Solaris follow mostly
+the specified extension to the BSD Sockets API for the base protocol and the
+corresponding supported protocol extensions.
 
 ### Transport Protocol Components
 
@@ -283,13 +421,16 @@ The transport protocol components provided by SCTP are:
 - connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable or partially reliable delivery
-- ordered delivery within a stream
+- ordered and unordered delivery within a stream
 - support for multiple prioritised streams
 - flow control (slow receiver function)
 - message-oriented delivery
 - congestion control
 - application PDU bundling
+- application PDU fragmentation and reassembly
 - integrity check
+- transport layer multihoming for resilience
+- transport layer mobility
 
 [EDITOR'S NOTE: update this list.]
 
@@ -499,7 +640,7 @@ mechanism to allow transport instantiations to indicate
 the service treatment that is expected from the network.
 
 The protocol segments data into messages, typically sized to
-fit in IP packets, but which may be fragemented providing they
+fit in IP packets, but which may be fragmented providing they
 are less than the  A DCCP interface MAY allow applications to
 request fragmentation for packets larger than PMTU, but not
 larger than the maximum packet size allowed by the current 
@@ -557,12 +698,12 @@ read and interpret DCCP packets (e.g. Wireshark).
 
 ### Interface Description
 
-API charactersitics include:
+API characteristics include:
 - Datagram transmission.
 - Notification of the current maximum packet size.
 - Send and reception of zero-length payloads.
-- Set the Slow Receiver flow control at areceiver.
-- Detct a Slow receiver at the sender.
+- Set the Slow Receiver flow control at a receiver.
+- Detect a Slow receiver at the sender.
 
 There is no current API specified in the RFC Series.
 
@@ -684,7 +825,8 @@ This document surveys existing transport protocols and protocols providing trans
 # Contributors
 
 - Kevin Fall <kfall@kfall.com>
-
+- Karen Nielsen <karen.nielsen@tieto.com>
+- Michael Tuexen <tuexen@fh-muenster.de>
 
 # Acknowledgments
 
