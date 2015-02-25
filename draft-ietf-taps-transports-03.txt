@@ -5,9 +5,13 @@
 Network Working Group                                  G. Fairhurst, Ed.
 Internet-Draft                                    University of Aberdeen
 Intended status: Informational                          B. Trammell, Ed.
-Expires: August 10, 2015                              M. Kuehlewind, Ed.
+Expires: August 29, 2015                              M. Kuehlewind, Ed.
                                                               ETH Zurich
-                                                       February 06, 2015
+                                                                 K. Fall
+
+                                                               M. Tuexen
+                                 Muenster University of Applied Sciences
+                                                       February 25, 2015
 
 
   Services provided by IETF transport protocols and congestion control
@@ -36,7 +40,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 10, 2015.
+   This Internet-Draft will expire on August 29, 2015.
 
 Copyright Notice
 
@@ -46,18 +50,18 @@ Copyright Notice
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
    (http://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 1]
+Fairhurst, et al.        Expires August 29, 2015                [Page 1]
 
 Internet-Draft               TAPS Transports               February 2015
 
 
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
@@ -102,18 +106,17 @@ Internet-Draft               TAPS Transports               February 2015
 
    [NOTE: The terminology below was presented at the TAPS WG meeting in
    Honolulu.  While the factoring of the terminology seems
-   uncontroversial, there may be some entities which still require names
-   (e.g. information about the interface between the transport and lower
-   layers which could lead to the availability or unavailability of
 
 
 
-
-Fairhurst, et al.        Expires August 10, 2015                [Page 2]
+Fairhurst, et al.        Expires August 29, 2015                [Page 2]
 
 Internet-Draft               TAPS Transports               February 2015
 
 
+   uncontroversial, there may be some entities which still require names
+   (e.g. information about the interface between the transport and lower
+   layers which could lead to the availability or unavailability of
    certain transport protocol features).  Comments are welcome via the
    TAPS mailing list.]
 
@@ -162,10 +165,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-
-
-
-Fairhurst, et al.        Expires August 10, 2015                [Page 3]
+Fairhurst, et al.        Expires August 29, 2015                [Page 3]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -221,7 +221,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 4]
+Fairhurst, et al.        Expires August 29, 2015                [Page 4]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -277,7 +277,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 5]
+Fairhurst, et al.        Expires August 29, 2015                [Page 5]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -333,7 +333,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 6]
+Fairhurst, et al.        Expires August 29, 2015                [Page 6]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -389,7 +389,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 7]
+Fairhurst, et al.        Expires August 29, 2015                [Page 7]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -445,7 +445,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 8]
+Fairhurst, et al.        Expires August 29, 2015                [Page 8]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -501,7 +501,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015                [Page 9]
+Fairhurst, et al.        Expires August 29, 2015                [Page 9]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -557,7 +557,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 10]
+Fairhurst, et al.        Expires August 29, 2015               [Page 10]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -613,7 +613,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 11]
+Fairhurst, et al.        Expires August 29, 2015               [Page 11]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -669,7 +669,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 12]
+Fairhurst, et al.        Expires August 29, 2015               [Page 12]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -725,7 +725,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 13]
+Fairhurst, et al.        Expires August 29, 2015               [Page 13]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -781,7 +781,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 14]
+Fairhurst, et al.        Expires August 29, 2015               [Page 14]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -837,7 +837,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 15]
+Fairhurst, et al.        Expires August 29, 2015               [Page 15]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -893,7 +893,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 16]
+Fairhurst, et al.        Expires August 29, 2015               [Page 16]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -949,7 +949,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 17]
+Fairhurst, et al.        Expires August 29, 2015               [Page 17]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -1005,7 +1005,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 18]
+Fairhurst, et al.        Expires August 29, 2015               [Page 18]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -1061,7 +1061,7 @@ Internet-Draft               TAPS Transports               February 2015
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 19]
+Fairhurst, et al.        Expires August 29, 2015               [Page 19]
 
 Internet-Draft               TAPS Transports               February 2015
 
@@ -1082,28 +1082,20 @@ Internet-Draft               TAPS Transports               February 2015
    providing these features.  Each RFC listed in this document discusses
    the security considerations of the specification it contains.
 
-7.  Contributors
-
-   o  Kevin Fall kfall@kfall.com [1]
-
-   o  Karen Nielsen karen.nielsen@tieto.com [2]
-
-   o  Michael Tuexen tuexen@fh-muenster.de [3]
-
-8.  Acknowledgments
+7.  Acknowledgments
 
    This work is partially supported by the European Commission under
    grant agreement FP7-ICT-318627 mPlane; support does not imply
    endorsement.
 
-9.  References
+8.  References
 
-9.1.  Normative References
+8.1.  Normative References
 
    [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
               1981.
 
-9.2.  Informative References
+8.2.  Informative References
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               August 1980.
@@ -1114,14 +1106,6 @@ Internet-Draft               TAPS Transports               February 2015
    [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
               RFC 896, January 1984.
 
-
-
-
-Fairhurst, et al.        Expires August 10, 2015               [Page 20]
-
-Internet-Draft               TAPS Transports               February 2015
-
-
    [RFC1122]  Braden, R., "Requirements for Internet Hosts -
               Communication Layers", STD 3, RFC 1122, October 1989.
 
@@ -1130,6 +1114,13 @@ Internet-Draft               TAPS Transports               February 2015
 
    [RFC1981]  McCann, J., Deering, S., and J. Mogul, "Path MTU Discovery
               for IP version 6", RFC 1981, August 1996.
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 20]
+
+Internet-Draft               TAPS Transports               February 2015
+
 
    [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
               Selective Acknowledgment Options", RFC 2018, October 1996.
@@ -1170,14 +1161,6 @@ Internet-Draft               TAPS Transports               February 2015
               Control Protocol (DCCP) Congestion Control ID 2: TCP-like
               Congestion Control", RFC 4341, March 2006.
 
-
-
-
-Fairhurst, et al.        Expires August 10, 2015               [Page 21]
-
-Internet-Draft               TAPS Transports               February 2015
-
-
    [RFC4342]  Floyd, S., Kohler, E., and J. Padhye, "Profile for
               Datagram Congestion Control Protocol (DCCP) Congestion
               Control ID 3: TCP-Friendly Rate Control (TFRC)", RFC 4342,
@@ -1186,6 +1169,14 @@ Internet-Draft               TAPS Transports               February 2015
    [RFC4614]  Duke, M., Braden, R., Eddy, W., and E. Blanton, "A Roadmap
               for Transmission Control Protocol (TCP) Specification
               Documents", RFC 4614, September 2006.
+
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 21]
+
+Internet-Draft               TAPS Transports               February 2015
+
 
    [RFC4820]  Tuexen, M., Stewart, R., and P. Lei, "Padding Chunk and
               Parameter for the Stream Control Transmission Protocol
@@ -1227,13 +1218,6 @@ Internet-Draft               TAPS Transports               February 2015
               (DCCP) Simultaneous-Open Technique to Facilitate NAT/
               Middlebox Traversal", RFC 5596, September 2009.
 
-
-
-Fairhurst, et al.        Expires August 10, 2015               [Page 22]
-
-Internet-Draft               TAPS Transports               February 2015
-
-
    [RFC5662]  Shepler, S., Eisler, M., and D. Noveck, "Network File
               System (NFS) Version 4 Minor Version 1 External Data
               Representation Standard (XDR) Description", RFC 5662,
@@ -1241,6 +1225,14 @@ Internet-Draft               TAPS Transports               February 2015
 
    [RFC5672]  Crocker, D., "RFC 4871 DomainKeys Identified Mail (DKIM)
               Signatures -- Update", RFC 5672, August 2009.
+
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 22]
+
+Internet-Draft               TAPS Transports               February 2015
+
 
    [RFC6773]  Phelan, T., Fairhurst, G., and C. Perkins, "DCCP-UDP: A
               Datagram Congestion Control Protocol UDP Encapsulation for
@@ -1280,16 +1272,6 @@ Internet-Draft               TAPS Transports               February 2015
    [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
               Security Version 1.2", RFC 6347, January 2012.
 
-
-
-
-
-
-Fairhurst, et al.        Expires August 10, 2015               [Page 23]
-
-Internet-Draft               TAPS Transports               February 2015
-
-
    [RFC6458]  Stewart, R., Tuexen, M., Poon, K., Lei, P., and V.
               Yasevich, "Sockets API Extensions for the Stream Control
               Transmission Protocol (SCTP)", RFC 6458, December 2011.
@@ -1300,6 +1282,13 @@ Internet-Draft               TAPS Transports               February 2015
    [RFC6824]  Ford, A., Raiciu, C., Handley, M., and O. Bonaventure,
               "TCP Extensions for Multipath Operation with Multiple
               Addresses", RFC 6824, January 2013.
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 23]
+
+Internet-Draft               TAPS Transports               February 2015
+
 
    [RFC6951]  Tuexen, M. and R. Stewart, "UDP Encapsulation of Stream
               Control Transmission Protocol (SCTP) Packets for End-Host
@@ -1336,24 +1325,6 @@ Internet-Draft               TAPS Transports               February 2015
               Control Transmission Protocol", draft-ietf-tsvwg-sctp-
               ndata-02 (work in progress), January 2015.
 
-
-
-
-
-
-Fairhurst, et al.        Expires August 10, 2015               [Page 24]
-
-Internet-Draft               TAPS Transports               February 2015
-
-
-9.3.  URIs
-
-   [1] mailto:kfall@kfall.com
-
-   [2] mailto:karen.nielsen@tieto.com
-
-   [3] mailto:tuexen@fh-muenster.de
-
 Authors' Addresses
 
    Godred Fairhurst (editor)
@@ -1362,6 +1333,17 @@ Authors' Addresses
    Aberdeen AB24 3UE
 
    Email: gorry@erg.abdn.ac.uk
+
+
+
+
+
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 24]
+
+Internet-Draft               TAPS Transports               February 2015
 
 
    Brian Trammell (editor)
@@ -1382,6 +1364,18 @@ Authors' Addresses
    Email: mirja.kuehlewind@tik.ee.ethz.ch
 
 
+   Kevin Fall
+
+   Email: kfall@kfall.com
+
+
+   Michael Tuexen
+   Muenster University of Applied Sciences
+   Stegerwaldstrasse 39
+   48565 Steinfurt
+   Germany
+
+   Email: tuexen@fh-muenster.de
 
 
 
@@ -1397,4 +1391,10 @@ Authors' Addresses
 
 
 
-Fairhurst, et al.        Expires August 10, 2015               [Page 25]
+
+
+
+
+
+
+Fairhurst, et al.        Expires August 29, 2015               [Page 25]

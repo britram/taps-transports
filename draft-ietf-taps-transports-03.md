@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-03
-date: 2015-02-06
+date: 2015-02-25
 category: info
 ipr: trust200902
 
@@ -33,6 +33,18 @@ author:
     street: Gloriastrasse 35
     city: 8092 Zurich
     country: Switzerland
+ -
+    ins: K. Fall
+    name: Kevin Fall
+    email: kfall@kfall.com
+ -
+    ins: M. Tuexen
+    name: Michael Tuexen
+    org: Muenster University of Applied Sciences
+    street: Stegerwaldstrasse 39
+    city: 48565 Steinfurt
+    country: Germany
+    email: tuexen@fh-muenster.de
 
 normative:
   RFC0791:
@@ -821,12 +833,6 @@ This document has no considerations for IANA.
 # Security Considerations
 
 This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new components or mechanisms for providing these features. Each RFC listed in this document discusses the security considerations of the specification it contains.
-
-# Contributors
-
-- Kevin Fall <kfall@kfall.com>
-- Karen Nielsen <karen.nielsen@tieto.com>
-- Michael Tuexen <tuexen@fh-muenster.de>
 
 # Acknowledgments
 

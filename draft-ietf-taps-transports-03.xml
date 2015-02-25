@@ -97,8 +97,25 @@
         <email>mirja.kuehlewind@tik.ee.ethz.ch</email>
       </address>
     </author>
+    <author initials="K." surname="Fall" fullname="Kevin Fall">
+      <organization></organization>
+      <address>
+        <email>kfall@kfall.com</email>
+      </address>
+    </author>
+    <author initials="M." surname="Tuexen" fullname="Michael Tuexen">
+      <organization>Muenster University of Applied Sciences</organization>
+      <address>
+        <postal>
+          <street>Stegerwaldstrasse 39</street>
+          <city>48565 Steinfurt</city>
+          <country>Germany</country>
+        </postal>
+        <email>tuexen@fh-muenster.de</email>
+      </address>
+    </author>
 
-    <date year="2015" month="February" day="06"/>
+    <date year="2015" month="February" day="25"/>
 
     
     
@@ -1000,15 +1017,6 @@ previous section – please discuss on taps@ietf.org list]</t>
 <section anchor="security-considerations" title="Security Considerations">
 
 <t>This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new components or mechanisms for providing these features. Each RFC listed in this document discusses the security considerations of the specification it contains.</t>
-
-</section>
-<section anchor="contributors" title="Contributors">
-
-<t><list style="symbols">
-  <t>Kevin Fall <eref target="mailto:kfall@kfall.com">kfall@kfall.com</eref></t>
-  <t>Karen Nielsen <eref target="mailto:karen.nielsen@tieto.com">karen.nielsen@tieto.com</eref></t>
-  <t>Michael Tuexen <eref target="mailto:tuexen@fh-muenster.de">tuexen@fh-muenster.de</eref></t>
-</list></t>
 
 </section>
 <section anchor="acknowledgments" title="Acknowledgments">
