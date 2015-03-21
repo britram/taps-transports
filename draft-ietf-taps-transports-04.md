@@ -90,6 +90,7 @@ informative:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-prpolicies:
   I-D.ietf-tsvwg-sctp-ndata:
+  I-D.ietf-tsvwg-natsupp:
 
 --- abstract
 
@@ -117,8 +118,9 @@ in-path devices, integrity protection, and minimal latency.
 The IETF has defined a wide variety of transport protocols beyond TCP and
 UDP, including SCTP, DCCP, MP-TCP, and UDP-Lite. Transport services
 may be provided directly by these transport protocols, or layered on top
-of them using protocols such as WebSockets (which runs over TCP) or RTP
-(over TCP or UDP). Services built on top of UDP or UDP-Lite typically also
+of them using protocols such as WebSockets (which runs over TCP), RTP
+(over TCP or UDP) or WebRTC data channels (which run over SCTP over DTLS
+over UDP or TCP). Services built on top of UDP or UDP-Lite typically also
 need to specify additional mechanisms, including a congestion control
 mechanism (such as a windowed congestion control, TFRC or LEDBAT
 congestion control mechanism).  This extends the set of available
@@ -126,10 +128,10 @@ Transport Services beyond those provided to applications by TCP and UDP.
 
 Transport protocols can also be differentiated by the features of the
 services they provide: for instance, SCTP offers a message-based service
-that does not suffer head-of-line blocking when used with multiple stream,
-because it can accept blocks of data out of order, UDP-Lite provides
-partial integrity protection, and LEDBAT can provide low-priority
-"scavenger" communication.
+providing full or partial reliability and allowing to minimize the head of line
+blocking due to the support of unordered and unordered message delivery within
+multiple streams, UDP-Lite provides partial integrity protection, and LEDBAT
+can provide low-priority "scavenger" communication.
 
 # Terminology
 
@@ -296,12 +298,16 @@ Each chunk consists of a type field, flags, a length field and a value.
 The support of extensions can be negotiated during the SCTP handshake.
 
 SCTP provides a message-oriented service. Multiple small user messages can
-be bundled into a single SCTP packet to improve the efficiency. User messages
-which would result in IP packets larger than the MTU will be fragmented at
-the sender side and reassembled at the receiver side. There is no protocol
-limit on the user message size.
-{{RFC4821}} defines a method to perform packetization layer path MTU discovery
-with probe packets using the padding chunks defined the {{RFC4820}}.
+be bundled into a single SCTP packet to improve the efficiency.
+For example, this bundling may be done by delaying user messages at the sender
+side similar to the Nagle algorithm used by TCP.
+User messages which would result in IP packets larger than the MTU will be
+fragmented at the sender side and reassembled at the receiver side.
+There is no protocol limit on the user message size.
+ICMP-based path MTU discovery as specified for IPv4 in {{RFC1191}} and for IPv6
+in {{RFC1981}} as well as packetization layer path MTU discovery as specified in
+{{RFC4821}} with probe packets using the padding chunks defined the {{RFC4820}}
+are supported.
 
 {{RFC4960}} specifies a TCP friendly congestion control to protect the network
 against overload. SCTP also uses a sliding window flow control to protect
@@ -310,14 +316,18 @@ receivers against overflow.
 Each SCTP association has between 1 and 65536 uni-directional streams in
 each direction. The number of streams can be different in each direction.
 Every user-message is sent on a particular stream.
-User messages can be sent ordered or un-ordered upon request by the upper layer.
+User messages can be sent un-ordered or ordered upon request by the upper layer.
+Un-ordered messages can be delivered as soon as they are completely received.
 Only all ordered messages sent on the same stream are delivered at the receiver
 in the same order as sent by the sender. For user messages not requiring
-fragmentation, this minimises head of line blocking. The base protocol defined
-in {{RFC4960}} doesn't allow interleaving of user-messages, which results in
-sending a large message on one stream can block the sending of user messages
-on other streams. {{I-D.ietf-tsvwg-sctp-ndata}} overcomes this limitation and
-also allows to specify a scheduler for the sender side streams selection.
+fragmentation, this minimises head of line blocking.
+The base protocol defined in {{RFC4960}} doesn't allow interleaving of
+user-messages, which results in sending a large message on one stream can block
+the sending of user messages on other streams.
+{{I-D.ietf-tsvwg-sctp-ndata}} overcomes this limitation.
+Furthermore, {{I-D.ietf-tsvwg-sctp-ndata}} specifies multiple algorithms for
+the sender side selection of which streams to send data from supporting a
+variety of scheduling algorithms including priority based ones.
 The stream re-configuration extension defined in {{RFC6525}} allows to reset
 streams during the lifetime of an association and to increase the number of
 streams, if the number of streams negotiated in the SCTP handshake is not
@@ -348,12 +358,15 @@ reachable one, if one exists.
 Each SCTP end-point supervises continuously the reachability of all peer
 addresses using a heartbeat mechanism.
 
-For securing user messages, the use of TLS over SCTP has been specified in {{RFC3436}}. However, this solution does not support all services provided
+For securing user messages, the use of TLS over SCTP has been specified in
+{{RFC3436}}. However, this solution does not support all services provided
 by SCTP (for example un-ordered delivery or partial reliability), and therefore
 the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
 limitations. When using DTLS over SCTP, the application can use almost all
 services provided by SCTP.
 
+{{I-D.ietf-tsvwg-natsupp}} defines a methods for end-hosts and
+middleboxes to provide for NAT support for SCTP over IPv4.
 For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
 SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
 as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
@@ -422,13 +435,14 @@ The transport protocol components provided by SCTP are:
 - port multiplexing
 - reliable or partially reliable delivery
 - ordered and unordered delivery within a stream
-- support for multiple prioritised streams
-- flow control (slow receiver function)
+- support for multiple concurrent streams
+- support for stream scheduling prioritization 
+- flow control
 - message-oriented delivery
 - congestion control
-- application PDU bundling
-- application PDU fragmentation and reassembly
-- integrity check
+- user message bundling
+- user message fragmentation and reassembly
+- strong error detection (CRC32C)
 - transport layer multihoming for resilience
 - transport layer mobility
 
