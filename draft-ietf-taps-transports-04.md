@@ -115,7 +115,7 @@ Services are reliable delivery, ordered delivery, content privacy to
 in-path devices, integrity protection, and minimal latency.
 
 The IETF has defined a wide variety of transport protocols beyond TCP and
-UDP, including TCP, SCTP, DCCP, MP-TCP, and UDP-Lite. Transport services
+UDP, including SCTP, DCCP, MP-TCP, and UDP-Lite. Transport services
 may be provided directly by these transport protocols, or layered on top
 of them using protocols such as WebSockets (which runs over TCP) or RTP
 (over TCP or UDP). Services built on top of UDP or UDP-Lite typically also
