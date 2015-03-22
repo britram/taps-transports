@@ -343,14 +343,17 @@ Examples for these policies include:
 
 - Limiting the time a user message is dealt with by the sender.
 - Limiting the number of retransmissions for each fragment of a user message.
+  If the number of retransmissions is limited to 0, one gets a service similar
+  to UDP.
 - Abandoning messages of lower priority in case of a send buffer shortage.
 
 SCTP supports multi-homing. Each SCTP end-point uses a list of IP-addresses
 and a single port number. These addresses can be any mixture of IPv4 and IPv6
 addresses.
 These addresses are negotiated during the handshake and the address
-re-configuration extension specified in {{RFC5061}} can be used to change
-these addresses during the livetime of an SCTP association.
+re-configuration extension specified in {{RFC5061}} in combination with
+{{RFC4895}} can be used to change these addresses in an authenticated way
+during the livetime of an SCTP association.
 This allows for transport layer mobility.
 Multiple addresses are used for improved resilience.
 If a remote address becomes unreachable, the traffic is switched over to a
