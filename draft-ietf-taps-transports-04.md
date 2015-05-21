@@ -1,10 +1,12 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-03
+docname: draft-ietf-taps-transports-04
 date: 2015-04-01
 category: info
 ipr: trust200902
+pi:
+    toc: yes
 
 author:
  -
@@ -439,7 +441,7 @@ The transport protocol components provided by SCTP are:
 - reliable or partially reliable delivery
 - ordered and unordered delivery within a stream
 - support for multiple concurrent streams
-- support for stream scheduling prioritization 
+- support for stream scheduling prioritization
 - flow control
 - message-oriented delivery
 - congestion control
