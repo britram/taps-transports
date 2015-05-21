@@ -87,12 +87,37 @@ informative:
   RFC6824:
   RFC6951:
   RFC7053:
+  RFC7230:
+  RFC7231:
+  RFC7232:
+  RFC7233:
+  RFC7234:
+  RFC7235:
   RFC7323:
+  RFC7540:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-prpolicies:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-natsupp:
+  XHR:
+    title: "XMLHttpRequest working draft (http://www.w3.org/TR/XMLHttpRequest/)"
+    author:
+      -
+        ins: A. van Kesteren
+      -
+        ins: J. Aubourg
+      -
+        ins: J. Song
+      -
+        ins: H. R. M. Steen
+    date: 2000
+    REST:
+      title: "Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvune), Chapter 5: Representational State Transfer"
+      author:
+        -
+          ins: R. T. Fielding
+      date: 2000  
 
 --- abstract
 
@@ -465,8 +490,6 @@ The transport protocol components provided by SCTP are:
  use of UDP is provided in{{RFC5405}}.  UDP is widely implemented and
  widely used by common applications, especially DNS.
 
-[EDITOR'S NOTE: Kevin Fall signed up as a contributor for this section.]
-
 ### Protocol Description
 
 UDP is a connection-less protocol which maintains message boundaries,
@@ -765,15 +788,47 @@ goals as an add-on interlayer above transport.]
 
 ## Hypertext Transport Protocol (HTTP) as a pseudotransport
 
-{{RFC3205}}
+Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC 2617}} and TLS {{RFC 5246}}, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.
 
-[EDITOR'S NOTE: No identified contributor for this section yet.]
+Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
 
 ### Protocol Description
 
+Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client sends a request containing a request method, URI and protocol version followed by a MIME-like message (see {{RFC7231}} for the differences between an HTTP object and a MIME message), containing information about the client and request modifiers. The message can contain a message body carrying application data as well. The server responds with a status or error code followed by a MIME-like message containing information about the server and information about carried data and it can include a message body. It is possible to specify a data format for the message body using MIME media types {{RFC2045}}. Furthermore, the protocol has numerous additional features; features relevant to pseudotransport are described below.
+
+Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP for selecting a representation on a requested resource. The client and server negotiate acceptable data formats, charsets, data encoding (e.g. data can be transferred compressed, gzip), etc. HTTP can accommodate exchange of messages as well as data streaming (using chunked transfer encoding {{RFC7230}}). It is also possible to request a part of a resource using range requests specified in {{RFC7233}}. The protocol provides powerful cache control signalling defined in {{RFC7234}}.
+
+HTTP 1.1’s and HTTP 2.0’s persistent connections can be use to perform multiple request-response transactions during the life-time of a single HTTP connection. Moreover, HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single connection. This reduces connection establishment overhead and the effect of TCP slow-start on each transaction, important for HTTP's primary use case.
+
+HTTP usually runs over TCP and inherits its properties (e.g. reliability, congestion controlled etc.). It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g. authentication, encryption, etc.). TLS’s Application-Layer Protocol Negotiation (ALPN) extension {{RFC7301}} can be used for HTTP version negotiation within TLS handshake which eliminates addition round-trip. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.
+
+Application layer protocols using HTTP as substrate may use existing method and data formats, or specify new methods and data formats. Furthermore some protocols may not fit a request/response paradigm and instead rely on HTTP to send messages (e.g. {{RFC6546}}). Because HTTP is working in many restricted infrastructures, it is also used to tunnel other application-layer protocols.
+
 ### Interface Description
 
+There are many HTTP libraries available exposing different APIs. The APIs provide a way to specify a request by providing a URI, a method, request modifiers and optionally a request body. For the response, callbacks can be registered that will be invoked when the response is received. If TLS is used, API expose a registration of callbacks in case a server requests client authentication and when certificate verification is needed.
+
+World Wide Web Consortium (W3C) standardized the XMLHttpRequest API {{XHR}}, an API that can be use for sending HTTP/HTTPS requests and receiving server responses. Besides XML data format, request and response data format can also be JSON, HTML and plain text. Specifically JavaScript and XMLHttpRequest are a ubiquitous programming model for websites, and more general applications, where native code is less attractive.
+
+Representational State Transfer (REST) {{REST}} is another example how applications can use HTTP as transport protocol. REST is an architecture style for building application on the Internet. It uses HTTP as a communication protocol.
+
 ### Transport Protocol Components
+
+The transport protocol components provided by HTTP, when used as a pseudotransport, are:
+
+- unicast
+- reliable delivery
+- ordered delivery
+- message and stream-oriented
+- object range request
+- message content type negotiation
+- congestion control
+
+HTTPS (HTTP over TLS) additionally provides the following components:
+
+- authentication (of one or both ends of a connection)
+- confidentiality
+- integrity protection
 
 ## WebSockets
 
@@ -862,6 +917,7 @@ This document surveys existing transport protocols and protocols providing trans
 
 - {{user-datagram-protocol-udp}} on UDP was contributed by Kevin Fall (kfall@kfall.com)
 - {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)
+- {{hypertext-transport-protocol-http-as-a-pseudotransport}} on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)
 
 # Acknowledgments
 
