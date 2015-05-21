@@ -64,9 +64,9 @@ Internet-Draft               TAPS Transports                  April 2015
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
-   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Existing Transport Protocols  . . . . . . . . . . . . . . . .   4
-     3.1.  Transport Control Protocol (TCP)  . . . . . . . . . . . .   4
+     3.1.  Transport Control Protocol (TCP)  . . . . . . . . . . . .   5
        3.1.1.  Protocol Description  . . . . . . . . . . . . . . . .   5
        3.1.2.  Interface description . . . . . . . . . . . . . . . .   6
        3.1.3.  Transport Protocol Components . . . . . . . . . . . .   6
@@ -88,24 +88,24 @@ Table of Contents
        3.6.2.  Interface Description . . . . . . . . . . . . . . . .  17
        3.6.3.  Transport Protocol Components . . . . . . . . . . . .  17
      3.7.  Realtime Transport Protocol (RTP) . . . . . . . . . . . .  18
-     3.8.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as
-           a . . . . . . . . . . . . . . . . . . . . . . . . . . . .  18
+     3.8.  NACK-Oriented Reliable Multicast (NORM) . . . . . . . . .  18
        3.8.1.  Protocol Description  . . . . . . . . . . . . . . . .  18
-       3.8.2.  Interface Description . . . . . . . . . . . . . . . .  18
-       3.8.3.  Transport Protocol Components . . . . . . . . . . . .  18
-     3.9.  Hypertext Transport Protocol (HTTP) as a pseudotransport   18
-       3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  19
-       3.9.2.  Interface Description . . . . . . . . . . . . . . . .  19
-       3.9.3.  Transport Protocol Components . . . . . . . . . . . .  19
-     3.10. WebSockets  . . . . . . . . . . . . . . . . . . . . . . .  19
-       3.10.1.  Protocol Description . . . . . . . . . . . . . . . .  19
-       3.10.2.  Interface Description  . . . . . . . . . . . . . . .  19
-       3.10.3.  Transport Protocol Components  . . . . . . . . . . .  19
-   4.  Transport Service Features  . . . . . . . . . . . . . . . . .  19
-     4.1.  Complete Protocol Feature Matrix  . . . . . . . . . . . .  19
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  21
-   7.  Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  21
+       3.8.2.  Interface Description . . . . . . . . . . . . . . . .  20
+       3.8.3.  Transport Protocol Components . . . . . . . . . . . .  20
+     3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as
+           a . . . . . . . . . . . . . . . . . . . . . . . . . . . .  20
+       3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  21
+       3.9.2.  Interface Description . . . . . . . . . . . . . . . .  21
+       3.9.3.  Transport Protocol Components . . . . . . . . . . . .  21
+     3.10. Hypertext Transport Protocol (HTTP) as a pseudotransport   21
+       3.10.1.  Protocol Description . . . . . . . . . . . . . . . .  21
+       3.10.2.  Interface Description  . . . . . . . . . . . . . . .  22
+       3.10.3.  Transport Protocol Components  . . . . . . . . . . .  23
+     3.11. WebSockets  . . . . . . . . . . . . . . . . . . . . . . .  23
+       3.11.1.  Protocol Description . . . . . . . . . . . . . . . .  23
+       3.11.2.  Interface Description  . . . . . . . . . . . . . . .  24
+       3.11.3.  Transport Protocol Components  . . . . . . . . . . .  24
+   4.  Transport Service Features  . . . . . . . . . . . . . . . . .  24
 
 
 
@@ -114,11 +114,15 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 2]
 Internet-Draft               TAPS Transports                  April 2015
 
 
-   8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  21
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  21
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  21
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  21
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  26
+     4.1.  Complete Protocol Feature Matrix  . . . . . . . . . . . .  24
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  26
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  26
+   7.  Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  26
+   8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  26
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  26
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  26
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  27
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  32
 
 1.  Introduction
 
@@ -155,11 +159,7 @@ Internet-Draft               TAPS Transports                  April 2015
    provides partial integrity protection, and LEDBAT can provide low-
    priority "scavenger" communication.
 
-2.  Terminology
 
-   The following terms are defined throughout this document, and in
-   subsequent documents produced by TAPS describing the composition and
-   decomposition of transport services.
 
 
 
@@ -169,6 +169,12 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 3]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+2.  Terminology
+
+   The following terms are defined throughout this document, and in
+   subsequent documents produced by TAPS describing the composition and
+   decomposition of transport services.
 
    [NOTE: The terminology below was presented at the TAPS WG meeting in
    Honolulu.  While the factoring of the terminology seems
@@ -210,14 +216,8 @@ Internet-Draft               TAPS Transports                  April 2015
 
    [EDITOR'S NOTE: Contributions to the subsections below are welcome]
 
-3.1.  Transport Control Protocol (TCP)
 
-   TCP is an IETF standards track transport protocol.  [RFC0793]
-   introduces TCP as follows: "The Transmission Control Protocol (TCP)
-   is intended for use as a highly reliable host-to-host protocol
-   between hosts in packet-switched computer communication networks, and
-   in interconnected systems of such networks."  Since its introduction,
-   TCP has become the default connection-oriented, stream-based
+
 
 
 
@@ -226,6 +226,14 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 4]
 Internet-Draft               TAPS Transports                  April 2015
 
 
+3.1.  Transport Control Protocol (TCP)
+
+   TCP is an IETF standards track transport protocol.  [RFC0793]
+   introduces TCP as follows: "The Transmission Control Protocol (TCP)
+   is intended for use as a highly reliable host-to-host protocol
+   between hosts in packet-switched computer communication networks, and
+   in interconnected systems of such networks."  Since its introduction,
+   TCP has become the default connection-oriented, stream-based
    transport protocol in the Internet.  It is widely implemented by
    endpoints and widely used by common applications.
 
@@ -265,14 +273,6 @@ Internet-Draft               TAPS Transports                  April 2015
    window is reduced.  A receiver detects congestion using one of three
    mechanisms: A retransmission timer, detection of loss (interpreted as
    a congestion signal), or Explicit Congestion Notification (ECN)
-   [RFC3168] to provide early signaling (see
-   [I-D.ietf-aqm-ecn-benefits])
-
-   A TCP protocol instance can be extended [RFC4614] and tuned.  Some
-   features are sender-side only, requiring no negotiation with the
-   receiver; some are receiver-side only, some are explicitly negotiated
-   during connection setup.
-
 
 
 
@@ -281,6 +281,14 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 5]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   [RFC3168] to provide early signaling (see
+   [I-D.ietf-aqm-ecn-benefits])
+
+   A TCP protocol instance can be extended [RFC4614] and tuned.  Some
+   features are sender-side only, requiring no negotiation with the
+   receiver; some are receiver-side only, some are explicitly negotiated
+   during connection setup.
 
    By default, TCP segment partitioning uses Nagle's algorithm [RFC0896]
    to buffer data at the sender into large segments, potentially
@@ -323,20 +331,19 @@ Internet-Draft               TAPS Transports                  April 2015
 
    o  unicast
 
-   o  connection setup with feature negotiation and application-to-port
-      mapping
-
-   o  port multiplexing
-
-   o  reliable delivery
-
-
 
 
 Fairhurst, et al.        Expires October 3, 2015                [Page 6]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   o  connection setup with feature negotiation and application-to-port
+      mapping
+
+   o  port multiplexing
+
+   o  reliable delivery
 
    o  ordered delivery for each byte stream
 
@@ -379,13 +386,6 @@ Internet-Draft               TAPS Transports                  April 2015
    SCTP was originally developed for transporting telephony signalling
    messages and is deployed in telephony signalling networks, especially
    in mobile telephony networks.  Additionally, it is used in the WebRTC
-   framework for data channels and is therefore deployed in all WEB-
-   browsers supporting WebRTC.
-
-   [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
-   contributors for these sections.]
-
-
 
 
 
@@ -393,6 +393,12 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 7]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   framework for data channels and is therefore deployed in all WEB-
+   browsers supporting WebRTC.
+
+   [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
+   contributors for these sections.]
 
 3.3.1.  Protocol Description
 
@@ -436,12 +442,6 @@ Internet-Draft               TAPS Transports                  April 2015
    messages can be sent un-ordered or ordered upon request by the upper
    layer.  Un-ordered messages can be delivered as soon as they are
    completely received.  Only all ordered messages sent on the same
-   stream are delivered at the receiver in the same order as sent by the
-   sender.  For user messages not requiring fragmentation, this
-   minimises head of line blocking.  The base protocol defined in
-   [RFC4960] doesn't allow interleaving of user-messages, which results
-   in sending a large message on one stream can block the sending of
-   user messages on other streams.  [I-D.ietf-tsvwg-sctp-ndata]
 
 
 
@@ -450,6 +450,12 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 8]
 Internet-Draft               TAPS Transports                  April 2015
 
 
+   stream are delivered at the receiver in the same order as sent by the
+   sender.  For user messages not requiring fragmentation, this
+   minimises head of line blocking.  The base protocol defined in
+   [RFC4960] doesn't allow interleaving of user-messages, which results
+   in sending a large message on one stream can block the sending of
+   user messages on other streams.  [I-D.ietf-tsvwg-sctp-ndata]
    overcomes this limitation.  Furthermore, [I-D.ietf-tsvwg-sctp-ndata]
    specifies multiple algorithms for the sender side selection of which
    streams to send data from supporting a variety of scheduling
@@ -492,12 +498,6 @@ Internet-Draft               TAPS Transports                  April 2015
    For securing user messages, the use of TLS over SCTP has been
    specified in [RFC3436].  However, this solution does not support all
    services provided by SCTP (for example un-ordered delivery or partial
-   reliability), and therefore the use of DTLS over SCTP has been
-   specified in [RFC6083] to overcome these limitations.  When using
-   DTLS over SCTP, the application can use almost all services provided
-   by SCTP.
-
-
 
 
 
@@ -505,6 +505,11 @@ Fairhurst, et al.        Expires October 3, 2015                [Page 9]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   reliability), and therefore the use of DTLS over SCTP has been
+   specified in [RFC6083] to overcome these limitations.  When using
+   DTLS over SCTP, the application can use almost all services provided
+   by SCTP.
 
    [I-D.ietf-tsvwg-natsupp] defines a methods for end-hosts and
    middleboxes to provide for NAT support for SCTP over IPv4.  For
@@ -550,17 +555,17 @@ Internet-Draft               TAPS Transports                  April 2015
 
    The SCTP socket API supports two kinds of sockets:
 
-   o  one-to-one style sockets (by using the socket type "SOCK_STREAM").
-
-   o  one-to-many style socket (by using the socket type
-      "SOCK_SEQPACKET").
-
 
 
 Fairhurst, et al.        Expires October 3, 2015               [Page 10]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   o  one-to-one style sockets (by using the socket type "SOCK_STREAM").
+
+   o  one-to-many style socket (by using the socket type
+      "SOCK_SEQPACKET").
 
    One-to-one style sockets are similar to TCP sockets, there is a 1:1
    relationship between the sockets and the SCTP associations (except
@@ -605,11 +610,6 @@ Internet-Draft               TAPS Transports                  April 2015
 
    o  support for multiple concurrent streams
 
-   o  support for stream scheduling prioritization
-
-   o  flow control
-
-   o  message-oriented delivery
 
 
 
@@ -617,6 +617,12 @@ Fairhurst, et al.        Expires October 3, 2015               [Page 11]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   o  support for stream scheduling prioritization
+
+   o  flow control
+
+   o  message-oriented delivery
 
    o  congestion control
 
@@ -644,9 +650,6 @@ Internet-Draft               TAPS Transports                  April 2015
    use of UDP is provided in[RFC5405].  UDP is widely implemented and
    widely used by common applications, especially DNS.
 
-   [EDITOR'S NOTE: Kevin Fall signed up as a contributor for this
-   section.]
-
 3.4.1.  Protocol Description
 
    UDP is a connection-less protocol which maintains message boundaries,
@@ -663,9 +666,6 @@ Internet-Draft               TAPS Transports                  April 2015
    Messages with bit errors are ordinarily detected by an invalid end-
    to-end checksum and are discarded before being delivered to an
    application.  There are some exceptions to this general rule,
-   however.  UDP-Lite (see [RFC3828], and below) provides the ability
-   for portions of the message contents to be exempt from checksum
-   coverage.  It is also possible to create UDP datagrams with no
 
 
 
@@ -674,6 +674,9 @@ Fairhurst, et al.        Expires October 3, 2015               [Page 12]
 Internet-Draft               TAPS Transports                  April 2015
 
 
+   however.  UDP-Lite (see [RFC3828], and below) provides the ability
+   for portions of the message contents to be exempt from checksum
+   coverage.  It is also possible to create UDP datagrams with no
    checksum, and while this is generally discouraged [RFC1122]
    [RFC5405], certain special cases permit its use [RFC6935].  The
    checksum support considerations for omitting the checksum are defined
@@ -720,15 +723,14 @@ Internet-Draft               TAPS Transports                  April 2015
 
    o  2-tuple endpoints
 
-   o  IPv4 broadcast, multicast and anycast
-
-
 
 
 Fairhurst, et al.        Expires October 3, 2015               [Page 13]
 
 Internet-Draft               TAPS Transports                  April 2015
 
+
+   o  IPv4 broadcast, multicast and anycast
 
    o  IPv6 multicast and anycast
 
@@ -776,8 +778,6 @@ Internet-Draft               TAPS Transports                  April 2015
    As for UDP, mechanisms for receiver flow control, congestion control,
    PMTU or PLPMTU discovery, support for ECN, etc need to be provided by
    upper layer protocols [RFC5405].
-
-
 
 
 
@@ -978,30 +978,30 @@ Internet-Draft               TAPS Transports                  April 2015
    [EDITOR'S NOTE: Varun Singh signed up as contributor for this
    section.]
 
-3.8.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
+3.8.  NACK-Oriented Reliable Multicast (NORM)
 
-   pseudo transport
-
-   [NOTE: A few words on TLS [RFC5246] and DTLS [RFC6347] here, and how
-   they get used by other protocols to meet security goals as an add-on
-   interlayer above transport.]
+   NORM is an IETF standards track protocol specified in [RFC5740].  The
+   protocol was designed to support reliable bulk data dissemination to
+   receiver groups using IP Multicast but also provides for point-to-
+   point unicast operation.  Its support for bulk data dissemination
+   includes discrete file or computer memory-based "objects" as well as
+   byte- and message-streaming.  NORM is designed to incorporate packet
+   erasure coding as an inherent part of its selective ARQ in response
+   to receiver negative acknowledgements.  The packet erasure coding can
+   also be proactively applied for forward protection from packet loss.
+   NORM transmissions are governed by TCP-friendly congestion control.
+   NORM's reliability, congestion control, and flow control mechanism
+   are distinct components and can be separately controlled to meet
+   different application needs.
 
 3.8.1.  Protocol Description
 
-3.8.2.  Interface Description
-
-3.8.3.  Transport Protocol Components
-
-3.9.  Hypertext Transport Protocol (HTTP) as a pseudotransport
-
-   [RFC3205]
-
-   [EDITOR'S NOTE: No identified contributor for this section yet.]
-
-
-
-
-
+   The NORM protocol is encapsulated in UDP datagrams and thus provides
+   multiplexing for multiple sockets on hosts using port numbers.  For
+   purposes of loosely coordinated IP Multicast, NORM is not strictly
+   connection-oriented although per-sender state is maintained by
+   receivers for protocol operation.  [RFC5740] does not specify a
+   handshake protocol for connection establishment and separate session
 
 
 
@@ -1010,23 +1010,289 @@ Fairhurst, et al.        Expires October 3, 2015               [Page 18]
 Internet-Draft               TAPS Transports                  April 2015
 
 
+   initiation can be used to coordinate port numbers.  However, in-band
+   "client-server" style connection establishment can be accomplished
+   with the NORM congestion control signaling messages using port
+   binding techniques like those for TCP client-server connections.
+
+   The NORM transport model supports bulk "objects" such as file or in-
+   memory content but also can treat a stream of data as a logical bulk
+   object for purposes of packet erasure coding.  In the case of stream
+   transport, NORM can support either byte streams or message streams
+   where application-defined message boundary information is carried in
+   the NORM protocol messages.  This allows the receiver(s) to join/re-
+   join and recover message boundaries mid-stream as needed.
+   Application content is carried and identified by the NORM protocol
+   with encoding symbol identifiers depending upon the Forward Error
+   Correction (FEC) Scheme [RFC3452] configured.  NORM uses NACK-based
+   selective ARQ to reliably deliver the application content to the
+   receiver(s).  NORM proactively measures round-trip timing information
+   to scale ARQ timers appropriately and to support congestion control.
+   For multicast operation, timer-based feedback suppression is uses to
+   achieve group size scaling with low feedback traffic levels.  The
+   feedback suppression is not applied for unicast operation.
+
+   NORM uses rate-based congestion control based upon the TCP-Friendly
+   Rate Control (TFRC) [RFC4324] principles that are also used in DCCP
+   [RFC4340].  NORM uses control messages to measure RTT and collect
+   congestion event (e..g, loss event, ECN event, etc) information from
+   the receiver(s) to support dynamic rate control adjustment.  The TCP-
+   Friendly Multicast Congestion Conrol (TFMCC) [RFC4654] used provides
+   some extra features to support multicast but is functionally
+   equivalent to TFRC in the unicast case.  Because NORM's reliability
+   mechanism is decoupled from congestion control, alternative forms of
+   transport service can be invoked.  For example, fixed-rate reliable
+   delivery can be supported or unreliable (but optionally "better than
+   best effort" via packet erasure coding) delivery with rate-control
+   per TFRC can be achieved.  Additionally, alternative congestion
+   control techniques may be applied.  For example, TFRC rate control
+   with congestion event detection based on ECN for links with high
+   packet loss (e.g., wireless) has been implemented and demonstrated
+   with NORM.
+
+   While NORM is NACK-based for reliability transfer, it also supports a
+   postitive acknowledgment (ACK) mechanim that can be used for receiver
+   flow control.  Again, since this mechanism is decoupled from the
+   reliability and congestion control, applications that have different
+   needs in this aspect can use the protocol differently.  One example
+   is use of NORM for quasi-reliable delivery where timely delivery of
+   newer content may be favored over completely reliable deliver of
+   older contenet within buffering and RTT constraints.
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 19]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+3.8.2.  Interface Description
+
+   The NORM specification does not describe a specific application
+   programming interface (API) to control protocol operation.  A freely-
+   available, open source reference implementation of NORM is available
+   at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented
+   API is provided for this implementation.  While a sockets-like API is
+   not currently documented, the existing API supports the necessary
+   functions for that to be implemented.
+
+3.8.3.  Transport Protocol Components
+
+   The transport protocol components provided by NORM are:
+
+   o  unicast
+
+   o  multicast
+
+   o  port multiplexing
+
+   o  reliable delivery
+
+   o  ordered delivery for each byte or mesage stream
+
+   o  unordered delivery of in-memory data or file bulk content objects
+
+   o  error detection (UDP checksum)
+
+   o  segmentation
+
+   o  stream-oriented delivery in a single stream
+
+   o  object-oriented delivery of discrete data or file items
+
+   o  data bundling (Nagle's algorithm)
+
+   o  flow control (timer-based and/or ack-based)
+
+   o  congestion control
+
+   o  packet erasure coding both proactively and as part of ARQ
+
+3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
+
+   pseudo transport
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 20]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+   [NOTE: A few words on TLS [RFC5246] and DTLS [RFC6347] here, and how
+   they get used by other protocols to meet security goals as an add-on
+   interlayer above transport.]
+
 3.9.1.  Protocol Description
 
 3.9.2.  Interface Description
 
 3.9.3.  Transport Protocol Components
 
-3.10.  WebSockets
+3.10.  Hypertext Transport Protocol (HTTP) as a pseudotransport
+
+   Hypertext Transfer Protocol (HTTP) is an application-level protocol
+   widely use on the Internet.  Version 1.1 of the protocol is specified
+   in [RFC7230] [RFC7231] [RFC7232] [RFC7233] [RFC7234] [RFC7235], and
+   version 2 in [RFC7540].  Furthermore, HTTP is used as a substrate for
+   other application-layer protocols.  There are various reasons for
+   this practice listed in [RFC3205]; these include being a well-known
+   and well-understood protocol, reusability of existing servers and
+   client libraries, easy use of existing security mechanisms such as
+   HTTP digest authentication [RFC2617] and TLS [RFC5246], the ability
+   of HTTP to traverse firewalls which makes it work with a lot of
+   infrastructure, and cases where a application server often needs to
+   support HTTP anyway.
+
+   Depending on application's needs, the use of HTTP as a substrate
+   protocol may add complexity and overhead in comparison to a special-
+   purpose protocol (e.g.  HTTP headers, suitability of the HTTP
+   security model etc.).  [RFC3205] address this issues and provides
+   some guidelines and concerns about the use of HTTP standard port 80
+   and 443, the use of HTTP URL scheme and interaction with existing
+   firewalls, proxies and NATs.
+
+3.10.1.  Protocol Description
+
+   Hypertext Transfer Protocol (HTTP) is a request/response protocol.  A
+   client sends a request containing a request method, URI and protocol
+   version followed by a MIME-like message (see [RFC7231] for the
+   differences between an HTTP object and a MIME message), containing
+   information about the client and request modifiers.  The message can
+   contain a message body carrying application data as well.  The server
+   responds with a status or error code followed by a MIME-like message
+   containing information about the server and information about carried
+   data and it can include a message body.  It is possible to specify a
+   data format for the message body using MIME media types [RFC2045].
+   Furthermore, the protocol has numerous additional features; features
+   relevant to pseudotransport are described below.
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 21]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+   Content negotiation, specified in [RFC7231], is a mechanism provided
+   by HTTP for selecting a representation on a requested resource.  The
+   client and server negotiate acceptable data formats, charsets, data
+   encoding (e.g. data can be transferred compressed, gzip), etc.  HTTP
+   can accommodate exchange of messages as well as data streaming (using
+   chunked transfer encoding [RFC7230]).  It is also possible to request
+   a part of a resource using range requests specified in [RFC7233].
+   The protocol provides powerful cache control signalling defined in
+   [RFC7234].
+
+   HTTP 1.1's and HTTP 2.0's persistent connections can be use to
+   perform multiple request-response transactions during the life-time
+   of a single HTTP connection.  Moreover, HTTP 2.0 connections can
+   multiplex many request/response pairs in parallel on a single
+   connection.  This reduces connection establishment overhead and the
+   effect of TCP slow-start on each transaction, important for HTTP's
+   primary use case.
+
+   HTTP usually runs over TCP and inherits its properties (e.g.
+   reliability, congestion controlled etc.).  It is possible to combine
+   HTTP with security mechanisms, like TLS (denoted by HTTPS), which
+   adds protocol properties provided by such a mechanism (e.g.
+   authentication, encryption, etc.).  TLS's Application-Layer Protocol
+   Negotiation (ALPN) extension [RFC7301] can be used for HTTP version
+   negotiation within TLS handshake which eliminates addition round-
+   trip.  Arbitrary cookie strings, included as part of the MIME
+   headers, are often used as bearer tokens in HTTP.
+
+   Application layer protocols using HTTP as substrate may use existing
+   method and data formats, or specify new methods and data formats.
+   Furthermore some protocols may not fit a request/response paradigm
+   and instead rely on HTTP to send messages (e.g.  [RFC6546]).  Because
+   HTTP is working in many restricted infrastructures, it is also used
+   to tunnel other application-layer protocols.
+
+3.10.2.  Interface Description
+
+   There are many HTTP libraries available exposing different APIs.  The
+   APIs provide a way to specify a request by providing a URI, a method,
+   request modifiers and optionally a request body.  For the response,
+   callbacks can be registered that will be invoked when the response is
+   received.  If TLS is used, API expose a registration of callbacks in
+   case a server requests client authentication and when certificate
+   verification is needed.
+
+   World Wide Web Consortium (W3C) standardized the XMLHttpRequest API
+   [XHR], an API that can be use for sending HTTP/HTTPS requests and
+   receiving server responses.  Besides XML data format, request and
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 22]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+   response data format can also be JSON, HTML and plain text.
+   Specifically JavaScript and XMLHttpRequest are a ubiquitous
+   programming model for websites, and more general applications, where
+   native code is less attractive.
+
+   Representational State Transfer (REST) [REST] is another example how
+   applications can use HTTP as transport protocol.  REST is an
+   architecture style for building application on the Internet.  It uses
+   HTTP as a communication protocol.
+
+3.10.3.  Transport Protocol Components
+
+   The transport protocol components provided by HTTP, when used as a
+   pseudotransport, are:
+
+   o  unicast
+
+   o  reliable delivery
+
+   o  ordered delivery
+
+   o  message and stream-oriented
+
+   o  object range request
+
+   o  message content type negotiation
+
+   o  congestion control
+
+   HTTPS (HTTP over TLS) additionally provides the following components:
+
+   o  authentication (of one or both ends of a connection)
+
+   o  confidentiality
+
+   o  integrity protection
+
+3.11.  WebSockets
 
    [RFC6455]
 
    [EDITOR'S NOTE: No identified contributor for this section yet.]
 
-3.10.1.  Protocol Description
+3.11.1.  Protocol Description
 
-3.10.2.  Interface Description
 
-3.10.3.  Transport Protocol Components
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 23]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+3.11.2.  Interface Description
+
+3.11.3.  Transport Protocol Components
 
 4.  Transport Service Features
 
@@ -1061,7 +1327,21 @@ Internet-Draft               TAPS Transports                  April 2015
 
 
 
-Fairhurst, et al.        Expires October 3, 2015               [Page 19]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 24]
 
 Internet-Draft               TAPS Transports                  April 2015
 
@@ -1117,7 +1397,7 @@ Internet-Draft               TAPS Transports                  April 2015
 
 
 
-Fairhurst, et al.        Expires October 3, 2015               [Page 20]
+Fairhurst, et al.        Expires October 3, 2015               [Page 25]
 
 Internet-Draft               TAPS Transports                  April 2015
 
@@ -1149,6 +1429,12 @@ Internet-Draft               TAPS Transports                  April 2015
    o  Section 3.3 on SCTP was contributed by Michael Tuexen (tuexen@fh-
       muenster.de)
 
+   o  Section 3.8 on NORM was contributed by Brian Adamson
+      (brian.adamson@nrl.navy.mil)
+
+   o  Section 3.10 on HTTP was contributed by Dragana Damjanovic
+      (ddamjanovic@mozilla.com)
+
 8.  Acknowledgments
 
    This work is partially supported by the European Commission under
@@ -1162,6 +1448,16 @@ Internet-Draft               TAPS Transports                  April 2015
    [RFC0791]  Postel, J., "Internet Protocol", STD 5, RFC 791, September
               1981.
 
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 26]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
 9.2.  Informative References
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
@@ -1169,14 +1465,6 @@ Internet-Draft               TAPS Transports                  April 2015
 
    [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
               793, September 1981.
-
-
-
-
-Fairhurst, et al.        Expires October 3, 2015               [Page 21]
-
-Internet-Draft               TAPS Transports                  April 2015
-
 
    [RFC0896]  Nagle, J., "Congestion control in IP/TCP internetworks",
               RFC 896, January 1984.
@@ -1193,8 +1481,17 @@ Internet-Draft               TAPS Transports                  April 2015
    [RFC2018]  Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, "TCP
               Selective Acknowledgment Options", RFC 2018, October 1996.
 
+   [RFC2045]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
+              Extensions (MIME) Part One: Format of Internet Message
+              Bodies", RFC 2045, November 1996.
+
    [RFC2460]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
               (IPv6) Specification", RFC 2460, December 1998.
+
+   [RFC2617]  Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S.,
+              Leach, P., Luotonen, A., and L. Stewart, "HTTP
+              Authentication: Basic and Digest Access Authentication",
+              RFC 2617, June 1999.
 
    [RFC3168]  Ramakrishnan, K., Floyd, S., and D. Black, "The Addition
               of Explicit Congestion Notification (ECN) to IP", RFC
@@ -1210,6 +1507,17 @@ Internet-Draft               TAPS Transports                  April 2015
               Layer Security over Stream Control Transmission Protocol",
               RFC 3436, December 2002.
 
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 27]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
+   [RFC3452]  Luby, M., Vicisano, L., Gemmell, J., Rizzo, L., Handley,
+              M., and J. Crowcroft, "Forward Error Correction (FEC)
+              Building Block", RFC 3452, December 2002.
+
    [RFC3758]  Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., and P.
               Conrad, "Stream Control Transmission Protocol (SCTP)
               Partial Reliability Extension", RFC 3758, May 2004.
@@ -1218,21 +1526,15 @@ Internet-Draft               TAPS Transports                  April 2015
               G. Fairhurst, "The Lightweight User Datagram Protocol
               (UDP-Lite)", RFC 3828, July 2004.
 
+   [RFC4324]  Royer, D., Babics, G., and S. Mansour, "Calendar Access
+              Protocol (CAP)", RFC 4324, December 2005.
+
    [RFC4336]  Floyd, S., Handley, M., and E. Kohler, "Problem Statement
               for the Datagram Congestion Control Protocol (DCCP)", RFC
               4336, March 2006.
 
    [RFC4340]  Kohler, E., Handley, M., and S. Floyd, "Datagram
               Congestion Control Protocol (DCCP)", RFC 4340, March 2006.
-
-
-
-
-
-Fairhurst, et al.        Expires October 3, 2015               [Page 22]
-
-Internet-Draft               TAPS Transports                  April 2015
-
 
    [RFC4341]  Floyd, S. and E. Kohler, "Profile for Datagram Congestion
               Control Protocol (DCCP) Congestion Control ID 2: TCP-like
@@ -1247,12 +1549,26 @@ Internet-Draft               TAPS Transports                  April 2015
               for Transmission Control Protocol (TCP) Specification
               Documents", RFC 4614, September 2006.
 
+   [RFC4654]  Widmer, J. and M. Handley, "TCP-Friendly Multicast
+              Congestion Control (TFMCC): Protocol Specification", RFC
+              4654, August 2006.
+
    [RFC4820]  Tuexen, M., Stewart, R., and P. Lei, "Padding Chunk and
               Parameter for the Stream Control Transmission Protocol
               (SCTP)", RFC 4820, March 2007.
 
    [RFC4821]  Mathis, M. and J. Heffner, "Packetization Layer Path MTU
               Discovery", RFC 4821, March 2007.
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 28]
+
+Internet-Draft               TAPS Transports                  April 2015
+
 
    [RFC4895]  Tuexen, M., Stewart, R., Lei, P., and E. Rescorla,
               "Authenticated Chunks for the Stream Control Transmission
@@ -1283,13 +1599,6 @@ Internet-Draft               TAPS Transports                  April 2015
    [RFC5595]  Fairhurst, G., "The Datagram Congestion Control Protocol
               (DCCP) Service Codes", RFC 5595, September 2009.
 
-
-
-Fairhurst, et al.        Expires October 3, 2015               [Page 23]
-
-Internet-Draft               TAPS Transports                  April 2015
-
-
    [RFC5596]  Fairhurst, G., "Datagram Congestion Control Protocol
               (DCCP) Simultaneous-Open Technique to Facilitate NAT/
               Middlebox Traversal", RFC 5596, September 2009.
@@ -1302,9 +1611,20 @@ Internet-Draft               TAPS Transports                  April 2015
    [RFC5672]  Crocker, D., "RFC 4871 DomainKeys Identified Mail (DKIM)
               Signatures -- Update", RFC 5672, August 2009.
 
+   [RFC5740]  Adamson, B., Bormann, C., Handley, M., and J. Macker,
+              "NACK-Oriented Reliable Multicast (NORM) Transport
+              Protocol", RFC 5740, November 2009.
+
    [RFC6773]  Phelan, T., Fairhurst, G., and C. Perkins, "DCCP-UDP: A
               Datagram Congestion Control Protocol UDP Encapsulation for
               NAT Traversal", RFC 6773, November 2012.
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 29]
+
+Internet-Draft               TAPS Transports                  April 2015
+
 
    [RFC5925]  Touch, J., Mankin, A., and R. Bonica, "The TCP
               Authentication Option", RFC 5925, June 2010.
@@ -1323,6 +1643,10 @@ Internet-Draft               TAPS Transports                  April 2015
               Transmission Protocol (SCTP) Stream Reconfiguration", RFC
               6525, February 2012.
 
+   [RFC6546]  Trammell, B., "Transport of Real-time Inter-network
+              Defense (RID) Messages over HTTP/TLS", RFC 6546, April
+              2012.
+
    [RFC6298]  Paxson, V., Allman, M., Chu, J., and M. Sargent,
               "Computing TCP's Retransmission Timer", RFC 6298, June
               2011.
@@ -1336,15 +1660,6 @@ Internet-Draft               TAPS Transports                  April 2015
 
    [RFC6455]  Fette, I. and A. Melnikov, "The WebSocket Protocol", RFC
               6455, December 2011.
-
-
-
-
-
-Fairhurst, et al.        Expires October 3, 2015               [Page 24]
-
-Internet-Draft               TAPS Transports                  April 2015
-
 
    [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
               Security Version 1.2", RFC 6347, January 2012.
@@ -1360,6 +1675,13 @@ Internet-Draft               TAPS Transports                  April 2015
               "TCP Extensions for Multipath Operation with Multiple
               Addresses", RFC 6824, January 2013.
 
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 30]
+
+Internet-Draft               TAPS Transports                  April 2015
+
+
    [RFC6951]  Tuexen, M. and R. Stewart, "UDP Encapsulation of Stream
               Control Transmission Protocol (SCTP) Packets for End-Host
               to End-Host Communication", RFC 6951, May 2013.
@@ -1368,14 +1690,53 @@ Internet-Draft               TAPS Transports                  April 2015
               IMMEDIATELY Extension for the Stream Control Transmission
               Protocol", RFC 7053, November 2013.
 
+   [RFC7230]  Fielding, R. and J. Reschke, "Hypertext Transfer Protocol
+              (HTTP/1.1): Message Syntax and Routing", RFC 7230, June
+              2014.
+
+   [RFC7231]  Fielding, R. and J. Reschke, "Hypertext Transfer Protocol
+              (HTTP/1.1): Semantics and Content", RFC 7231, June 2014.
+
+   [RFC7232]  Fielding, R. and J. Reschke, "Hypertext Transfer Protocol
+              (HTTP/1.1): Conditional Requests", RFC 7232, June 2014.
+
+   [RFC7233]  Fielding, R., Lafon, Y., and J. Reschke, "Hypertext
+              Transfer Protocol (HTTP/1.1): Range Requests", RFC 7233,
+              June 2014.
+
+   [RFC7234]  Fielding, R., Nottingham, M., and J. Reschke, "Hypertext
+              Transfer Protocol (HTTP/1.1): Caching", RFC 7234, June
+              2014.
+
+   [RFC7235]  Fielding, R. and J. Reschke, "Hypertext Transfer Protocol
+              (HTTP/1.1): Authentication", RFC 7235, June 2014.
+
+   [RFC7301]  Friedl, S., Popov, A., Langley, A., and E. Stephan,
+              "Transport Layer Security (TLS) Application-Layer Protocol
+              Negotiation Extension", RFC 7301, July 2014.
+
    [RFC7323]  Borman, D., Braden, B., Jacobson, V., and R.
               Scheffenegger, "TCP Extensions for High Performance", RFC
               7323, September 2014.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, "Hypertext Transfer
+              Protocol Version 2 (HTTP/2)", RFC 7540, May 2015.
 
    [I-D.ietf-aqm-ecn-benefits]
               Welzl, M. and G. Fairhurst, "The Benefits and Pitfalls of
               using Explicit Congestion Notification (ECN)", draft-ietf-
               aqm-ecn-benefits-00 (work in progress), October 2014.
+
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 31]
+
+Internet-Draft               TAPS Transports                  April 2015
+
 
    [I-D.ietf-tsvwg-sctp-dtls-encaps]
               Tuexen, M., Stewart, R., Jesup, R., and S. Loreto, "DTLS
@@ -1395,18 +1756,19 @@ Internet-Draft               TAPS Transports                  April 2015
               Stream Control Transmission Protocol", draft-ietf-tsvwg-
               sctp-ndata-03 (work in progress), March 2015.
 
-
-
-Fairhurst, et al.        Expires October 3, 2015               [Page 25]
-
-Internet-Draft               TAPS Transports                  April 2015
-
-
    [I-D.ietf-tsvwg-natsupp]
               Stewart, R., Tuexen, M., and I. Ruengeler, "Stream Control
               Transmission Protocol (SCTP) Network Address Translation
               Support", draft-ietf-tsvwg-natsupp-07 (work in progress),
               February 2015.
+
+   [XHR]      van Kesteren, A., Aubourg, J., Song, J., and H. Steen,
+              "XMLHttpRequest working draft
+              (http://www.w3.org/TR/XMLHttpRequest/)", 2000.
+
+   [REST]     Fielding, R., "Architectural Styles and the Design of
+              Network-based Software Architectures, Ph. D. (UC Irvune),
+              Chapter 5: Representational State Transfer", 2000.
 
 Authors' Addresses
 
@@ -1416,6 +1778,20 @@ Authors' Addresses
    Aberdeen AB24 3UE
 
    Email: gorry@erg.abdn.ac.uk
+
+
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 32]
+
+Internet-Draft               TAPS Transports                  April 2015
 
 
    Brian Trammell (editor)
@@ -1453,4 +1829,20 @@ Authors' Addresses
 
 
 
-Fairhurst, et al.        Expires October 3, 2015               [Page 26]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fairhurst, et al.        Expires October 3, 2015               [Page 33]

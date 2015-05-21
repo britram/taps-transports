@@ -11,18 +11,23 @@
 <!ENTITY RFC1191 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.1191.xml">
 <!ENTITY RFC1981 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.1981.xml">
 <!ENTITY RFC2018 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2018.xml">
+<!ENTITY RFC2045 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2045.xml">
 <!ENTITY RFC2460 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2460.xml">
+<!ENTITY RFC2617 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2617.xml">
 <!ENTITY RFC3168 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3168.xml">
 <!ENTITY RFC3205 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3205.xml">
 <!ENTITY RFC3390 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3390.xml">
 <!ENTITY RFC3436 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3436.xml">
+<!ENTITY RFC3452 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3452.xml">
 <!ENTITY RFC3758 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3758.xml">
 <!ENTITY RFC3828 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3828.xml">
+<!ENTITY RFC4324 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4324.xml">
 <!ENTITY RFC4336 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4336.xml">
 <!ENTITY RFC4340 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4340.xml">
 <!ENTITY RFC4341 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4341.xml">
 <!ENTITY RFC4342 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4342.xml">
 <!ENTITY RFC4614 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4614.xml">
+<!ENTITY RFC4654 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4654.xml">
 <!ENTITY RFC4820 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4820.xml">
 <!ENTITY RFC4821 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4821.xml">
 <!ENTITY RFC4895 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4895.xml">
@@ -36,12 +41,14 @@
 <!ENTITY RFC5596 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5596.xml">
 <!ENTITY RFC5662 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5662.xml">
 <!ENTITY RFC5672 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5672.xml">
+<!ENTITY RFC5740 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5740.xml">
 <!ENTITY RFC6773 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6773.xml">
 <!ENTITY RFC5925 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5925.xml">
 <!ENTITY RFC5681 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5681.xml">
 <!ENTITY RFC6083 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6083.xml">
 <!ENTITY RFC6093 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6093.xml">
 <!ENTITY RFC6525 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6525.xml">
+<!ENTITY RFC6546 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6546.xml">
 <!ENTITY RFC6298 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6298.xml">
 <!ENTITY RFC6935 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6935.xml">
 <!ENTITY RFC6936 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6936.xml">
@@ -58,6 +65,7 @@
 <!ENTITY RFC7233 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7233.xml">
 <!ENTITY RFC7234 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7234.xml">
 <!ENTITY RFC7235 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7235.xml">
+<!ENTITY RFC7301 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7301.xml">
 <!ENTITY RFC7323 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7323.xml">
 <!ENTITY RFC7540 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7540.xml">
 <!ENTITY I-D.ietf-aqm-ecn-benefits SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-aqm-ecn-benefits.xml">
@@ -811,6 +819,49 @@ UDP-Lite, DCCP.</t>
 <t>[EDITOR’S NOTE: Varun Singh signed up as contributor for this section.]</t>
 
 </section>
+<section anchor="nack-oriented-reliable-multicast-norm" title="NACK-Oriented Reliable Multicast (NORM)">
+
+<t>NORM is an IETF standards track protocol specified in <xref target="RFC5740"/>. The protocol was designed to support reliable bulk data dissemination to receiver groups using IP Multicast but also provides for point-to-point unicast operation. Its support for bulk data dissemination includes discrete file or computer memory-based “objects” as well as byte- and message-streaming. NORM is designed to incorporate packet erasure coding as an inherent part of its selective ARQ in response to receiver negative acknowledgements. The packet erasure coding can also be proactively applied for forward protection from packet loss. NORM transmissions are governed by TCP-friendly congestion control. NORM’s reliability, congestion control, and flow control mechanism are distinct components and can be separately controlled to meet different application needs.</t>
+
+<section anchor="protocol-description-5" title="Protocol Description">
+
+<t>The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For purposes of loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation. <xref target="RFC5740"/> does not specify a handshake protocol for connection establishment and separate session initiation can be used to coordinate port numbers. However, in-band “client-server” style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.</t>
+
+<t>The NORM transport model supports bulk “objects” such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme <xref target="RFC3452"/> configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.</t>
+
+<t>NORM uses rate-based congestion control based upon the TCP-Friendly Rate Control (TFRC) <xref target="RFC4324"/> principles that are also used in DCCP <xref target="RFC4340"/>. NORM uses control messages to measure RTT and collect congestion event (e..g, loss event, ECN event, etc) information from the receiver(s) to support dynamic rate control adjustment. The TCP-Friendly Multicast Congestion Conrol (TFMCC) <xref target="RFC4654"/> used provides some extra features to support multicast but is functionally equivalent to TFRC in the unicast case. Because NORM’s reliability mechanism is decoupled from congestion control, alternative forms of transport service can be invoked. For example, fixed-rate reliable delivery can be supported or unreliable (but optionally “better than best effort” via packet erasure coding) delivery with rate-control per TFRC can be achieved. Additionally, alternative congestion control techniques may be applied. For example, TFRC rate control with congestion event detection based on ECN for links with high packet loss (e.g., wireless) has been implemented and demonstrated with NORM.</t>
+
+<t>While NORM is NACK-based for reliability transfer, it also supports a postitive acknowledgment (ACK) mechanim that can be used for receiver flow control. Again, since this mechanism is decoupled from the reliability and congestion control, applications that have different needs in this aspect can use the protocol differently. One example is use of NORM for quasi-reliable delivery where timely delivery of newer content may be favored over completely reliable deliver of older contenet within buffering and RTT constraints.</t>
+
+</section>
+<section anchor="interface-description-5" title="Interface Description">
+
+<t>The NORM specification does not describe a specific application programming interface (API) to control protocol operation. A freely-available, open source reference implementation of NORM is available at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented API is provided for this implementation. While a sockets-like API is not currently documented, the existing API supports the necessary functions for that to be implemented.</t>
+
+</section>
+<section anchor="transport-protocol-components-5" title="Transport Protocol Components">
+
+<t>The transport protocol components provided by NORM are:</t>
+
+<t><list style="symbols">
+  <t>unicast</t>
+  <t>multicast</t>
+  <t>port multiplexing</t>
+  <t>reliable delivery</t>
+  <t>ordered delivery for each byte or mesage stream</t>
+  <t>unordered delivery of in-memory data or file bulk content objects</t>
+  <t>error detection (UDP checksum)</t>
+  <t>segmentation</t>
+  <t>stream-oriented delivery in a single stream</t>
+  <t>object-oriented delivery of discrete data or file items</t>
+  <t>data bundling (Nagle’s algorithm)</t>
+  <t>flow control (timer-based and/or ack-based)</t>
+  <t>congestion control</t>
+  <t>packet erasure coding both proactively and as part of ARQ</t>
+</list></t>
+
+</section>
+</section>
 <section anchor="transport-layer-security-tls-and-datagram-tls-dtls-as-a" title="Transport Layer Security (TLS) and Datagram TLS (DTLS) as a">
 <t>pseudo transport</t>
 
@@ -818,23 +869,23 @@ UDP-Lite, DCCP.</t>
 and how they get used by other protocols to meet security
 goals as an add-on interlayer above transport.]</t>
 
-<section anchor="protocol-description-5" title="Protocol Description">
+<section anchor="protocol-description-6" title="Protocol Description">
 
 </section>
-<section anchor="interface-description-5" title="Interface Description">
+<section anchor="interface-description-6" title="Interface Description">
 
 </section>
-<section anchor="transport-protocol-components-5" title="Transport Protocol Components">
+<section anchor="transport-protocol-components-6" title="Transport Protocol Components">
 
 </section>
 </section>
 <section anchor="hypertext-transport-protocol-http-as-a-pseudotransport" title="Hypertext Transport Protocol (HTTP) as a pseudotransport">
 
-<t>Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in <xref target="RFC7230"/> <xref target="RFC7231"/> <xref target="RFC7232"/> <xref target="RFC7233"/> <xref target="RFC7234"/> <xref target="RFC7235"/>, and version 2 in <xref target="RFC7540"/>. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in <xref target="RFC3205"/>; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication <xref target="RFC 2617"/> and TLS <xref target="RFC 5246"/>, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.</t>
+<t>Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in <xref target="RFC7230"/> <xref target="RFC7231"/> <xref target="RFC7232"/> <xref target="RFC7233"/> <xref target="RFC7234"/> <xref target="RFC7235"/>, and version 2 in <xref target="RFC7540"/>. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in <xref target="RFC3205"/>; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication <xref target="RFC2617"/> and TLS <xref target="RFC5246"/>, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.</t>
 
 <t>Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). <xref target="RFC3205"/> address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.</t>
 
-<section anchor="protocol-description-6" title="Protocol Description">
+<section anchor="protocol-description-7" title="Protocol Description">
 
 <t>Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client sends a request containing a request method, URI and protocol version followed by a MIME-like message (see <xref target="RFC7231"/> for the differences between an HTTP object and a MIME message), containing information about the client and request modifiers. The message can contain a message body carrying application data as well. The server responds with a status or error code followed by a MIME-like message containing information about the server and information about carried data and it can include a message body. It is possible to specify a data format for the message body using MIME media types <xref target="RFC2045"/>. Furthermore, the protocol has numerous additional features; features relevant to pseudotransport are described below.</t>
 
@@ -847,7 +898,7 @@ goals as an add-on interlayer above transport.]</t>
 <t>Application layer protocols using HTTP as substrate may use existing method and data formats, or specify new methods and data formats. Furthermore some protocols may not fit a request/response paradigm and instead rely on HTTP to send messages (e.g. <xref target="RFC6546"/>). Because HTTP is working in many restricted infrastructures, it is also used to tunnel other application-layer protocols.</t>
 
 </section>
-<section anchor="interface-description-6" title="Interface Description">
+<section anchor="interface-description-7" title="Interface Description">
 
 <t>There are many HTTP libraries available exposing different APIs. The APIs provide a way to specify a request by providing a URI, a method, request modifiers and optionally a request body. For the response, callbacks can be registered that will be invoked when the response is received. If TLS is used, API expose a registration of callbacks in case a server requests client authentication and when certificate verification is needed.</t>
 
@@ -856,7 +907,7 @@ goals as an add-on interlayer above transport.]</t>
 <t>Representational State Transfer (REST) <xref target="REST"/> is another example how applications can use HTTP as transport protocol. REST is an architecture style for building application on the Internet. It uses HTTP as a communication protocol.</t>
 
 </section>
-<section anchor="transport-protocol-components-6" title="Transport Protocol Components">
+<section anchor="transport-protocol-components-7" title="Transport Protocol Components">
 
 <t>The transport protocol components provided by HTTP, when used as a pseudotransport, are:</t>
 
@@ -886,13 +937,13 @@ goals as an add-on interlayer above transport.]</t>
 
 <t>[EDITOR’S NOTE: No identified contributor for this section yet.]</t>
 
-<section anchor="protocol-description-7" title="Protocol Description">
+<section anchor="protocol-description-8" title="Protocol Description">
 
 </section>
-<section anchor="interface-description-7" title="Interface Description">
+<section anchor="interface-description-8" title="Interface Description">
 
 </section>
-<section anchor="transport-protocol-components-7" title="Transport Protocol Components">
+<section anchor="transport-protocol-components-8" title="Transport Protocol Components">
 
 </section>
 </section>
@@ -1083,6 +1134,7 @@ previous section – please discuss on taps@ietf.org list]</t>
 <t><list style="symbols">
   <t><xref target="user-datagram-protocol-udp"/> on UDP was contributed by Kevin Fall (kfall@kfall.com)</t>
   <t><xref target="stream-control-transmission-protocol-sctp"/> on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)</t>
+  <t><xref target="nack-oriented-reliable-multicast-norm"/> on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)</t>
   <t><xref target="hypertext-transport-protocol-http-as-a-pseudotransport"/> on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)</t>
 </list></t>
 
@@ -1115,18 +1167,23 @@ agreement FP7-ICT-318627 mPlane; support does not imply endorsement.</t>
 &RFC1191;
 &RFC1981;
 &RFC2018;
+&RFC2045;
 &RFC2460;
+&RFC2617;
 &RFC3168;
 &RFC3205;
 &RFC3390;
 &RFC3436;
+&RFC3452;
 &RFC3758;
 &RFC3828;
+&RFC4324;
 &RFC4336;
 &RFC4340;
 &RFC4341;
 &RFC4342;
 &RFC4614;
+&RFC4654;
 &RFC4820;
 &RFC4821;
 &RFC4895;
@@ -1140,12 +1197,14 @@ agreement FP7-ICT-318627 mPlane; support does not imply endorsement.</t>
 &RFC5596;
 &RFC5662;
 &RFC5672;
+&RFC5740;
 &RFC6773;
 &RFC5925;
 &RFC5681;
 &RFC6083;
 &RFC6093;
 &RFC6525;
+&RFC6546;
 &RFC6298;
 &RFC6935;
 &RFC6936;
@@ -1162,6 +1221,7 @@ agreement FP7-ICT-318627 mPlane; support does not imply endorsement.</t>
 &RFC7233;
 &RFC7234;
 &RFC7235;
+&RFC7301;
 &RFC7323;
 &RFC7540;
 &I-D.ietf-aqm-ecn-benefits;
@@ -1182,6 +1242,15 @@ agreement FP7-ICT-318627 mPlane; support does not imply endorsement.</t>
       <organization></organization>
     </author>
     <author initials="H.R.M." surname="Steen">
+      <organization></organization>
+    </author>
+    <date year="2000"/>
+  </front>
+</reference>
+<reference anchor="REST" >
+  <front>
+    <title>Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvune), Chapter 5: Representational State Transfer</title>
+    <author initials="R.T." surname="Fielding">
       <organization></organization>
     </author>
     <date year="2000"/>

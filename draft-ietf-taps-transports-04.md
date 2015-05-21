@@ -46,18 +46,23 @@ informative:
   RFC1191:
   RFC1981:
   RFC2018:
+  RFC2045:
   RFC2460:
+  RFC2617:
   RFC3168:
   RFC3205:
   RFC3390:
   RFC3436:
+  RFC3452:
   RFC3758:
   RFC3828:
+  RFC4324:
   RFC4336:
   RFC4340:
   RFC4341:
   RFC4342:
   RFC4614:
+  RFC4654:
   RFC4820:
   RFC4821:
   RFC4895:
@@ -71,12 +76,14 @@ informative:
   RFC5596:
   RFC5662:
   RFC5672:
+  RFC5740:
   RFC6773:
   RFC5925:
   RFC5681:
   RFC6083:
   RFC6093:
   RFC6525:
+  RFC6546:
   RFC6298:
   RFC6935:
   RFC6936:
@@ -93,6 +100,7 @@ informative:
   RFC7233:
   RFC7234:
   RFC7235:
+  RFC7301:
   RFC7323:
   RFC7540:
   I-D.ietf-aqm-ecn-benefits:
@@ -112,12 +120,12 @@ informative:
       -
         ins: H. R. M. Steen
     date: 2000
-    REST:
-      title: "Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvune), Chapter 5: Representational State Transfer"
-      author:
-        -
-          ins: R. T. Fielding
-      date: 2000  
+  REST:
+    title: "Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvune), Chapter 5: Representational State Transfer"
+    author:
+      -
+        ins: R. T. Fielding
+    date: 2000  
 
 --- abstract
 
@@ -773,6 +781,43 @@ UDP-Lite, DCCP.
 
 [EDITOR'S NOTE: Varun Singh signed up as contributor for this section.]
 
+## NACK-Oriented Reliable Multicast (NORM)
+
+NORM is an IETF standards track protocol specified in {{RFC5740}}. The protocol was designed to support reliable bulk data dissemination to receiver groups using IP Multicast but also provides for point-to-point unicast operation. Its support for bulk data dissemination includes discrete file or computer memory-based "objects" as well as byte- and message-streaming. NORM is designed to incorporate packet erasure coding as an inherent part of its selective ARQ in response to receiver negative acknowledgements. The packet erasure coding can also be proactively applied for forward protection from packet loss. NORM transmissions are governed by TCP-friendly congestion control. NORM's reliability, congestion control, and flow control mechanism are distinct components and can be separately controlled to meet different application needs.
+
+### Protocol Description
+
+The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For purposes of loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation. {{RFC5740}} does not specify a handshake protocol for connection establishment and separate session initiation can be used to coordinate port numbers. However, in-band "client-server" style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.
+
+The NORM transport model supports bulk "objects" such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme {{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.
+
+NORM uses rate-based congestion control based upon the TCP-Friendly Rate Control (TFRC) {{RFC4324}} principles that are also used in DCCP {{RFC4340}}. NORM uses control messages to measure RTT and collect congestion event (e..g, loss event, ECN event, etc) information from the receiver(s) to support dynamic rate control adjustment. The TCP-Friendly Multicast Congestion Conrol (TFMCC) {{RFC4654}} used provides some extra features to support multicast but is functionally equivalent to TFRC in the unicast case. Because NORM's reliability mechanism is decoupled from congestion control, alternative forms of transport service can be invoked. For example, fixed-rate reliable delivery can be supported or unreliable (but optionally "better than best effort" via packet erasure coding) delivery with rate-control per TFRC can be achieved. Additionally, alternative congestion control techniques may be applied. For example, TFRC rate control with congestion event detection based on ECN for links with high packet loss (e.g., wireless) has been implemented and demonstrated with NORM.
+
+While NORM is NACK-based for reliability transfer, it also supports a postitive acknowledgment (ACK) mechanim that can be used for receiver flow control. Again, since this mechanism is decoupled from the reliability and congestion control, applications that have different needs in this aspect can use the protocol differently. One example is use of NORM for quasi-reliable delivery where timely delivery of newer content may be favored over completely reliable deliver of older contenet within buffering and RTT constraints.
+
+### Interface Description
+
+The NORM specification does not describe a specific application programming interface (API) to control protocol operation. A freely-available, open source reference implementation of NORM is available at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented API is provided for this implementation. While a sockets-like API is not currently documented, the existing API supports the necessary functions for that to be implemented.
+
+### Transport Protocol Components
+
+The transport protocol components provided by NORM are:
+
+- unicast
+- multicast
+- port multiplexing
+- reliable delivery
+- ordered delivery for each byte or mesage stream
+- unordered delivery of in-memory data or file bulk content objects
+- error detection (UDP checksum)
+- segmentation
+- stream-oriented delivery in a single stream
+- object-oriented delivery of discrete data or file items
+- data bundling (Nagle’s algorithm)
+- flow control (timer-based and/or ack-based)
+- congestion control
+- packet erasure coding both proactively and as part of ARQ
+
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
 pseudo transport
 
@@ -788,7 +833,7 @@ goals as an add-on interlayer above transport.]
 
 ## Hypertext Transport Protocol (HTTP) as a pseudotransport
 
-Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC 2617}} and TLS {{RFC 5246}}, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.
+Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.
 
 Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
 
@@ -917,6 +962,7 @@ This document surveys existing transport protocols and protocols providing trans
 
 - {{user-datagram-protocol-udp}} on UDP was contributed by Kevin Fall (kfall@kfall.com)
 - {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)
+- {{nack-oriented-reliable-multicast-norm}} on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)
 - {{hypertext-transport-protocol-http-as-a-pseudotransport}} on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)
 
 # Acknowledgments
