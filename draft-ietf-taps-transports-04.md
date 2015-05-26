@@ -780,9 +780,11 @@ NORM is an IETF standards track protocol specified in {{RFC5740}}. The protocol 
 
 ### Protocol Description
 
+[EDITOR'S NOTE: needs to be more clear about the application of FEC and packet erasure coding; expand ARQ.]
+
 The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For purposes of loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation. {{RFC5740}} does not specify a handshake protocol for connection establishment and separate session initiation can be used to coordinate port numbers. However, in-band "client-server" style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.
 
-The NORM transport model supports bulk "objects" such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme {{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.
+NORM supports bulk "objects" such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme {{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.
 
 NORM uses rate-based congestion control based upon the TCP-Friendly Rate Control (TFRC) {{RFC4324}} principles that are also used in DCCP {{RFC4340}}. NORM uses control messages to measure RTT and collect congestion event (e..g, loss event, ECN event, etc) information from the receiver(s) to support dynamic rate control adjustment. The TCP-Friendly Multicast Congestion Control (TFMCC) {{RFC4654}} used provides some extra features to support multicast but is functionally equivalent to TFRC in the unicast case.
 
@@ -800,7 +802,7 @@ The transport protocol components provided by NORM are:
 
 - unicast
 - multicast
-- port multiplexing
+- port multiplexing (UDP ports)
 - reliable delivery
 - ordered delivery for each byte or message stream
 - unordered delivery of in-memory data or file bulk content objects
@@ -811,7 +813,7 @@ The transport protocol components provided by NORM are:
 - data bundling (Nagle’s algorithm)
 - flow control (timer-based and/or ack-based)
 - congestion control
-- packet erasure coding both proactively and as part of ARQ
+- packet erasure coding (both proactively and as part of ARQ)
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
