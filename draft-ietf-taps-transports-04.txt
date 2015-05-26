@@ -94,7 +94,7 @@ Table of Contents
        3.8.3.  Transport Protocol Components . . . . . . . . . . . .  20
      3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as
            a pseudotransport . . . . . . . . . . . . . . . . . . . .  20
-       3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  20
+       3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  21
        3.9.2.  Interface Description . . . . . . . . . . . . . . . .  21
        3.9.3.  Transport Protocol Components . . . . . . . . . . . .  21
      3.10. Hypertext Transport Protocol (HTTP) as a pseudotransport   21
@@ -986,6 +986,9 @@ Internet-Draft               TAPS Transports                    May 2015
 
 3.8.1.  Protocol Description
 
+   [EDITOR'S NOTE: needs to be more clear about the application of FEC
+   and packet erasure coding; expand ARQ.]
+
    The NORM protocol is encapsulated in UDP datagrams and thus provides
    multiplexing for multiple sockets on hosts using port numbers.  For
    purposes of loosely coordinated IP Multicast, NORM is not strictly
@@ -997,11 +1000,8 @@ Internet-Draft               TAPS Transports                    May 2015
    with the NORM congestion control signaling messages using port
    binding techniques like those for TCP client-server connections.
 
-   The NORM transport model supports bulk "objects" such as file or in-
-   memory content but also can treat a stream of data as a logical bulk
-   object for purposes of packet erasure coding.  In the case of stream
-   transport, NORM can support either byte streams or message streams
-   where application-defined message boundary information is carried in
+   NORM supports bulk "objects" such as file or in-memory content but
+   also can treat a stream of data as a logical bulk object for purposes
 
 
 
@@ -1010,17 +1010,20 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 18]
 Internet-Draft               TAPS Transports                    May 2015
 
 
-   the NORM protocol messages.  This allows the receiver(s) to join/re-
-   join and recover message boundaries mid-stream as needed.
-   Application content is carried and identified by the NORM protocol
-   with encoding symbol identifiers depending upon the Forward Error
-   Correction (FEC) Scheme [RFC3452] configured.  NORM uses NACK-based
-   selective ARQ to reliably deliver the application content to the
-   receiver(s).  NORM proactively measures round-trip timing information
-   to scale ARQ timers appropriately and to support congestion control.
-   For multicast operation, timer-based feedback suppression is uses to
-   achieve group size scaling with low feedback traffic levels.  The
-   feedback suppression is not applied for unicast operation.
+   of packet erasure coding.  In the case of stream transport, NORM can
+   support either byte streams or message streams where application-
+   defined message boundary information is carried in the NORM protocol
+   messages.  This allows the receiver(s) to join/re-join and recover
+   message boundaries mid-stream as needed.  Application content is
+   carried and identified by the NORM protocol with encoding symbol
+   identifiers depending upon the Forward Error Correction (FEC) Scheme
+   [RFC3452] configured.  NORM uses NACK-based selective ARQ to reliably
+   deliver the application content to the receiver(s).  NORM proactively
+   measures round-trip timing information to scale ARQ timers
+   appropriately and to support congestion control.  For multicast
+   operation, timer-based feedback suppression is uses to achieve group
+   size scaling with low feedback traffic levels.  The feedback
+   suppression is not applied for unicast operation.
 
    NORM uses rate-based congestion control based upon the TCP-Friendly
    Rate Control (TFRC) [RFC4324] principles that are also used in DCCP
@@ -1055,9 +1058,6 @@ Internet-Draft               TAPS Transports                    May 2015
    The NORM specification does not describe a specific application
    programming interface (API) to control protocol operation.  A freely-
    available, open source reference implementation of NORM is available
-   at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented
-   API is provided for this implementation.  While a sockets-like API is
-
 
 
 
@@ -1066,6 +1066,8 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 19]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented
+   API is provided for this implementation.  While a sockets-like API is
    not currently documented, the existing API supports the necessary
    functions for that to be implemented.
 
@@ -1077,7 +1079,7 @@ Internet-Draft               TAPS Transports                    May 2015
 
    o  multicast
 
-   o  port multiplexing
+   o  port multiplexing (UDP ports)
 
    o  reliable delivery
 
@@ -1099,7 +1101,7 @@ Internet-Draft               TAPS Transports                    May 2015
 
    o  congestion control
 
-   o  packet erasure coding both proactively and as part of ARQ
+   o  packet erasure coding (both proactively and as part of ARQ)
 
 3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
       pseudotransport
@@ -1108,8 +1110,6 @@ Internet-Draft               TAPS Transports                    May 2015
    they get used by other protocols to meet security goals as an add-on
    interlayer above transport.  We might get most of what we need from
    the HTTP section below]
-
-3.9.1.  Protocol Description
 
 
 
@@ -1121,6 +1121,8 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 20]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+3.9.1.  Protocol Description
 
 3.9.2.  Interface Description
 
@@ -1168,8 +1170,6 @@ Internet-Draft               TAPS Transports                    May 2015
    by HTTP for selecting a representation on a requested resource.  The
    client and server negotiate acceptable data formats, charsets, data
    encoding (e.g. data can be transferred compressed, gzip), etc.  HTTP
-   can accommodate exchange of messages as well as data streaming (using
-   chunked transfer encoding [RFC7230]).  It is also possible to request
 
 
 
@@ -1178,6 +1178,8 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 21]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   can accommodate exchange of messages as well as data streaming (using
+   chunked transfer encoding [RFC7230]).  It is also possible to request
    a part of a resource using range requests specified in [RFC7233].
    The protocol provides powerful cache control signalling defined in
    [RFC7234].
@@ -1224,8 +1226,6 @@ Internet-Draft               TAPS Transports                    May 2015
    Specifically JavaScript and XMLHttpRequest are a ubiquitous
    programming model for websites, and more general applications, where
    native code is less attractive.
-
-
 
 
 
