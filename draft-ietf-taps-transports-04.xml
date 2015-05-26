@@ -949,7 +949,7 @@ goals as an add-on interlayer above transport. We might get most of what we need
 <t>The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:</t>
 
 <t><list style="symbols">
-  <t>Destination selection features
+  <t>Destination selection
   <list style="symbols">
       <t>unicast</t>
       <t>broadcast (IPv4 only)</t>
@@ -960,11 +960,11 @@ goals as an add-on interlayer above transport. We might get most of what we need
       <t>port multiplexing</t>
       <t>service codes</t>
     </list></t>
-  <t>Connection setup features
+  <t>Connection setup
   <list style="symbols">
       <t>connection setup with feature negotiation and application-to-port mapping</t>
     </list></t>
-  <t>Delivery features
+  <t>Delivery
   <list style="symbols">
       <t>reliable delivery</t>
       <t>partially reliable delivery</t>
@@ -986,7 +986,7 @@ goals as an add-on interlayer above transport. We might get most of what we need
       <t>data bundling (Nagle’s algorithm)</t>
       <t>message bundling</t>
     </list></t>
-  <t>Transmission control features
+  <t>Transmission control
   <list style="symbols">
       <t>timer-based rate control</t>
       <t>ack-based flow control</t>
@@ -994,14 +994,14 @@ goals as an add-on interlayer above transport. We might get most of what we need
       <t>packet erasure coding</t>
       <t>congestion control</t>
     </list></t>
-  <t>Integrity protection features
+  <t>Integrity protection
   <list style="symbols">
       <t>checksum for error detection</t>
       <t>partial checksum protection</t>
       <t>checksum optional</t>
       <t>cryptographic integrity protection</t>
     </list></t>
-  <t>Security features
+  <t>Security
   <list style="symbols">
       <t>authentication of one end of a connection</t>
       <t>authentication of both ends of a connection</t>

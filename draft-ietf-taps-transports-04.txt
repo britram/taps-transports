@@ -1296,7 +1296,7 @@ Internet-Draft               TAPS Transports                    May 2015
    be used as a basis for defining common transport service features,
    normalized and separated into categories, are as follows:
 
-   o  Destination selection features
+   o  Destination selection
 
       *  unicast
 
@@ -1314,12 +1314,12 @@ Internet-Draft               TAPS Transports                    May 2015
 
       *  service codes
 
-   o  Connection setup features
+   o  Connection setup
 
       *  connection setup with feature negotiation and application-to-
          port mapping
 
-   o  Delivery features
+   o  Delivery
 
       *  reliable delivery
 
@@ -1367,7 +1367,7 @@ Internet-Draft               TAPS Transports                    May 2015
 
       *  message bundling
 
-   o  Transmission control features
+   o  Transmission control
 
       *  timer-based rate control
 
@@ -1379,7 +1379,7 @@ Internet-Draft               TAPS Transports                    May 2015
 
       *  congestion control
 
-   o  Integrity protection features
+   o  Integrity protection
 
       *  checksum for error detection
 
@@ -1389,7 +1389,7 @@ Internet-Draft               TAPS Transports                    May 2015
 
       *  cryptographic integrity protection
 
-   o  Security features
+   o  Security
 
       *  authentication of one end of a connection
 

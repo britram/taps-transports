@@ -887,7 +887,7 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 
 The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
 
-- Destination selection features
+- Destination selection
   - unicast
   - broadcast (IPv4 only)
   - multicast
@@ -897,10 +897,10 @@ The transport protocol components analyzed in this document which can be used as
   - port multiplexing
   - service codes
 
-- Connection setup features
+- Connection setup
   - connection setup with feature negotiation and application-to-port mapping
 
-- Delivery features
+- Delivery
   - reliable delivery
   - partially reliable delivery
   - unreliable delivery
@@ -921,20 +921,20 @@ The transport protocol components analyzed in this document which can be used as
   - data bundling (Nagle's algorithm)
   - message bundling
 
-- Transmission control features
+- Transmission control
   - timer-based rate control
   - ack-based flow control
   - drop notification
   - packet erasure coding
   - congestion control
 
-- Integrity protection features
+- Integrity protection
   - checksum for error detection
   - partial checksum protection
   - checksum optional
   - cryptographic integrity protection
 
-- Security features
+- Security
   - authentication of one end of a connection
   - authentication of both ends of a connection
   - confidentiality
