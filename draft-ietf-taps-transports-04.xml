@@ -289,7 +289,7 @@ characteristics?]</t>
 
 <t>[EDITOR’S NOTE: a few sentences describing Multipath TCP <xref target="RFC6824"/> go
 here. Note that this adds transport-layer multihoming to the components
-TCP provides]</t>
+TCP provides. Simone Ferlin-Oliveira will contribute text for this section.]</t>
 
 </section>
 <section anchor="stream-control-transmission-protocol-sctp" title="Stream Control Transmission Protocol (SCTP)">
@@ -597,9 +597,6 @@ multicast message streams over
 a datagram protocol. IETF guidance on the use of UDP-Lite is provided in
 <xref target="RFC5405"/>.</t>
 
-<t>[EDITOR’S NOTE: Gorry Fairhurst signed up as a contributor for this
-section.]</t>
-
 <section anchor="protocol-description-3" title="Protocol Description">
 
 <t>UDP-Lite is a connection-less datagram protocol,
@@ -863,7 +860,7 @@ UDP-Lite, DCCP.</t>
 
 <t>[NOTE: A few words on TLS <xref target="RFC5246"/> and DTLS <xref target="RFC6347"/> here,
 and how they get used by other protocols to meet security
-goals as an add-on interlayer above transport. We might get most of what we need from the HTTP section below]</t>
+goals as an add-on interlayer above transport. Kevin Fall will contribute text to this section.]</t>
 
 <section anchor="protocol-description-6" title="Protocol Description">
 
@@ -875,11 +872,11 @@ goals as an add-on interlayer above transport. We might get most of what we need
 
 </section>
 </section>
-<section anchor="hypertext-transport-protocol-http-as-a-pseudotransport" title="Hypertext Transport Protocol (HTTP) as a pseudotransport">
+<section anchor="hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport" title="Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport">
 
-<t>Hypertext Transfer Protocol (HTTP) is an application-level protocol widely use on the Internet. Version 1.1 of the protocol is specified in <xref target="RFC7230"/> <xref target="RFC7231"/> <xref target="RFC7232"/> <xref target="RFC7233"/> <xref target="RFC7234"/> <xref target="RFC7235"/>, and version 2 in <xref target="RFC7540"/>. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in <xref target="RFC3205"/>; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication <xref target="RFC2617"/> and TLS <xref target="RFC5246"/>, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.</t>
+<t>Hypertext Transfer Protocol (HTTP) is an application-level protocol widely used on the Internet. Version 1.1 of the protocol is specified in <xref target="RFC7230"/> <xref target="RFC7231"/> <xref target="RFC7232"/> <xref target="RFC7233"/> <xref target="RFC7234"/> <xref target="RFC7235"/>, and version 2 in <xref target="RFC7540"/>. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in <xref target="RFC3205"/>; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication <xref target="RFC2617"/> and TLS <xref target="RFC5246"/>, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.</t>
 
-<t>Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). <xref target="RFC3205"/> address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.</t>
+<t>Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). <xref target="RFC3205"/> address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs. Also, though not strictly bound to TCP, HTTP is almost exclusively run over TCP, and therefore inherits its properties when used in this way. This can have disadvantages, when the application does not naturally require single-streamed, reliable transport.</t>
 
 <section anchor="protocol-description-7" title="Protocol Description">
 
@@ -889,7 +886,7 @@ goals as an add-on interlayer above transport. We might get most of what we need
 
 <t>HTTP 1.1’s and HTTP 2.0’s persistent connections can be use to perform multiple request-response transactions during the life-time of a single HTTP connection. Moreover, HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single connection. This reduces connection establishment overhead and the effect of TCP slow-start on each transaction, important for HTTP’s primary use case.</t>
 
-<t>HTTP usually runs over TCP and inherits its properties (e.g. reliability, congestion controlled etc.). It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g. authentication, encryption, etc.). TLS’s Application-Layer Protocol Negotiation (ALPN) extension <xref target="RFC7301"/> can be used for HTTP version negotiation within TLS handshake which eliminates addition round-trip. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.</t>
+<t>It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g. authentication, encryption, etc.). TLS’s Application-Layer Protocol Negotiation (ALPN) extension <xref target="RFC7301"/> can be used for HTTP version negotiation within TLS handshake which eliminates addition round-trip. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.</t>
 
 <t>Application layer protocols using HTTP as substrate may use existing method and data formats, or specify new methods and data formats. Furthermore some protocols may not fit a request/response paradigm and instead rely on HTTP to send messages (e.g. <xref target="RFC6546"/>). Because HTTP is working in many restricted infrastructures, it is also used to tunnel other application-layer protocols.</t>
 
@@ -905,7 +902,7 @@ goals as an add-on interlayer above transport. We might get most of what we need
 </section>
 <section anchor="transport-protocol-components-7" title="Transport Protocol Components">
 
-<t>The transport protocol components provided by HTTP, when used as a pseudotransport, are:</t>
+<t>The transport protocol components provided by HTTP, when used as a pseudotransport over TCP, are:</t>
 
 <t><list style="symbols">
   <t>unicast</t>
@@ -931,7 +928,7 @@ goals as an add-on interlayer above transport. We might get most of what we need
 
 <t><xref target="RFC6455"/></t>
 
-<t>[EDITOR’S NOTE: No identified contributor for this section yet.]</t>
+<t>[EDITOR’S NOTE: Salvatore Loreto will contribute text for this section.]</t>
 
 <section anchor="protocol-description-8" title="Protocol Description">
 
@@ -1196,7 +1193,7 @@ previous section – please discuss on taps@ietf.org list]</t>
   <t><xref target="user-datagram-protocol-udp"/> on UDP was contributed by Kevin Fall (kfall@kfall.com)</t>
   <t><xref target="stream-control-transmission-protocol-sctp"/> on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)</t>
   <t><xref target="nack-oriented-reliable-multicast-norm"/> on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)</t>
-  <t><xref target="hypertext-transport-protocol-http-as-a-pseudotransport"/> on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)</t>
+  <t><xref target="hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport"/> on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)</t>
 </list></t>
 
 </section>

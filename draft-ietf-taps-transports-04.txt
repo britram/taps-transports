@@ -72,7 +72,7 @@ Table of Contents
        3.1.3.  Transport Protocol Components . . . . . . . . . . . .   6
      3.2.  Multipath TCP (MP-TCP)  . . . . . . . . . . . . . . . . .   7
      3.3.  Stream Control Transmission Protocol (SCTP) . . . . . . .   7
-       3.3.1.  Protocol Description  . . . . . . . . . . . . . . . .   7
+       3.3.1.  Protocol Description  . . . . . . . . . . . . . . . .   8
        3.3.2.  Interface Description . . . . . . . . . . . . . . . .  10
        3.3.3.  Transport Protocol Components . . . . . . . . . . . .  11
      3.4.  User Datagram Protocol (UDP)  . . . . . . . . . . . . . .  12
@@ -97,15 +97,15 @@ Table of Contents
        3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  21
        3.9.2.  Interface Description . . . . . . . . . . . . . . . .  21
        3.9.3.  Transport Protocol Components . . . . . . . . . . . .  21
-     3.10. Hypertext Transport Protocol (HTTP) as a pseudotransport   21
+     3.10. Hypertext Transport Protocol (HTTP) over TCP as a
+           pseudotransport . . . . . . . . . . . . . . . . . . . . .  21
        3.10.1.  Protocol Description . . . . . . . . . . . . . . . .  21
        3.10.2.  Interface Description  . . . . . . . . . . . . . . .  22
        3.10.3.  Transport Protocol Components  . . . . . . . . . . .  23
      3.11. WebSockets  . . . . . . . . . . . . . . . . . . . . . . .  23
        3.11.1.  Protocol Description . . . . . . . . . . . . . . . .  23
-       3.11.2.  Interface Description  . . . . . . . . . . . . . . .  23
-       3.11.3.  Transport Protocol Components  . . . . . . . . . . .  23
-   4.  Transport Service Features  . . . . . . . . . . . . . . . . .  24
+       3.11.2.  Interface Description  . . . . . . . . . . . . . . .  24
+       3.11.3.  Transport Protocol Components  . . . . . . . . . . .  24
 
 
 
@@ -114,6 +114,7 @@ Fairhurst, et al.       Expires November 28, 2015               [Page 2]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   4.  Transport Service Features  . . . . . . . . . . . . . . . . .  24
      4.1.  Complete Protocol Feature Matrix  . . . . . . . . . . . .  26
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  28
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  28
@@ -158,7 +159,6 @@ Internet-Draft               TAPS Transports                    May 2015
    and unordered message delivery within multiple streams, UDP-Lite
    provides partial integrity protection, and LEDBAT can provide low-
    priority "scavenger" communication.
-
 
 
 
@@ -357,7 +357,8 @@ Internet-Draft               TAPS Transports                    May 2015
 
    [EDITOR'S NOTE: a few sentences describing Multipath TCP [RFC6824] go
    here.  Note that this adds transport-layer multihoming to the
-   components TCP provides]
+   components TCP provides.  Simone Ferlin-Oliveira will contribute text
+   for this section.]
 
 3.3.  Stream Control Transmission Protocol (SCTP)
 
@@ -381,10 +382,9 @@ Internet-Draft               TAPS Transports                    May 2015
    [EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as
    contributors for these sections.]
 
-3.3.1.  Protocol Description
 
-   SCTP is a connection oriented protocol using a four way handshake to
-   establish an SCTP association and a three way message exchange to
+
+
 
 
 
@@ -394,6 +394,10 @@ Fairhurst, et al.       Expires November 28, 2015               [Page 7]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+3.3.1.  Protocol Description
+
+   SCTP is a connection oriented protocol using a four way handshake to
+   establish an SCTP association and a three way message exchange to
    gracefully shut it down.  It uses the same port number concept as
    DCCP, TCP, UDP, and UDP-Lite do and only supports unicast.
 
@@ -438,10 +442,6 @@ Internet-Draft               TAPS Transports                    May 2015
    [RFC4960] doesn't allow interleaving of user-messages, which results
    in sending a large message on one stream can block the sending of
    user messages on other streams.  [I-D.ietf-tsvwg-sctp-ndata]
-   overcomes this limitation.  Furthermore, [I-D.ietf-tsvwg-sctp-ndata]
-   specifies multiple algorithms for the sender side selection of which
-   streams to send data from supporting a variety of scheduling
-   algorithms including priority based ones.  The stream re-
 
 
 
@@ -450,6 +450,10 @@ Fairhurst, et al.       Expires November 28, 2015               [Page 8]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   overcomes this limitation.  Furthermore, [I-D.ietf-tsvwg-sctp-ndata]
+   specifies multiple algorithms for the sender side selection of which
+   streams to send data from supporting a variety of scheduling
+   algorithms including priority based ones.  The stream re-
    configuration extension defined in [RFC6525] allows to reset streams
    during the lifetime of an association and to increase the number of
    streams, if the number of streams negotiated in the SCTP handshake is
@@ -493,10 +497,6 @@ Internet-Draft               TAPS Transports                    May 2015
    DTLS over SCTP, the application can use almost all services provided
    by SCTP.
 
-   [I-D.ietf-tsvwg-natsupp] defines a methods for end-hosts and
-   middleboxes to provide for NAT support for SCTP over IPv4.  For
-   legacy NAT traversal, [RFC6951] defines the UDP encapsulation of
-   SCTP-packets.  Alternatively, SCTP packets can be encapsulated in
 
 
 
@@ -506,6 +506,10 @@ Fairhurst, et al.       Expires November 28, 2015               [Page 9]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   [I-D.ietf-tsvwg-natsupp] defines a methods for end-hosts and
+   middleboxes to provide for NAT support for SCTP over IPv4.  For
+   legacy NAT traversal, [RFC6951] defines the UDP encapsulation of
+   SCTP-packets.  Alternatively, SCTP packets can be encapsulated in
    DTLS packets as specified in [I-D.ietf-tsvwg-sctp-dtls-encaps].  The
    latter encapsulation is used with in the WebRTC context.
 
@@ -551,10 +555,6 @@ Internet-Draft               TAPS Transports                    May 2015
    o  one-to-many style socket (by using the socket type
       "SOCK_SEQPACKET").
 
-   One-to-one style sockets are similar to TCP sockets, there is a 1:1
-   relationship between the sockets and the SCTP associations (except
-   for listening sockets).  One-to-many style SCTP sockets are similar
-
 
 
 Fairhurst, et al.       Expires November 28, 2015              [Page 10]
@@ -562,6 +562,9 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 10]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   One-to-one style sockets are similar to TCP sockets, there is a 1:1
+   relationship between the sockets and the SCTP associations (except
+   for listening sockets).  One-to-many style SCTP sockets are similar
    to unconnected UDP sockets as there is a 1:n relationship between the
    sockets and the SCTP associations.
 
@@ -608,15 +611,14 @@ Internet-Draft               TAPS Transports                    May 2015
 
    o  message-oriented delivery
 
-   o  congestion control
-
-
 
 
 Fairhurst, et al.       Expires November 28, 2015              [Page 11]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+   o  congestion control
 
    o  user message bundling
 
@@ -664,8 +666,6 @@ Internet-Draft               TAPS Transports                    May 2015
    checksum, and while this is generally discouraged [RFC1122]
    [RFC5405], certain special cases permit its use [RFC6935].  The
    checksum support considerations for omitting the checksum are defined
-   in [RFC6936].  Note that due to the relatively weak form of checksum
-   used by UDP, applications that require end to end integrity of data
 
 
 
@@ -674,6 +674,8 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 12]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   in [RFC6936].  Note that due to the relatively weak form of checksum
+   used by UDP, applications that require end to end integrity of data
    are recommended to include a stronger integrity check of their
    payload data.
 
@@ -721,14 +723,14 @@ Internet-Draft               TAPS Transports                    May 2015
 
    o  IPv6 jumbograms
 
-   o  message-oriented delivery
-
 
 
 Fairhurst, et al.       Expires November 28, 2015              [Page 13]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+   o  message-oriented delivery
 
    o  error detection (checksum)
 
@@ -741,9 +743,6 @@ Internet-Draft               TAPS Transports                    May 2015
    bidirectional set of logical unicast or multicast message streams
    over a datagram protocol.  IETF guidance on the use of UDP-Lite is
    provided in [RFC5405].
-
-   [EDITOR'S NOTE: Gorry Fairhurst signed up as a contributor for this
-   section.]
 
 3.5.1.  Protocol Description
 
@@ -777,6 +776,7 @@ Internet-Draft               TAPS Transports                    May 2015
    when used over paths that include error-prone links, another
    application is when header integrity checks are required, but payload
    integrity is provided by some other mechanism (e.g.  [RFC6936].
+
 
 
 
@@ -1108,8 +1108,8 @@ Internet-Draft               TAPS Transports                    May 2015
 
    [NOTE: A few words on TLS [RFC5246] and DTLS [RFC6347] here, and how
    they get used by other protocols to meet security goals as an add-on
-   interlayer above transport.  We might get most of what we need from
-   the HTTP section below]
+   interlayer above transport.  Kevin Fall will contribute text to this
+   section.]
 
 
 
@@ -1128,20 +1128,20 @@ Internet-Draft               TAPS Transports                    May 2015
 
 3.9.3.  Transport Protocol Components
 
-3.10.  Hypertext Transport Protocol (HTTP) as a pseudotransport
+3.10.  Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
 
    Hypertext Transfer Protocol (HTTP) is an application-level protocol
-   widely use on the Internet.  Version 1.1 of the protocol is specified
-   in [RFC7230] [RFC7231] [RFC7232] [RFC7233] [RFC7234] [RFC7235], and
-   version 2 in [RFC7540].  Furthermore, HTTP is used as a substrate for
-   other application-layer protocols.  There are various reasons for
-   this practice listed in [RFC3205]; these include being a well-known
-   and well-understood protocol, reusability of existing servers and
-   client libraries, easy use of existing security mechanisms such as
-   HTTP digest authentication [RFC2617] and TLS [RFC5246], the ability
-   of HTTP to traverse firewalls which makes it work with a lot of
-   infrastructure, and cases where a application server often needs to
-   support HTTP anyway.
+   widely used on the Internet.  Version 1.1 of the protocol is
+   specified in [RFC7230] [RFC7231] [RFC7232] [RFC7233] [RFC7234]
+   [RFC7235], and version 2 in [RFC7540].  Furthermore, HTTP is used as
+   a substrate for other application-layer protocols.  There are various
+   reasons for this practice listed in [RFC3205]; these include being a
+   well-known and well-understood protocol, reusability of existing
+   servers and client libraries, easy use of existing security
+   mechanisms such as HTTP digest authentication [RFC2617] and TLS
+   [RFC5246], the ability of HTTP to traverse firewalls which makes it
+   work with a lot of infrastructure, and cases where a application
+   server often needs to support HTTP anyway.
 
    Depending on application's needs, the use of HTTP as a substrate
    protocol may add complexity and overhead in comparison to a special-
@@ -1149,7 +1149,11 @@ Internet-Draft               TAPS Transports                    May 2015
    security model etc.).  [RFC3205] address this issues and provides
    some guidelines and concerns about the use of HTTP standard port 80
    and 443, the use of HTTP URL scheme and interaction with existing
-   firewalls, proxies and NATs.
+   firewalls, proxies and NATs.  Also, though not strictly bound to TCP,
+   HTTP is almost exclusively run over TCP, and therefore inherits its
+   properties when used in this way.  This can have disadvantages, when
+   the application does not naturally require single-streamed, reliable
+   transport.
 
 3.10.1.  Protocol Description
 
@@ -1166,10 +1170,6 @@ Internet-Draft               TAPS Transports                    May 2015
    Furthermore, the protocol has numerous additional features; features
    relevant to pseudotransport are described below.
 
-   Content negotiation, specified in [RFC7231], is a mechanism provided
-   by HTTP for selecting a representation on a requested resource.  The
-   client and server negotiate acceptable data formats, charsets, data
-   encoding (e.g. data can be transferred compressed, gzip), etc.  HTTP
 
 
 
@@ -1178,6 +1178,10 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 21]
 Internet-Draft               TAPS Transports                    May 2015
 
 
+   Content negotiation, specified in [RFC7231], is a mechanism provided
+   by HTTP for selecting a representation on a requested resource.  The
+   client and server negotiate acceptable data formats, charsets, data
+   encoding (e.g. data can be transferred compressed, gzip), etc.  HTTP
    can accommodate exchange of messages as well as data streaming (using
    chunked transfer encoding [RFC7230]).  It is also possible to request
    a part of a resource using range requests specified in [RFC7233].
@@ -1192,15 +1196,13 @@ Internet-Draft               TAPS Transports                    May 2015
    effect of TCP slow-start on each transaction, important for HTTP's
    primary use case.
 
-   HTTP usually runs over TCP and inherits its properties (e.g.
-   reliability, congestion controlled etc.).  It is possible to combine
-   HTTP with security mechanisms, like TLS (denoted by HTTPS), which
-   adds protocol properties provided by such a mechanism (e.g.
-   authentication, encryption, etc.).  TLS's Application-Layer Protocol
-   Negotiation (ALPN) extension [RFC7301] can be used for HTTP version
-   negotiation within TLS handshake which eliminates addition round-
-   trip.  Arbitrary cookie strings, included as part of the MIME
-   headers, are often used as bearer tokens in HTTP.
+   It is possible to combine HTTP with security mechanisms, like TLS
+   (denoted by HTTPS), which adds protocol properties provided by such a
+   mechanism (e.g. authentication, encryption, etc.).  TLS's
+   Application-Layer Protocol Negotiation (ALPN) extension [RFC7301] can
+   be used for HTTP version negotiation within TLS handshake which
+   eliminates addition round-trip.  Arbitrary cookie strings, included
+   as part of the MIME headers, are often used as bearer tokens in HTTP.
 
    Application layer protocols using HTTP as substrate may use existing
    method and data formats, or specify new methods and data formats.
@@ -1224,8 +1226,6 @@ Internet-Draft               TAPS Transports                    May 2015
    receiving server responses.  Besides XML data format, request and
    response data format can also be JSON, HTML and plain text.
    Specifically JavaScript and XMLHttpRequest are a ubiquitous
-   programming model for websites, and more general applications, where
-   native code is less attractive.
 
 
 
@@ -1233,6 +1233,9 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 22]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+   programming model for websites, and more general applications, where
+   native code is less attractive.
 
    Representational State Transfer (REST) [REST] is another example how
    applications can use HTTP as transport protocol.  REST is an
@@ -1242,7 +1245,7 @@ Internet-Draft               TAPS Transports                    May 2015
 3.10.3.  Transport Protocol Components
 
    The transport protocol components provided by HTTP, when used as a
-   pseudotransport, are:
+   pseudotransport over TCP, are:
 
    o  unicast
 
@@ -1270,13 +1273,10 @@ Internet-Draft               TAPS Transports                    May 2015
 
    [RFC6455]
 
-   [EDITOR'S NOTE: No identified contributor for this section yet.]
+   [EDITOR'S NOTE: Salvatore Loreto will contribute text for this
+   section.]
 
 3.11.1.  Protocol Description
-
-3.11.2.  Interface Description
-
-3.11.3.  Transport Protocol Components
 
 
 
@@ -1289,6 +1289,10 @@ Fairhurst, et al.       Expires November 28, 2015              [Page 23]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+3.11.2.  Interface Description
+
+3.11.3.  Transport Protocol Components
 
 4.  Transport Service Features
 
@@ -1335,16 +1339,16 @@ Internet-Draft               TAPS Transports                    May 2015
 
       *  stream-oriented delivery
 
-      *  message-oriented delivery
-
-      *  message fragmentation
-
 
 
 Fairhurst, et al.       Expires November 28, 2015              [Page 24]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+      *  message-oriented delivery
+
+      *  message fragmentation
 
       *  object-oriented delivery of discrete data or file items
 
@@ -1391,16 +1395,16 @@ Internet-Draft               TAPS Transports                    May 2015
 
    o  Security
 
-      *  authentication of one end of a connection
-
-      *  authentication of both ends of a connection
-
 
 
 Fairhurst, et al.       Expires November 28, 2015              [Page 25]
 
 Internet-Draft               TAPS Transports                    May 2015
 
+
+      *  authentication of one end of a connection
+
+      *  authentication of both ends of a connection
 
       *  confidentiality
 
@@ -1423,10 +1427,6 @@ Internet-Draft               TAPS Transports                    May 2015
    The table below summarises protocol mechanisms that have been
    standardised.  It does not make an assessment on whether specific
    implementations are fully compliant to these specifications.
-
-
-
-
 
 
 

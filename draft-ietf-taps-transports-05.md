@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-04
-date: 2015-05-27
+docname: draft-ietf-taps-transports-05
+date: 2015-6-15
 category: info
 ipr: trust200902
 pi:
@@ -828,7 +828,9 @@ goals as an add-on interlayer above transport. Kevin Fall will contribute text t
 
 Hypertext Transfer Protocol (HTTP) is an application-level protocol widely used on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.
 
-Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs. Also, though not strictly bound to TCP, HTTP is almost exclusively run over TCP, and therefore inherits its properties when used in this way. This can have disadvantages, when the application does not naturally require single-streamed, reliable transport.
+Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
+
+Though not strictly bound to TCP, HTTP is almost exclusively run over TCP, and therefore inherits its properties when used in this way.
 
 ### Protocol Description
 
@@ -852,7 +854,7 @@ Representational State Transfer (REST) {{REST}} is another example how applicati
 
 ### Transport Protocol Components
 
-The transport protocol components provided by HTTP, when used as a pseudotransport over TCP, are:
+The transport protocol components provided by HTTP, when used as a pseudotransport, are:
 
 - unicast
 - reliable delivery
