@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-04
-date: 2015-04-01
+date: 2015-05-27
 category: info
 ipr: trust200902
 pi:
@@ -173,13 +173,6 @@ can provide low-priority "scavenger" communication.
 The following terms are defined throughout this document, and in
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.
-
-[NOTE: The terminology below was presented at the TAPS WG meeting
-in Honolulu. While the factoring of the terminology seems uncontroversial,
-there may be some entities which still require names (e.g. information
-about the interface between the transport and lower layers which could
-lead to the availability or unavailability of certain transport protocol
-features). Comments are welcome via the TAPS mailing list.]
 
 Transport Service Feature:
 : a specific end-to-end feature that a transport service provides to its
@@ -888,6 +881,62 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 ### Transport Protocol Components
 
 # Transport Service Features
+
+The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
+
+- Destination selection features
+  - unicast
+  - broadcast (IPv4 only)
+  - multicast
+  - anycast
+  - transport layer multihoming for resilience
+  - transport layer mobility
+  - port multiplexing
+  - service codes
+
+- Connection setup features
+  - connection setup with feature negotiation and application-to-port mapping
+
+- Delivery features
+  - reliable delivery
+  - partially reliable delivery
+  - unreliable delivery
+  - packet erasure coding
+  - ordered delivery
+  - unordered delivery
+  - stream-oriented delivery
+  - message-oriented delivery
+  - message fragmentation
+  - object-oriented delivery of discrete data or file items
+  - unordered delivery of in-memory data or file bulk content objects
+  - object range request
+  - object content type negotiation
+  - single streaming
+  - multiple streaming
+  - stream scheduling prioritization
+  - segmentation
+  - data bundling (Nagle's algorithm)
+  - message bundling
+
+- Transmission control features
+  - timer-based rate control
+  - ack-based flow control
+  - drop notification
+  - packet erasure coding
+  - congestion control
+
+- Integrity protection features
+  - checksum for error detection
+  - partial checksum protection
+  - checksum optional
+  - cryptographic integrity protection
+
+- Security features
+  - authentication of one end of a connection
+  - authentication of both ends of a connection
+  - confidentiality
+
+The next revision of this document will define transport service features based upon this list.
 
 [EDITOR'S NOTE: this section will drawn from the candidate features provided by protocol components in the
 previous section -- please discuss on taps@ietf.org list]

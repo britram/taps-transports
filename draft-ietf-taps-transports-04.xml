@@ -115,7 +115,7 @@
       </address>
     </author>
 
-    <date year="2015" month="April" day="01"/>
+    <date year="2015" month="May" day="27"/>
 
     
     
@@ -177,13 +177,6 @@ can provide low-priority “scavenger” communication.</t>
 <t>The following terms are defined throughout this document, and in
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.</t>
-
-<t>[NOTE: The terminology below was presented at the TAPS WG meeting
-in Honolulu. While the factoring of the terminology seems uncontroversial,
-there may be some entities which still require names (e.g. information
-about the interface between the transport and lower layers which could
-lead to the availability or unavailability of certain transport protocol
-features). Comments are welcome via the TAPS mailing list.]</t>
 
 <t><list style="hanging">
   <t hangText='Transport Service Feature:'>
@@ -949,6 +942,71 @@ goals as an add-on interlayer above transport.]</t>
 </section>
 </section>
 <section anchor="transport-service-features" title="Transport Service Features">
+
+<t>The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:</t>
+
+<t><list style="symbols">
+  <t>Destination selection features
+  <list style="symbols">
+      <t>unicast</t>
+      <t>broadcast (IPv4 only)</t>
+      <t>multicast</t>
+      <t>anycast</t>
+      <t>transport layer multihoming for resilience</t>
+      <t>transport layer mobility</t>
+      <t>port multiplexing</t>
+      <t>service codes</t>
+    </list></t>
+  <t>Connection setup features
+  <list style="symbols">
+      <t>connection setup with feature negotiation and application-to-port mapping</t>
+    </list></t>
+  <t>Delivery features
+  <list style="symbols">
+      <t>reliable delivery</t>
+      <t>partially reliable delivery</t>
+      <t>unreliable delivery</t>
+      <t>packet erasure coding</t>
+      <t>ordered delivery</t>
+      <t>unordered delivery</t>
+      <t>stream-oriented delivery</t>
+      <t>message-oriented delivery</t>
+      <t>message fragmentation</t>
+      <t>object-oriented delivery of discrete data or file items</t>
+      <t>unordered delivery of in-memory data or file bulk content objects</t>
+      <t>object range request</t>
+      <t>object content type negotiation</t>
+      <t>single streaming</t>
+      <t>multiple streaming</t>
+      <t>stream scheduling prioritization</t>
+      <t>segmentation</t>
+      <t>data bundling (Nagle’s algorithm)</t>
+      <t>message bundling</t>
+    </list></t>
+  <t>Transmission control features
+  <list style="symbols">
+      <t>timer-based rate control</t>
+      <t>ack-based flow control</t>
+      <t>drop notification</t>
+      <t>packet erasure coding</t>
+      <t>congestion control</t>
+    </list></t>
+  <t>Integrity protection features
+  <list style="symbols">
+      <t>checksum for error detection</t>
+      <t>partial checksum protection</t>
+      <t>checksum optional</t>
+      <t>cryptographic integrity protection</t>
+    </list></t>
+  <t>Security features
+  <list style="symbols">
+      <t>authentication of one end of a connection</t>
+      <t>authentication of both ends of a connection</t>
+      <t>confidentiality</t>
+    </list></t>
+</list></t>
+
+<t>The next revision of this document will define transport service features based upon this list.</t>
 
 <t>[EDITOR’S NOTE: this section will drawn from the candidate features provided by protocol components in the
 previous section – please discuss on taps@ietf.org list]</t>
