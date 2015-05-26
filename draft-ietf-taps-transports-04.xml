@@ -855,12 +855,11 @@ UDP-Lite, DCCP.</t>
 
 </section>
 </section>
-<section anchor="transport-layer-security-tls-and-datagram-tls-dtls-as-a" title="Transport Layer Security (TLS) and Datagram TLS (DTLS) as a">
-<t>pseudo transport</t>
+<section anchor="transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport" title="Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport">
 
 <t>[NOTE: A few words on TLS <xref target="RFC5246"/> and DTLS <xref target="RFC6347"/> here,
 and how they get used by other protocols to meet security
-goals as an add-on interlayer above transport.]</t>
+goals as an add-on interlayer above transport. We might get most of what we need from the HTTP section below]</t>
 
 <section anchor="protocol-description-6" title="Protocol Description">
 

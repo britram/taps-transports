@@ -811,12 +811,11 @@ The transport protocol components provided by NORM are:
 - congestion control
 - packet erasure coding both proactively and as part of ARQ
 
-## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
-pseudo transport
+## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
 [NOTE: A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here,
 and how they get used by other protocols to meet security
-goals as an add-on interlayer above transport.]
+goals as an add-on interlayer above transport. We might get most of what we need from the HTTP section below]
 
 ### Protocol Description
 

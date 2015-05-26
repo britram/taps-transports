@@ -93,7 +93,7 @@ Table of Contents
        3.8.2.  Interface Description . . . . . . . . . . . . . . . .  19
        3.8.3.  Transport Protocol Components . . . . . . . . . . . .  20
      3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as
-           a . . . . . . . . . . . . . . . . . . . . . . . . . . . .  20
+           a pseudotransport . . . . . . . . . . . . . . . . . . . .  20
        3.9.1.  Protocol Description  . . . . . . . . . . . . . . . .  20
        3.9.2.  Interface Description . . . . . . . . . . . . . . . .  20
        3.9.3.  Transport Protocol Components . . . . . . . . . . . .  21
@@ -1099,12 +1099,12 @@ Internet-Draft               TAPS Transports                    May 2015
    o  packet erasure coding both proactively and as part of ARQ
 
 3.9.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
-
-   pseudo transport
+      pseudotransport
 
    [NOTE: A few words on TLS [RFC5246] and DTLS [RFC6347] here, and how
    they get used by other protocols to meet security goals as an add-on
-   interlayer above transport.]
+   interlayer above transport.  We might get most of what we need from
+   the HTTP section below]
 
 3.9.1.  Protocol Description
 
