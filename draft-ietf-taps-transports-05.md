@@ -85,13 +85,15 @@ informative:
   RFC6525:
   RFC6546:
   RFC6298:
-  RFC6935:
-  RFC6936:
-  RFC6455:
   RFC6347:
+  RFC6356:
+  RFC6455:
   RFC6458:
   RFC6691:
   RFC6824:
+  RFC6897:
+  RFC6935:
+  RFC6936:
   RFC6951:
   RFC7053:
   RFC7230:
@@ -102,6 +104,8 @@ informative:
   RFC7235:
   RFC7301:
   RFC7323:
+  RFC7457:
+  RFC7525:
   RFC7540:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
@@ -265,7 +269,6 @@ The transport protocol components provided by TCP are:
 - connection setup with feature negotiation and application-to-port mapping
 - port multiplexing
 - reliable delivery
-- ordered delivery for each byte stream
 - error detection (checksum)
 - segmentation
 - stream-oriented delivery in a single stream
@@ -278,11 +281,69 @@ layer need to decide? what can the transport layer decide based on global
 settings? what must the transport layer decide based on network
 characteristics?]
 
-## Multipath TCP (MP-TCP)
+## Multipath TCP (MPTCP)
 
-[EDITOR'S NOTE: a few sentences describing Multipath TCP {{RFC6824}} go
-here. Note that this adds transport-layer multihoming to the components
-TCP provides. Simone Ferlin-Oliveira will contribute text for this section.]
+Multipath TCP {{RFC6824}} is an extension for TCP to support multi-homing. It is
+designed to be as transparent as possible to middle-boxes. It does so by
+establishing regular TCP flows between a pair of source/destination endpoints,
+and multiplexing the application's stream over these flows.
+
+### Protocol Description
+
+MPTCP uses TCP options for its control plane. They are used to signal multipath
+capabilities, as well as to negotiate data sequence numbers, and advertise other
+available IP addresses and establish new sessions between pairs of endpoints.
+
+### Interface Description
+
+By default, MPTCP exposes the same interface as TCP to the application.
+{{RFC6897}} however describes a richer API for MPTCP-aware applications.
+
+This Basic API describes how an application can
+- enable or disable MPTCP;
+- bind a socket to one or more selected local endpoints;
+- query local and remote endpoint addresses;
+- get a unique connection identifier (similar to an address--port pair for TCP).
+
+The document also recommend the use of extensions defined for SCTP {{RFC6458}}
+(see next section) to deal with multihoming.
+
+[AUTHOR'S NOTE: research work, and some implementation, also suggest that the
+scheduling algorithm, as well as the path manager, are configurable options that
+should be exposed to higher layer. Should this be discussed here?]
+
+### Transport Protocol Components
+
+[AUTHOR'S NOTE: shouldn't it be “service feature”?]
+
+As an extension to TCP, MPTCP provides mostly the same components. By
+establishing multiple sessions between available endpoints, it can additionally
+provide soft failover solutions should one of the paths become unusable. In
+addition, by multiplexing one byte stream over separate paths, it can achieve a
+higher throughput than TCP in certain situations (note however that coupled
+congestion control {{RFC6356}} might limit this benefit to maintain fairness to
+other flows at the bottleneck). When aggregating capacity over multiple paths,
+and depending on the way packets are scheduled on each TCP subflow, an
+additional delay and higher jitter might be observed observed before in-order
+delivery of data to the applications.
+
+The transport protocol components provided by MPTCP therefore are:
+
+- unicast
+- connection setup with feature negotiation and application-to-port mapping
+- port multiplexing
+- reliable delivery
+- error detection (checksum)
+- segmentation
+- stream-oriented delivery in a single stream
+- flow control
+- congestion control
+- endpoint multiplexing of a single byte stream (higher throughput)
+- resilience to network failure and/or handovers
+
+[AUTHOR'S NOTE: it is unclear whether MPTCP has to provide data bundling.]
+[AUTHOR'S NOTE: AF muliplexing? sub-flows can be started over IPv4 or IPv6 for
+the same session]
 
 ## Stream Control Transmission Protocol (SCTP)
 
@@ -302,8 +363,6 @@ SCTP was originally developed for transporting telephony signalling messages
 and is deployed in telephony signalling networks, especially in mobile telephony
 networks.
 Additionally, it is used in the WebRTC framework for data channels and is therefore deployed in all WEB-browsers supporting WebRTC.
-
-[EDITOR'S NOTE: Michael Tuexen and Karen Nielsen signed up as contributors for these sections.]
 
 ### Protocol Description
 
@@ -801,7 +860,6 @@ The transport protocol components provided by NORM are:
 - multicast
 - port multiplexing (UDP ports)
 - reliable delivery
-- ordered delivery for each byte or message stream
 - unordered delivery of in-memory data or file bulk content objects
 - error detection (UDP checksum)
 - segmentation
@@ -812,17 +870,88 @@ The transport protocol components provided by NORM are:
 - congestion control
 - packet erasure coding (both proactively and as part of ARQ)
 
+
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-[NOTE: A few words on TLS {{RFC5246}} and DTLS {{RFC6347}} here,
-and how they get used by other protocols to meet security
-goals as an add-on interlayer above transport. Kevin Fall will contribute text to this section.]
+Transport Layer Security (TLS) and Datagram TLS are IETF protocols that provide
+several security-related features to applications. TLS is designed to run on top
+of TCP, DTLS is designed to run on top of UDP. At the time of writing, the
+current version of TLS is 1.2; it is defined in {{RFC5246}}. DTLS provides
+nearly identical functionality; it is defined in {RFC6347}} and also at version
+1.2.
+
+While older versions of TLS and DTLS are still in use, they provide weaker
+security guarantees. {{RFC7457}} outlines important attacks on TLS and DTLS.
+{{RFC7525}} is a Best Current Practices (BCP) document that describes secure
+configurations for TLS and DTLS to counter these attacks. The recommendations
+are applicable for the vast majority of use cases.
+
+[NOTE: The Logjam authors (weakdh.org) give (inconclusive) evidence that one of
+the recommendations of {{RFC7525}}, namely use to DHE-1024 as a fallback, may
+not be sufficient in all cases to counter an attacker with the resources of a
+nation-state. It is unclear at this time if the RFC is going to be updated as a
+result or whether there will be an RFC7525bis.]
 
 ### Protocol Description
 
+Both TLS and DTLS provide the same security features and can thus be discussed
+together. The features they provide are:
+
+* Confidentiality
+* Data integrity
+* Data authenticity
+* Optionally authentication of the peer entity
+
+[Note: Both TLS and DTLS provide replay protection, although it is optional in
+DTLS. The TLS RFC discusses this only in the security considerations and thus
+views it as a feature that is implicit in the ones listed above. DTLS mentions
+it as an explicit feature.]
+
+The authentication of the peer entity can be omitted, although this is a rare
+use case. In many use cases (e.g. the Web), authentication is not mutual,
+however (e.g. only the Web server is authenticated, but not the client). It is
+important to note that TLS itself does not specify how a peering entity is to be
+authenticated. This is part of the application logic; i.e. the authentication
+decision rests with the application. As an example, in the common use case of
+authentication by means of an X.509 certificate, it is the application's
+decision whether the certificate of the peering entity is acceptable for the
+purposes of the application or whether the handshake should be aborted.
+
+As DTLS is used over the unreliable UDP transport, it needs to add three
+features to provide the same security guarantees as TLS:
+* Message fragmentation
+* Message reordering
+* Message loss
+
+As a result, DTLS provides features that UDP lacks.
+
+[NOTE: Need to describe how this is achieved?]
+
 ### Interface Description
 
+TLS is commonly used with a socket-like interface, although details can vary
+between implementations. This is particularly true for the choice which
+cryptographic algorithms to use, see below.
+
+[TODO: DTLS interface]
+
+Both TLS and DTLS allow to employ a multitude of cipher suites for encryption,
+hashing and applying message integrity. It is no easy task to choose safe
+settings here. {{RFC7525}} provides guidance.
+
+[TODO: list the RFCs?]
+[TODO: more detail?]
 ### Transport Protocol Components
+
+Both TLS and DTLS employ a layered architecture. The lower layer is commonly
+called the record protocol. It is responsible for fragmenting messages, applying
+message authentication codes (MACs), encrypting data, and sending it via the
+underlying transport protocol.  Several essential protocols run on top of the
+record protocol in order to carry out the handshake and establish a secure
+session.
+
+[NOTE: TLS can also compress, but this has been found to be a security weakness.
+It is not described here.]
 
 ## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
 
@@ -1011,12 +1140,14 @@ This document surveys existing transport protocols and protocols providing trans
     email: tuexen@fh-muenster.de
 -->
 
+- {{multipath-tcp-mptcp}} on MPTCP was contributed by Simone Ferlin-Oliviera (ferlin@simula.no) and Olivier Mehani (olivier.mehani@nicta.com.au)
 - {{user-datagram-protocol-udp}} on UDP was contributed by Kevin Fall (kfall@kfall.com)
 - {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)
 - {{nack-oriented-reliable-multicast-norm}} on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)
+- {{transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport}} on MPTCP was contributed by Ralph Holz (ralph.holz@nicta.com.au) and Olivier Mehani (olivier.mehani@nicta.com.au)
 - {{hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport}} on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)
 
 # Acknowledgments
 
-This work is partially supported by the European Commission under grant
+Thanks to Karen Nielsen for the comments and feedback. This work is partially supported by the European Commission under grant
 agreement FP7-ICT-318627 mPlane; support does not imply endorsement.
