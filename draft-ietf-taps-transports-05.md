@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-05
-date: 2015-6-15
+date: 2015-6-4
 category: info
 ipr: trust200902
 pi:
@@ -178,6 +178,9 @@ The following terms are defined throughout this document, and in
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.
 
+[EDITOR'S NOTE: we may want to add definitions for the different kinds of
+interfaces that are important here.]
+
 Transport Service Feature:
 : a specific end-to-end feature that a transport service provides to its
 clients. Examples include confidentiality, reliable delivery, ordered
@@ -226,36 +229,71 @@ widely used by common applications.
 
 ### Protocol Description
 
-TCP is a connection-oriented protocol, providing a three way handshake to allow a client and server to set up a connection, and mechanisms for orderly completion and immediate teardown of a connection. TCP is defined by a family of RFCs {{RFC4614}}.
+TCP is a connection-oriented protocol, providing a three way handshake to
+allow a client and server to set up a connection, and mechanisms for orderly
+completion and immediate teardown of a connection. TCP is defined by a family
+of RFCs {{RFC4614}}.
 
-TCP provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers. The destination port during connection setup has a different role as it is often used to indicate the requested service.
+TCP provides multiplexing to multiple sockets on each host using port numbers.
+An active TCP session is identified by its four-tuple of local and remote IP
+addresses and local port and remote port numbers. The destination port during
+connection setup has a different role as it is often used to indicate the
+requested service.
 
-TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
+TCP partitions a continuous stream of bytes into segments, sized to fit in IP
+packets. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as
+Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
 
-Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment {{RFC2018}} extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission.
+Each byte in the stream is identified by a sequence number. The sequence
+number is used to order segments on receipt, to identify segments in
+acknowledgments, and to detect unacknowledged segments for retransmission.
+This is the basis of TCP's reliable, ordered delivery of data in a stream. TCP
+Selective Acknowledgment {{RFC2018}} extends this mechanism by making it
+possible to identify missing segments more precisely, reducing spurious
+retransmission.
 
-Receiver flow control is provided by a sliding window: limiting the amount of unacknowledged data that can be outstanding at a given time. The window scale option {{RFC7323}} allows a receiver to use windows greater than
-64KB.
+Receiver flow control is provided by a sliding window: limiting the amount of
+unacknowledged data that can be outstanding at a given time. The window scale
+option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-All TCP senders provide Congestion Control: This uses a separate window, where each time congestion is detected, this congestion window is reduced. A receiver detects congestion using one of three mechanisms: A retransmission timer, detection of loss (interpreted as a congestion signal), or Explicit Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see {{I-D.ietf-aqm-ecn-benefits}})
+All TCP senders provide Congestion Control: This uses a separate window, where
+each time congestion is detected, this congestion window is reduced. A
+receiver detects congestion using one of three mechanisms: A retransmission
+timer, detection of loss (interpreted as a congestion signal), or Explicit
+Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
+{{I-D.ietf-aqm-ecn-benefits}})
 
-A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features are sender-side only, requiring no negotiation with the receiver; some are receiver-side only, some are explicitly negotiated during connection setup.
+A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
+are sender-side only, requiring no negotiation with the receiver; some are
+receiver-side only, some are explicitly negotiated during connection setup.
 
-By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.
+By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to
+buffer data at the sender into large segments, potentially incurring
+sender-side buffering delay; this algorithm can be disabled by the sender to
+transmit more immediately, e.g. to enable smoother interactive sessions.
 
-[EDITOR'S NOTE: add URGENT and PUSH flag (note {{RFC6093}} says SHOULD NOT use due to the range of TCP implementations that process TCP urgent indications differently.) ]
+[EDITOR'S NOTE: add URGENT and PUSH flag (note {{RFC6093}} says SHOULD NOT use
+due to the range of TCP implementations that process TCP urgent indications
+differently.) ]
 
-A checksum provides an Integrity Check and is mandatory across the entire packet. The TCP checksum does not
-support partial corruption protection as in DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data, but is relatively weak, and applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.
-
+A checksum provides an Integrity Check and is mandatory across the entire
+packet. The TCP checksum does not support partial corruption protection as in
+DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data,
+but is relatively weak, and applications that require end to end integrity of
+data are recommended to include a stronger integrity check of their payload
+data.
 
 A TCP service is unicast.
 
 ### Interface description
 
-A User/TCP Interface is defined in {{RFC0793}} providing six user commands: Open, Send, Receive, Close, Status. This interface does not describe configuration of TCP options or parameters beside use of the PUSH and URGENT flags.
+A User/TCP Interface is defined in {{RFC0793}} providing six user commands:
+Open, Send, Receive, Close, Status. This interface does not describe
+configuration of TCP options or parameters beside use of the PUSH and URGENT
+flags.
 
-In API implementations derived from the BSD Sockets API, TCP sockets are created using the `SOCK_STREAM` socket type.
+In API implementations derived from the BSD Sockets API, TCP sockets are
+created using the `SOCK_STREAM` socket type.
 
 The features used by a protocol instance may be set and tuned via this API.
 
@@ -828,7 +866,7 @@ applications transmitting real-time data, such as audio, video or
 data, over multicast or unicast network services, including TCP, UDP,
 UDP-Lite, DCCP.
 
-[EDITOR'S NOTE: Varun Singh signed up as contributor for this section.]
+[EDITOR'S NOTE: Varun Singh signed up as contributor for this section. Given the complexity of RTP, suggest to have an abbreviated section here contrasting RTP with other transports, and focusing on those features that are RTP-unique.]
 
 ## NACK-Oriented Reliable Multicast (NORM)
 
@@ -925,7 +963,7 @@ features to provide the same security guarantees as TLS:
 
 As a result, DTLS provides features that UDP lacks.
 
-[NOTE: Need to describe how this is achieved?]
+[EDITOR'S NOTE: Need to describe how this is achieved?]
 
 ### Interface Description
 
@@ -950,7 +988,7 @@ underlying transport protocol.  Several essential protocols run on top of the
 record protocol in order to carry out the handshake and establish a secure
 session.
 
-[NOTE: TLS can also compress, but this has been found to be a security weakness.
+[EDITOR'S NOTE: TLS can also compress, but this has been found to be a security weakness.
 It is not described here.]
 
 ## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
@@ -1149,5 +1187,9 @@ This document surveys existing transport protocols and protocols providing trans
 
 # Acknowledgments
 
-Thanks to Karen Nielsen for the comments and feedback. This work is partially supported by the European Commission under grant
-agreement FP7-ICT-318627 mPlane; support does not imply endorsement.
+Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
+feedback, and discussion. This work is partially supported by the European
+Commission under grant agreement FP7-ICT-318627 mPlane; support does not imply
+endorsement.
+
+[EDITOR'S NOTE: add H2020-NEAT ack].
