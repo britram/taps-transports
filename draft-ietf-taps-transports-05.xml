@@ -119,7 +119,7 @@
       </address>
     </author>
 
-    <date year="2015" month="June" day="15"/>
+    <date year="2015" month="June" day="04"/>
 
     
     
@@ -182,6 +182,9 @@ can provide low-priority “scavenger” communication.</t>
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.</t>
 
+<t>[EDITOR’S NOTE: we may want to add definitions for the different kinds of
+interfaces that are important here.]</t>
+
 <t><list style="hanging">
   <t hangText='Transport Service Feature:'>
   a specific end-to-end feature that a transport service provides to its
@@ -228,36 +231,72 @@ widely used by common applications.</t>
 
 <section anchor="protocol-description" title="Protocol Description">
 
-<t>TCP is a connection-oriented protocol, providing a three way handshake to allow a client and server to set up a connection, and mechanisms for orderly completion and immediate teardown of a connection. TCP is defined by a family of RFCs <xref target="RFC4614"/>.</t>
+<t>TCP is a connection-oriented protocol, providing a three way handshake to
+allow a client and server to set up a connection, and mechanisms for orderly
+completion and immediate teardown of a connection. TCP is defined by a family
+of RFCs <xref target="RFC4614"/>.</t>
 
-<t>TCP provides multiplexing to multiple sockets on each host using port numbers. An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers. The destination port during connection setup has a different role as it is often used to indicate the requested service.</t>
+<t>TCP provides multiplexing to multiple sockets on each host using port numbers.
+An active TCP session is identified by its four-tuple of local and remote IP
+addresses and local port and remote port numbers. The destination port during
+connection setup has a different role as it is often used to indicate the
+requested service.</t>
 
-<t>TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets. ICMP-based PathMTU discovery <xref target="RFC1191"/><xref target="RFC1981"/> as well as Packetization Layer Path MTU Discovery (PMTUD) <xref target="RFC4821"/> are supported.</t>
+<t>TCP partitions a continuous stream of bytes into segments, sized to fit in IP
+packets. ICMP-based PathMTU discovery <xref target="RFC1191"/><xref target="RFC1981"/> as well as
+Packetization Layer Path MTU Discovery (PMTUD) <xref target="RFC4821"/> are supported.</t>
 
-<t>Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission. This is the basis of TCP’s reliable, ordered delivery of data in a stream. TCP Selective Acknowledgment <xref target="RFC2018"/> extends this mechanism by making it possible to identify missing segments more precisely, reducing spurious retransmission.</t>
+<t>Each byte in the stream is identified by a sequence number. The sequence
+number is used to order segments on receipt, to identify segments in
+acknowledgments, and to detect unacknowledged segments for retransmission.
+This is the basis of TCP’s reliable, ordered delivery of data in a stream. TCP
+Selective Acknowledgment <xref target="RFC2018"/> extends this mechanism by making it
+possible to identify missing segments more precisely, reducing spurious
+retransmission.</t>
 
-<t>Receiver flow control is provided by a sliding window: limiting the amount of unacknowledged data that can be outstanding at a given time. The window scale option <xref target="RFC7323"/> allows a receiver to use windows greater than
-64KB.</t>
+<t>Receiver flow control is provided by a sliding window: limiting the amount of
+unacknowledged data that can be outstanding at a given time. The window scale
+option <xref target="RFC7323"/> allows a receiver to use windows greater than 64KB.</t>
 
-<t>All TCP senders provide Congestion Control: This uses a separate window, where each time congestion is detected, this congestion window is reduced. A receiver detects congestion using one of three mechanisms: A retransmission timer, detection of loss (interpreted as a congestion signal), or Explicit Congestion Notification (ECN) <xref target="RFC3168"/> to provide early signaling (see <xref target="I-D.ietf-aqm-ecn-benefits"/>)</t>
+<t>All TCP senders provide Congestion Control: This uses a separate window, where
+each time congestion is detected, this congestion window is reduced. A
+receiver detects congestion using one of three mechanisms: A retransmission
+timer, detection of loss (interpreted as a congestion signal), or Explicit
+Congestion Notification (ECN) <xref target="RFC3168"/> to provide early signaling (see
+<xref target="I-D.ietf-aqm-ecn-benefits"/>)</t>
 
-<t>A TCP protocol instance can be extended <xref target="RFC4614"/> and tuned. Some features are sender-side only, requiring no negotiation with the receiver; some are receiver-side only, some are explicitly negotiated during connection setup.</t>
+<t>A TCP protocol instance can be extended <xref target="RFC4614"/> and tuned. Some features
+are sender-side only, requiring no negotiation with the receiver; some are
+receiver-side only, some are explicitly negotiated during connection setup.</t>
 
-<t>By default, TCP segment partitioning uses Nagle’s algorithm <xref target="RFC0896"/> to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g. to enable smoother interactive sessions.</t>
+<t>By default, TCP segment partitioning uses Nagle’s algorithm <xref target="RFC0896"/> to
+buffer data at the sender into large segments, potentially incurring
+sender-side buffering delay; this algorithm can be disabled by the sender to
+transmit more immediately, e.g. to enable smoother interactive sessions.</t>
 
-<t>[EDITOR’S NOTE: add URGENT and PUSH flag (note <xref target="RFC6093"/> says SHOULD NOT use due to the range of TCP implementations that process TCP urgent indications differently.) ]</t>
+<t>[EDITOR’S NOTE: add URGENT and PUSH flag (note <xref target="RFC6093"/> says SHOULD NOT use
+due to the range of TCP implementations that process TCP urgent indications
+differently.) ]</t>
 
-<t>A checksum provides an Integrity Check and is mandatory across the entire packet. The TCP checksum does not
-support partial corruption protection as in DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data, but is relatively weak, and applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.</t>
+<t>A checksum provides an Integrity Check and is mandatory across the entire
+packet. The TCP checksum does not support partial corruption protection as in
+DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data,
+but is relatively weak, and applications that require end to end integrity of
+data are recommended to include a stronger integrity check of their payload
+data.</t>
 
 <t>A TCP service is unicast.</t>
 
 </section>
 <section anchor="interface-description" title="Interface description">
 
-<t>A User/TCP Interface is defined in <xref target="RFC0793"/> providing six user commands: Open, Send, Receive, Close, Status. This interface does not describe configuration of TCP options or parameters beside use of the PUSH and URGENT flags.</t>
+<t>A User/TCP Interface is defined in <xref target="RFC0793"/> providing six user commands:
+Open, Send, Receive, Close, Status. This interface does not describe
+configuration of TCP options or parameters beside use of the PUSH and URGENT
+flags.</t>
 
-<t>In API implementations derived from the BSD Sockets API, TCP sockets are created using the <spanx style="verb">SOCK_STREAM</spanx> socket type.</t>
+<t>In API implementations derived from the BSD Sockets API, TCP sockets are
+created using the <spanx style="verb">SOCK_STREAM</spanx> socket type.</t>
 
 <t>The features used by a protocol instance may be set and tuned via this API.</t>
 
@@ -870,7 +909,7 @@ applications transmitting real-time data, such as audio, video or
 data, over multicast or unicast network services, including TCP, UDP,
 UDP-Lite, DCCP.</t>
 
-<t>[EDITOR’S NOTE: Varun Singh signed up as contributor for this section.]</t>
+<t>[EDITOR’S NOTE: Varun Singh signed up as contributor for this section. Given the complexity of RTP, suggest to have an abbreviated section here contrasting RTP with other transports, and focusing on those features that are RTP-unique.]</t>
 
 </section>
 <section anchor="nack-oriented-reliable-multicast-norm" title="NACK-Oriented Reliable Multicast (NORM)">
@@ -975,7 +1014,7 @@ features to provide the same security guarantees as TLS:
 
 <t>As a result, DTLS provides features that UDP lacks.</t>
 
-<t>[NOTE: Need to describe how this is achieved?]</t>
+<t>[EDITOR’S NOTE: Need to describe how this is achieved?]</t>
 
 </section>
 <section anchor="interface-description-7" title="Interface Description">
@@ -1001,7 +1040,7 @@ underlying transport protocol.  Several essential protocols run on top of the
 record protocol in order to carry out the handshake and establish a secure
 session.</t>
 
-<t>[NOTE: TLS can also compress, but this has been found to be a security weakness.
+<t>[EDITOR’S NOTE: TLS can also compress, but this has been found to be a security weakness.
 It is not described here.]</t>
 
 </section>
@@ -1337,8 +1376,12 @@ previous section – please discuss on taps@ietf.org list]</t>
 </section>
 <section anchor="acknowledgments" title="Acknowledgments">
 
-<t>Thanks to Karen Nielsen for the comments and feedback. This work is partially supported by the European Commission under grant
-agreement FP7-ICT-318627 mPlane; support does not imply endorsement.</t>
+<t>Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
+feedback, and discussion. This work is partially supported by the European
+Commission under grant agreement FP7-ICT-318627 mPlane; support does not imply
+endorsement.</t>
+
+<t>[EDITOR’S NOTE: add H2020-NEAT ack].</t>
 
 </section>
 
