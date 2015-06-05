@@ -1,6 +1,6 @@
 # TAPS Transports Document
 
-This is the source repository for draft-ietf-taps-transports, in fulfillment of item 1 of the IETF TAPS WG charter. *The current revision is -04*.
+This is the source repository for draft-ietf-taps-transports, in fulfillment of item 1 of the IETF TAPS WG charter. *The current revision is -05*. Rework of components and features is underway in -06.
 
 ## Toolchain
 
