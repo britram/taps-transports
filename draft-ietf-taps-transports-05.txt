@@ -5,9 +5,9 @@
 Network Working Group                                  G. Fairhurst, Ed.
 Internet-Draft                                    University of Aberdeen
 Intended status: Informational                          B. Trammell, Ed.
-Expires: December 6, 2015                             M. Kuehlewind, Ed.
+Expires: December 11, 2015                            M. Kuehlewind, Ed.
                                                               ETH Zurich
-                                                           June 04, 2015
+                                                           June 09, 2015
 
 
   Services provided by IETF transport protocols and congestion control
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 6, 2015.
+   This Internet-Draft will expire on December 11, 2015.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 1]
+Fairhurst, et al.       Expires December 11, 2015               [Page 1]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 2]
+Fairhurst, et al.       Expires December 11, 2015               [Page 2]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -165,7 +165,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 3]
+Fairhurst, et al.       Expires December 11, 2015               [Page 3]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -221,7 +221,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 4]
+Fairhurst, et al.       Expires December 11, 2015               [Page 4]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -277,7 +277,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 5]
+Fairhurst, et al.       Expires December 11, 2015               [Page 5]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -333,7 +333,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 6]
+Fairhurst, et al.       Expires December 11, 2015               [Page 6]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -389,7 +389,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 7]
+Fairhurst, et al.       Expires December 11, 2015               [Page 7]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -445,7 +445,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 8]
+Fairhurst, et al.       Expires December 11, 2015               [Page 8]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -501,7 +501,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015                [Page 9]
+Fairhurst, et al.       Expires December 11, 2015               [Page 9]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -557,7 +557,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 10]
+Fairhurst, et al.       Expires December 11, 2015              [Page 10]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -613,7 +613,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 11]
+Fairhurst, et al.       Expires December 11, 2015              [Page 11]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -669,7 +669,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 12]
+Fairhurst, et al.       Expires December 11, 2015              [Page 12]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -725,7 +725,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 13]
+Fairhurst, et al.       Expires December 11, 2015              [Page 13]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -781,7 +781,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 14]
+Fairhurst, et al.       Expires December 11, 2015              [Page 14]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -837,7 +837,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 15]
+Fairhurst, et al.       Expires December 11, 2015              [Page 15]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -893,7 +893,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 16]
+Fairhurst, et al.       Expires December 11, 2015              [Page 16]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -949,7 +949,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 17]
+Fairhurst, et al.       Expires December 11, 2015              [Page 17]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1005,7 +1005,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 18]
+Fairhurst, et al.       Expires December 11, 2015              [Page 18]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1061,7 +1061,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 19]
+Fairhurst, et al.       Expires December 11, 2015              [Page 19]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1117,7 +1117,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 20]
+Fairhurst, et al.       Expires December 11, 2015              [Page 20]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1173,7 +1173,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 21]
+Fairhurst, et al.       Expires December 11, 2015              [Page 21]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1229,7 +1229,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 22]
+Fairhurst, et al.       Expires December 11, 2015              [Page 22]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1285,7 +1285,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 23]
+Fairhurst, et al.       Expires December 11, 2015              [Page 23]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1341,7 +1341,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 24]
+Fairhurst, et al.       Expires December 11, 2015              [Page 24]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1397,7 +1397,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 25]
+Fairhurst, et al.       Expires December 11, 2015              [Page 25]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1453,7 +1453,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 26]
+Fairhurst, et al.       Expires December 11, 2015              [Page 26]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1509,7 +1509,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 27]
+Fairhurst, et al.       Expires December 11, 2015              [Page 27]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1565,7 +1565,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 28]
+Fairhurst, et al.       Expires December 11, 2015              [Page 28]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1621,7 +1621,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 29]
+Fairhurst, et al.       Expires December 11, 2015              [Page 29]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1677,7 +1677,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 30]
+Fairhurst, et al.       Expires December 11, 2015              [Page 30]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1733,7 +1733,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 31]
+Fairhurst, et al.       Expires December 11, 2015              [Page 31]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1789,7 +1789,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 32]
+Fairhurst, et al.       Expires December 11, 2015              [Page 32]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1845,7 +1845,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 33]
+Fairhurst, et al.       Expires December 11, 2015              [Page 33]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1901,7 +1901,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 34]
+Fairhurst, et al.       Expires December 11, 2015              [Page 34]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -1957,7 +1957,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 35]
+Fairhurst, et al.       Expires December 11, 2015              [Page 35]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -2013,7 +2013,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 36]
+Fairhurst, et al.       Expires December 11, 2015              [Page 36]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -2069,7 +2069,7 @@ Internet-Draft               TAPS Transports                   June 2015
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 37]
+Fairhurst, et al.       Expires December 11, 2015              [Page 37]
 
 Internet-Draft               TAPS Transports                   June 2015
 
@@ -2125,4 +2125,4 @@ Authors' Addresses
 
 
 
-Fairhurst, et al.       Expires December 6, 2015               [Page 38]
+Fairhurst, et al.       Expires December 11, 2015              [Page 38]
