@@ -308,10 +308,9 @@ layer need to decide? what can the transport layer decide based on global
 settings? what must the transport layer decide based on network
 characteristics?]
 
-- Support for unicast addressing.
-- connection-oriented bidirectional communication. TCP uses three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open. This additionally implies a guarantee of return routability.
+- connection-oriented bidirectional communication using three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open. This implies both unicast addressing and a guarantee of return routability.
 - single stream-oriented transmission. The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
-- limited control over segmentation, either bundling multiple application-layer transmissions into single segments for overhead efficiency, or sending each transmission in its own segment for delay minimization in interactive applications (this is called Nagle's algorithm).
+- limited control over segment transmission scheduling (Nagle's algorithm). This allows for delay minimization in interactive applications.
 - port multiplexing, with application-to-port mapping during connection setup. Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
 - full reliability based on ack-based loss detection and retransmission. Loss is sensed using duplicated acks ("fast retransmit"), which places a lower bound on the delay inherent in this approach to reliability.
 - error detection based on a checksum covering the network and transport headers as well as payload. Packets that are detected as corrupted are dropped, relying on the reliability mechanism to retransmit them.
@@ -1055,18 +1054,25 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 
 The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
 
-- Destination selection
+- Addressing
   - unicast
   - broadcast (IPv4 only)
   - multicast
   - anycast
-  - transport layer multihoming for resilience
-  - transport layer mobility
-  - port multiplexing
-  - service codes
+  - something on ports and NAT
+  
+- Multihoming support 
+  - multihoming for resilience
+  - multihoming for mobility
+  - multihoming for load-balancing
+  -> Application might wnat to decide if packet will be sent simultaneously over multiple interfaces as well as handover latency and interleave delay 
 
-- Connection setup
-  - connection setup with feature negotiation and application-to-port mapping
+- Multiplexing
+  - application to port mapping
+
+
+
+
 
 - Delivery
   - reliable delivery
