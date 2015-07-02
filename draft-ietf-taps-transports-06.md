@@ -308,16 +308,14 @@ layer need to decide? what can the transport layer decide based on global
 settings? what must the transport layer decide based on network
 characteristics?]
 
-- connection-oriented bidirectional communication using three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open. This implies both unicast addressing and a guarantee of return routability.
-- single stream-oriented transmission. The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
-- limited control over segment transmission scheduling (Nagle's algorithm). This allows for delay minimization in interactive applications.
-- port multiplexing, with application-to-port mapping during connection setup. Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
-- full reliability based on ack-based loss detection and retransmission. Loss is sensed using duplicated acks ("fast retransmit"), which places a lower bound on the delay inherent in this approach to reliability.
-- error detection based on a checksum covering the network and transport headers as well as payload. Packets that are detected as corrupted are dropped, relying on the reliability mechanism to retransmit them.
-- window-based flow control, with receiver-side window management and signaling of available window. Scaling the flow control window beyond 64kB requires the use of an optional feature, which has performance implications in environments where this option is not supported.
-- window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN). Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals.
-
-
+- Connection-oriented bidirectional communication using three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open: This implies both unicast addressing and a guarantee of return routability.
+- Single stream-oriented transmission: The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
+- Limited control over segment transmission scheduling (Nagle's algorithm): This allows for delay minimization in interactive applications by preventing the transport to add additional delays (by deactivating Nagle's algorithm).
+- Port multiplexing, with application-to-port mapping during connection setup: Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
+- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on	the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event. 
+- Error detection based on a checksum covering the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism	to retransmit them.
+- Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64kB requires the use of an optional feature,	which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
+-  Window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN): Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals.
 
 
 ## Multipath TCP (MPTCP)
@@ -366,19 +364,11 @@ and depending on the way packets are scheduled on each TCP subflow, an
 additional delay and higher jitter might be observed observed before in-order
 delivery of data to the applications.
 
-The transport protocol components provided by MPTCP therefore are:
+The transport protocol components provided by MPTCP in addition to TCP therefore are:
 
-- unicast
-- connection setup with feature negotiation and application-to-port mapping
-- port multiplexing
-- reliable delivery
-- error detection (checksum)
-- segmentation
-- stream-oriented delivery in a single stream
-- flow control
-- congestion control
+- congestion control with load balancing over mutiple connections
 - endpoint multiplexing of a single byte stream (higher throughput)
-- resilience to network failure and/or handovers
+- resilience to network failure and/or handoverss
 
 [AUTHOR'S NOTE: it is unclear whether MPTCP has to provide data bundling.]
 [AUTHOR'S NOTE: AF muliplexing? sub-flows can be started over IPv4 or IPv6 for
@@ -912,12 +902,16 @@ The transport protocol components provided by NORM are:
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-Transport Layer Security (TLS) and Datagram TLS are IETF protocols that provide
+Transport Layer Security (TLS) and Datagram TLS (DTLS) are IETF protocols that provide
 several security-related features to applications. TLS is designed to run on top
-of TCP, DTLS is designed to run on top of UDP. At the time of writing, the
+of a reliable streaming transport protocol (usually TCP), while DTLS
+is designed to run on top of a best-effort datagram protocol (usually UDP).
+At the time of writing, the
 current version of TLS is 1.2; it is defined in {{RFC5246}}. DTLS provides
-nearly identical functionality; it is defined in {RFC6347}} and also at version
-1.2.
+nearly identical functionality to applications; it is defined in {{RFC6347}}
+and its current version is also 1.2.  The TLS protocol evolved from
+the Secure Sockets Layer (SSL) protocols developed in the mid 90s to support
+protection of HTTP traffic.
 
 While older versions of TLS and DTLS are still in use, they provide weaker
 security guarantees. {{RFC7457}} outlines important attacks on TLS and DTLS.
@@ -926,10 +920,10 @@ configurations for TLS and DTLS to counter these attacks. The recommendations
 are applicable for the vast majority of use cases.
 
 [NOTE: The Logjam authors (weakdh.org) give (inconclusive) evidence that one of
-the recommendations of {{RFC7525}}, namely use to DHE-1024 as a fallback, may
+the recommendations of {{RFC7525}}, namely the use of DHE-1024 as a fallback, may
 not be sufficient in all cases to counter an attacker with the resources of a
 nation-state. It is unclear at this time if the RFC is going to be updated as a
-result or whether there will be an RFC7525bis.]
+result, or whether there will be an RFC7525bis.]
 
 ### Protocol Description
 
@@ -938,59 +932,85 @@ together. The features they provide are:
 
 * Confidentiality
 * Data integrity
-* Data authenticity
-* Optionally authentication of the peer entity
+* Peer authentication (optional)
+* Perfect forward secrecy (optional)
 
-[Note: Both TLS and DTLS provide replay protection, although it is optional in
-DTLS. The TLS RFC discusses this only in the security considerations and thus
-views it as a feature that is implicit in the ones listed above. DTLS mentions
-it as an explicit feature.]
-
-The authentication of the peer entity can be omitted, although this is a rare
-use case. In many use cases (e.g. the Web), authentication is not mutual,
-however (e.g. only the Web server is authenticated, but not the client). It is
-important to note that TLS itself does not specify how a peering entity is to be
-authenticated. This is part of the application logic; i.e. the authentication
-decision rests with the application. As an example, in the common use case of
+The authentication of the peer entity can be omitted; a common web use
+case is where the server is authenticated and the client is not.
+TLS also provides a completely anonymous operation mode in which neither
+peer's identity is authenticated.
+It is important to note that TLS itself does not specify how a peering entity's identity
+should be interpreted.  For example, in the common use case of
 authentication by means of an X.509 certificate, it is the application's
-decision whether the certificate of the peering entity is acceptable for the
-purposes of the application or whether the handshake should be aborted.
+decision whether the certificate of the peering entity is acceptable for authorization decisions.
+Perfect forward secrecy, if enabled and supported by the selected algorithms,
+ensures that traffic encrypted and captured during a session at time t0 cannot be 
+later decrypted at time t1 (t1 > t0), even if the long-term secrets of the
+communicating peers are later compromised.
 
-As DTLS is used over the unreliable UDP transport, it needs to add three
-features to provide the same security guarantees as TLS:
-* Message fragmentation
-* Message reordering
-* Message loss
+As DTLS is generally used over an unreliable datagram transport such as TCP, applications
+will need to tolerate loss, re-ordered, or duplicated datagrams.
+Like TLS, DTLS conveys application data in a sequence of independent records.
+However, because records are mapped to unreliable datagrams, there are several
+features unique to DTLS that are not applicable to TLS:
 
-As a result, DTLS provides features that UDP lacks.
+* Record replay detection (optional)
+* Record size negotiation (estimates of PMTU and record size expansion factor)
+* Coveyance of IP don't fragment (DF) bit settings by application
+* An anti-DoS stateless cookie mechanism (optional)
 
-[EDITOR'S NOTE: Need to describe how this is achieved?]
+Generally, DTLS follows the TLS design as closely as possible.
+To operate over datagrams, DTLS includes a sequence number and limited forms
+of retransmission and fragmentation for its internal operations.
+The sequence number may be used for detecting replayed information, according
+to the windowing procedure described in Section 4.1.2.6 of {{RFC6347}}.
+Note also that DTLS bans the use of stream ciphers, which are essentially incompatible
+when operating on independent encrypted records.
 
 ### Interface Description
 
-TLS is commonly used with a socket-like interface, although details can vary
-between implementations. This is particularly true for the choice which
-cryptographic algorithms to use, see below.
+TLS is commonly invoked using an API provided by packages such as OpenSSL, wolfSSL, or GnuTLS.
+Using such APIs entails the manipulation of several important abstractions, which
+fall into the following categories:
+long-term keys and algorithms, session state, and communications/connections.
+There may also be special APIs required to deal with time and/or random numbers, both of which
+are needed by a variety of encryption algorithms and protocols.
 
-[TODO: DTLS interface]
+Considerable care is required in the use of TLS APIs in order to create a secure
+application.  The programmer should have at least a basic understanding of encryption
+and digital signature algorithms and their strengths, public key infrastructure (including
+X.509 certificates and certificate revocation), and the sockets API.
+See {{RFC7525}} and {{RFC7457}}, as mentioned above.
 
-Both TLS and DTLS allow to employ a multitude of cipher suites for encryption,
-hashing and applying message integrity. It is no easy task to choose safe
-settings here. {{RFC7525}} provides guidance.
+As an example, in the case of OpenSSL, 
+the primary abstractions are the library itself and method (protocol),
+session, context, cipher and connection.
+After initializing the library and setting the method, a cipher suite
+is chosen and used to configure a context object.
+Session objects may then be minted according to the parameters present
+in a context object and associated with individual connections.
+Depending on how precisely the programmer wishes to select different
+algorithmic or protocol options, various levels of details may be required.
 
-[TODO: list the RFCs?]
-[TODO: more detail?]
 ### Transport Protocol Components
 
 Both TLS and DTLS employ a layered architecture. The lower layer is commonly
 called the record protocol. It is responsible for fragmenting messages, applying
-message authentication codes (MACs), encrypting data, and sending it via the
-underlying transport protocol.  Several essential protocols run on top of the
-record protocol in order to carry out the handshake and establish a secure
-session.
+message authentication codes (MACs), encrypting data, and invoking transmission
+from the underlying transport protocol.  DTLS augments the TLS record
+protocol with sequence numbers used for ordering and replay detection.
 
-[EDITOR'S NOTE: TLS can also compress, but this has been found to be a security weakness.
-It is not described here.]
+Several protocols are layered on top of the
+record protocol.  These include the handshake, alert, and change cipher spec
+protocols.  There is also the data protocol, used to carry application traffic.
+The handshake protocol is used to establish cryptographic  and compression parameters when a connection
+is first set up.  In DTLS, this protocol also has a basic fragmentation and retransmission capability and
+a cookie-like mechanism to resist DoS attacks.
+(TLS compression is not recommended at present).
+The alert protocol is used to inform the peer of various conditions, most of which
+are terminal for the connection.
+The change cipher spec protocol is used to synchronize changes in cryptographic
+parameters for each peer.
 
 ## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
 
@@ -1052,66 +1072,65 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 
 # Transport Service Features
 
+[EDITOR'S NOTE: This section is still work-in-progress. This list is probably not complete and/or too detailed.]
+
 The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
 
-- Addressing
-  - unicast
-  - broadcast (IPv4 only)
-  - multicast
-  - anycast
-  - something on ports and NAT
-  
-- Multihoming support 
-  - multihoming for resilience
-  - multihoming for mobility
-  - multihoming for load-balancing
-  -> Application might wnat to decide if packet will be sent simultaneously over multiple interfaces as well as handover latency and interleave delay 
-
-- Multiplexing
-  - application to port mapping
-
-
-
-
+- Control Functions
+  - Addressing
+    - unicast
+    - broadcast (IPv4 only)
+    - multicast
+    - anycast
+    - something on ports and NAT
+  - Multihoming support 
+    - multihoming for resilience
+    - multihoming for mobility
+      - specify handover latency?
+    - multihoming for load-balancing
+      - specify interleaving delay?
+  - Multiplexing
+    - application to port mapping
+    - single vs. multiple streaming
 
 - Delivery
-  - reliable delivery
-  - partially reliable delivery
-  - unreliable delivery
-  - packet erasure coding
-  - ordered delivery
-  - unordered delivery
-  - stream-oriented delivery
-  - message-oriented delivery
-  - message fragmentation
-  - object-oriented delivery of discrete data or file items
-  - unordered delivery of in-memory data or file bulk content objects
-  - object range request
-  - object content type negotiation
-  - single streaming
-  - multiple streaming
-  - stream scheduling prioritization
-  - segmentation
-  - data bundling (Nagle's algorithm)
-  - message bundling
+  - reliability
+    - reliable delivery
+    - partially reliable delivery
+      - packet erasure coding
+    - unreliable delivery
+      - drop notification
+      - Integrity protection
+        - checksum for error detection
+        - partial checksum protection
+        - checksum optional
+  - ordering
+    - ordered delivery
+    - unordered delivery
+      - unordered delivery of in-memory data
+  - type/framing
+    - stream-oriented delivery
+    - message-oriented delivery
+    - object-oriented delivery of discrete data or file items
+      - object content type negotiation
+    - range-based partical object transmission
+    - file bulk content objects
 
 - Transmission control
-  - timer-based rate control
-  - ack-based flow control
-  - drop notification
-  - packet erasure coding
-  - congestion control
-
-- Integrity protection
-  - checksum for error detection
-  - partial checksum protection
-  - checksum optional
-  - cryptographic integrity protection
+  - rate control
+    - timer-based
+    - ACK-based 
+  - congestion control 
+  - flow control
+  - segmentation
+  - data/message bundling (Nagle's algorithm)
+  - stream scheduling prioritization
 
 - Security
   - authentication of one end of a connection
   - authentication of both ends of a connection
   - confidentiality
+  - cryptographic integrity protection
 
 The next revision of this document will define transport service features based upon this list.
 
