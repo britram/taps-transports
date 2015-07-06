@@ -5,9 +5,9 @@
 Network Working Group                                  G. Fairhurst, Ed.
 Internet-Draft                                    University of Aberdeen
 Intended status: Informational                          B. Trammell, Ed.
-Expires: December 14, 2015                            M. Kuehlewind, Ed.
+Expires: January 7, 2016                              M. Kuehlewind, Ed.
                                                               ETH Zurich
-                                                           June 12, 2015
+                                                            Jule 6, 2015
 
 
   Services provided by IETF transport protocols and congestion control
