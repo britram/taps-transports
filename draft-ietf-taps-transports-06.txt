@@ -7,7 +7,7 @@ Internet-Draft                                    University of Aberdeen
 Intended status: Informational                          B. Trammell, Ed.
 Expires: January 7, 2016                              M. Kuehlewind, Ed.
                                                               ETH Zurich
-                                                            Jule 6, 2015
+                                                           July 06, 2015
 
 
   Services provided by IETF transport protocols and congestion control
