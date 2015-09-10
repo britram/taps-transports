@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-06
-date: 2015-7-6
+docname: draft-ietf-taps-transports-07
+date: 2015-9-14
 category: info
 ipr: trust200902
 pi:
@@ -125,7 +125,7 @@ informative:
         ins: H. R. M. Steen
     date: 2000
   REST:
-    title: "Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvune), Chapter 5: Representational State Transfer"
+    title: "Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvine), Chapter 5: Representational State Transfer"
     author:
       -
         ins: R. T. Fielding
@@ -312,7 +312,7 @@ characteristics?]
 - Single stream-oriented transmission: The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
 - Limited control over segment transmission scheduling (Nagle's algorithm): This allows for delay minimization in interactive applications by preventing the transport to add additional delays (by deactivating Nagle's algorithm).
 - Port multiplexing, with application-to-port mapping during connection setup: Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
-- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on	the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event. 
+- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on	the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event.
 - Error detection based on a checksum covering the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism	to retransmit them.
 - Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64kB requires the use of an optional feature,	which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
 -  Window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN): Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals.
@@ -351,7 +351,7 @@ should be exposed to higher layer. Should this be discussed here?]
 
 ### Transport Protocol Components
 
-[AUTHOR'S NOTE: shouldn't it be “service feature”?]
+[AUTHOR'S NOTE: shouldn't it be "service feature"?]
 
 As an extension to TCP, MPTCP provides mostly the same components. By
 establishing multiple sessions between available endpoints, it can additionally
@@ -894,7 +894,7 @@ The transport protocol components provided by NORM are:
 - segmentation
 - stream-oriented delivery in a single stream
 - object-oriented delivery of discrete data or file items
-- data bundling (Nagle’s algorithm)
+- data bundling (Nagle's algorithm)
 - flow control (timer-based and/or ack-based)
 - congestion control
 - packet erasure coding (both proactively and as part of ARQ)
@@ -944,7 +944,7 @@ should be interpreted.  For example, in the common use case of
 authentication by means of an X.509 certificate, it is the application's
 decision whether the certificate of the peering entity is acceptable for authorization decisions.
 Perfect forward secrecy, if enabled and supported by the selected algorithms,
-ensures that traffic encrypted and captured during a session at time t0 cannot be 
+ensures that traffic encrypted and captured during a session at time t0 cannot be
 later decrypted at time t1 (t1 > t0), even if the long-term secrets of the
 communicating peers are later compromised.
 
@@ -982,7 +982,7 @@ and digital signature algorithms and their strengths, public key infrastructure 
 X.509 certificates and certificate revocation), and the sockets API.
 See {{RFC7525}} and {{RFC7457}}, as mentioned above.
 
-As an example, in the case of OpenSSL, 
+As an example, in the case of OpenSSL,
 the primary abstractions are the library itself and method (protocol),
 session, context, cipher and connection.
 After initializing the library and setting the method, a cipher suite
@@ -1016,7 +1016,7 @@ parameters for each peer.
 
 Hypertext Transfer Protocol (HTTP) is an application-level protocol widely used on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}. Furthermore, HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to traverse firewalls which makes it work with a lot of infrastructure, and cases where a application server often needs to support HTTP anyway.
 
-Depending on application’s needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
+Depending on application's needs, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g. HTTP headers, suitability of the HTTP security model etc.). {{RFC3205}} address this issues and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
 
 Though not strictly bound to TCP, HTTP is almost exclusively run over TCP, and therefore inherits its properties when used in this way.
 
@@ -1026,9 +1026,9 @@ Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client send
 
 Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP for selecting a representation on a requested resource. The client and server negotiate acceptable data formats, charsets, data encoding (e.g. data can be transferred compressed, gzip), etc. HTTP can accommodate exchange of messages as well as data streaming (using chunked transfer encoding {{RFC7230}}). It is also possible to request a part of a resource using range requests specified in {{RFC7233}}. The protocol provides powerful cache control signalling defined in {{RFC7234}}.
 
-HTTP 1.1’s and HTTP 2.0’s persistent connections can be use to perform multiple request-response transactions during the life-time of a single HTTP connection. Moreover, HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single connection. This reduces connection establishment overhead and the effect of TCP slow-start on each transaction, important for HTTP's primary use case.
+HTTP 1.1's and HTTP 2.0's persistent connections can be use to perform multiple request-response transactions during the life-time of a single HTTP connection. Moreover, HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single connection. This reduces connection establishment overhead and the effect of TCP slow-start on each transaction, important for HTTP's primary use case.
 
-It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g. authentication, encryption, etc.). TLS’s Application-Layer Protocol Negotiation (ALPN) extension {{RFC7301}} can be used for HTTP version negotiation within TLS handshake which eliminates addition round-trip. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.
+It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g. authentication, encryption, etc.). TLS's Application-Layer Protocol Negotiation (ALPN) extension {{RFC7301}} can be used for HTTP version negotiation within TLS handshake which eliminates addition round-trip. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.
 
 Application layer protocols using HTTP as substrate may use existing method and data formats, or specify new methods and data formats. Furthermore some protocols may not fit a request/response paradigm and instead rely on HTTP to send messages (e.g. {{RFC6546}}). Because HTTP is working in many restricted infrastructures, it is also used to tunnel other application-layer protocols.
 
@@ -1083,7 +1083,7 @@ The transport protocol components analyzed in this document which can be used as
     - multicast
     - anycast
     - something on ports and NAT
-  - Multihoming support 
+  - Multihoming support
     - multihoming for resilience
     - multihoming for mobility
       - specify handover latency?
@@ -1119,8 +1119,8 @@ The transport protocol components analyzed in this document which can be used as
 - Transmission control
   - rate control
     - timer-based
-    - ACK-based 
-  - congestion control 
+    - ACK-based
+  - congestion control
   - flow control
   - segmentation
   - data/message bundling (Nagle's algorithm)
@@ -1216,7 +1216,5 @@ This document surveys existing transport protocols and protocols providing trans
 
 Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
 feedback, and discussion. This work is partially supported by the European
-Commission under grant agreement FP7-ICT-318627 mPlane; support does not imply
+Commission under grant agreements FP7-ICT-318627 mPlane and H2020-NEAT; support does not imply
 endorsement.
-
-[EDITOR'S NOTE: add H2020-NEAT ack].

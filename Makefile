@@ -27,8 +27,12 @@ rfcdiff ?= rfcdiff --browse
 # For generating PDF:
 #   https://www.gnu.org/software/enscript/
 enscript ?= enscript
+
 #   http://www.ghostscript.com/
-ps2pdf ?= ps2pdf 
+ps2pdf ?= ps2pdf
+
+# for desmartifying quotes
+sed ?= sed
 
 # Where to get references
 XML_RESOURCE_ORG_PREFIX ?= http://unicorn-wg.github.io/idrefs
@@ -103,6 +107,9 @@ endif
 %.xml: %.md
 	XML_RESOURCE_ORG_PREFIX=$(XML_RESOURCE_ORG_PREFIX) \
 	  $(kramdown-rfc2629) $< > $@
+
+#%.xml: %.sqxml
+#	sed s/[“”]/\"/g $< | sed s/[‘’]/\'/g > $@
 
 %.xml: %.org
 	$(oxtradoc) -m outline-to-xml -n "$@" $< > $@
