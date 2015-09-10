@@ -5,6 +5,7 @@ docname: draft-ietf-taps-transports-07
 date: 2015-9-14
 category: info
 ipr: trust200902
+coding: us-ascii
 pi:
     toc: yes
 
@@ -312,9 +313,9 @@ characteristics?]
 - Single stream-oriented transmission: The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
 - Limited control over segment transmission scheduling (Nagle's algorithm): This allows for delay minimization in interactive applications by preventing the transport to add additional delays (by deactivating Nagle's algorithm).
 - Port multiplexing, with application-to-port mapping during connection setup: Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
-- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on	the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event.
-- Error detection based on a checksum covering the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism	to retransmit them.
-- Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64kB requires the use of an optional feature,	which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
+- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event.
+- Error detection based on a checksum covering the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism to retransmit them.
+- Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64kB requires the use of an optional feature, which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
 -  Window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN): Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals.
 
 
@@ -858,6 +859,197 @@ data, over multicast or unicast network services, including TCP, UDP,
 UDP-Lite, DCCP.
 
 [EDITOR'S NOTE: Varun Singh signed up as contributor for this section. Given the complexity of RTP, suggest to have an abbreviated section here contrasting RTP with other transports, and focusing on those features that are RTP-unique.]
+
+## File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)
+
+FLUTE/ALC is an IETF standards track protocol specified in {{RFC6726}}
+and {{RFC5775}} respectively, where ALC provides the underlying
+reliable transport service and FLUTE a file-oriented specialization
+of the ALC service (e.g., to carry the associated metadata).  The
+{{RFC6726}} and {{RFC5775}} protocols are non-backward-compatible updates
+of the {{RFC3926}} and {{RFC3450}} experimental protocols; these
+experimental protocols are currently largely deployed in the 3GPP
+Multimedia Broadcast and Multicast Services (MBMS) (see {{MBMS}},
+section 7) and similar contexts (e.g., the Japanese ISDB-Tmm standard).
+
+The FLUTE/ALC protocol has been designed to support massively scalable
+reliable bulk data dissemination to receiver groups of arbitrary size using IP
+Multicast, over any type of delivery network, including unidirectional networks
+(e.g., broadcast wireless channels).  However the FLUTE/ALC protocol also
+supports point-to-point unicast transmissions.  FLUTE/ALC bulk data
+dissemination has been designed for discrete file or memory-based "objects".
+Transmissions happen either in push mode, where content is sent once, or in
+on-demand mode, where content is continuously sent during periods of time that
+can largely exceed the average time required to download the session objects
+(see {{RFC5651}}, section 4.2).  
+
+Though FLUTE/ALC is not well adapted to byte- and message-streaming, there is
+an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
+HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6).  In
+that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
+object in push mode.  FLUTE/ALC makes heavy use of packet erasure coding (also
+known as Application-Level Forward Erasure Correction, or AL-FEC) in a
+proactive way.  The goal of using AL-FEC is both to increase the robustness in
+front of packet erasures and to improve the efficiency of the on-demand
+service.  FLUTE/ALC transmissions can be governed by a congestion control
+mechanism such as the "Wave and Equation Based Rate Control" (WEBRC) {{RFC3738}}
+when FLUTE/ALC is used in a layered transmission manner, with several session
+channels over which ALC packets are sent. However many FLUTE/ALC deployments
+involve only Constant Bit Rate (CBR) channels with no competing flows, for
+which a sender based rate control mechanism is sufficient.  In any case,
+FLUTE/ALC's reliability, delivery mode, congestion control, and flow/rate
+control mechanisms are distinct components that can be separately controlled
+to meet different application needs.
+
+[Editor's Note: work continues from here. We pulled out a cite for FECFRAME
+{{RFC6363}}; find a way to add back (or defer to a FECFRAME section)]
+
+3.9.1.  Protocol Description
+
+   The FLUTE/ALC protocol works on top of UDP (a requirement of ALC,
+   although technically speaking it could work on top of any datagram
+   delivery transport protocol) and any underlying network, without
+   requiring any connectivity from receivers to the sender.  Purely
+   unidirectional networks are therefore supported by FLUTE/ALC, which
+   has a major consequence: it guaranties an unlimited scalability to
+   FLUTE/ALC in terms of the number of receivers in a session, since the
+   sender behaves exactly the same whether there is a single or a huge
+   number of receivers (or even no receiver at all).
+
+   FLUTE/ALC supports the transfer of bulk objects such as file or in-
+   memory content, using either a push or an on-demand mode: in push
+   mode, content is sent once to the receivers, while in on-demand mode,
+   content is sent continuously during periods of time that can largely
+   exceed the average time required to download the session objects.
+
+
+
+Fairhurst, et al.        Expires January 7, 2016               [Page 23]
+
+Internet-Draft               TAPS Transports                   July 2015
+
+
+   This is what enables receivers to join the session asynchronously, at
+   their own discretion, download the content and leave the session.  In
+   that case, transmissions typically take place a carousel where data
+   content is sent continuously, in loops.  FLUTE/ALC also supports the
+   transfer of an object-stream, with loose real-time constraints.  This
+   is particularly useful to carry 3GPP DASH when scalability is a
+   requirement and unicast transmissions over HTTP cannot be used
+   ([MBMS], section 5.6).  In that case, packets are sent in sequence,
+   in push mode.  However FLUTE/ALC is not well adapted to byte- and
+   message-streaming and other solutions could be preferred (e.g.,
+   FECFRAME with real-time flows).
+
+   The FLUTE file delivery instantiation of ALC provides a meta-data
+   delivery service.  Each object of the FLUTE/ALC session is described
+   in a dedicated entry of a File Delivery Table (FDT), using an XML
+   format (see [RFC6726], section 3.2).  This meta-data can include (but
+   is not restricted to) a URI attribute (to identify and locate the
+   object), a media type attribute, a size attribute, an encoding
+   attribute, or a message digest attribute.  Since the set of objects
+   sent within a session can be dynamic, with new object being added and
+   old ones removed, several instances of the FDT can be sent and a
+   mechanism is provided to identify a new FDT Instance.
+
+   In order to provide robustness against packet erasures and improve
+   the efficiency of the on-demand mode, FLUTE/ALC heavily relies on
+   packet erasure coding (AL-FEC).  Here AL-FEC encoding necessarily
+   happens proactively (since there is no feedback and therefore no
+   (N)ACK-based retransmission) and ALC packets containing repair data
+   are sent along with ALC packets containing source data.  Several FEC
+   Schemes have been standardized and FLUTE/ALC does not mandate the use
+   of any particular one.  Several strategies concerning the
+   transmission order of ALC source and repair packets are possible, in
+   particular in on-demand mode where it can deeply impact the service
+   provided (e.g., to favor the recovery of objects in sequence, or at
+   the other extreme, to favor the recovery of all objects in parallel),
+   and FLUTE/ALC does not mandate nor recommend the use of any
+   particular one.
+
+   A FLUTE/ALC session is composed of one or more channels, associated
+   to different destination unicast and/or multicast IP addresses.  ALC
+   packets are sent in those channels at a certain transmission rate,
+   with a rate that often differs depending on the channel.  FLUTE/ALC
+   does not mandate nor recommend any strategy to select which ALC
+   packet to send on which channel.  FLUTE/ALC can use a multiple rate
+   congestion control building block (e.g., WEBRC) to provide congestion
+   control that is feedback free, where receivers adjust their reception
+   rates individually by joining and leaving channels associated with
+   the session.  To that purpose, the ALC header provides a specific
+
+
+
+Fairhurst, et al.        Expires January 7, 2016               [Page 24]
+
+Internet-Draft               TAPS Transports                   July 2015
+
+
+   field to carry congestion control specific information.  However
+   FLUTE/ALC does not mandate the use of a particular congestion control
+   mechanism although WEBRC is mandatory to support in case of Internet
+   ([RFC6726], section 1.1.4).  Note that FLUTE/ALC is often used on CBR
+   network, with no competing flows, for which a sender based rate
+   control mechanism and a single channel is sufficient.
+
+   Concerning security services, [RFC6584] provides per-packet
+   authentication, integrity, and anti-replay services in the context of
+   the ALC and NORM protocols.  Several mechanisms are proposed that
+   seamlessly integrate into these protocols thanks to the ALC and NORM
+   header extension mechanism.
+
+3.9.2.  Interface Description
+
+   The FLUTE/ALC specification does not describe a specific application
+   programming interface (API) to control protocol operation.  Freely-
+   available, open source reference implementations of FLUTE/ALC are
+   available at http://planete-bcast.inrialpes.fr/ (no longer
+   maintained) and http://mad.cs.tut.fi/ (no longer maintained), and
+   these implementations specify and document their own API.  Commercial
+   versions are also available, some of them being derived from the
+   above implementations, with their own API.
+
+3.9.3.  Transport Protocol Components
+
+   The transport protocol components provided by FLUTE/ALC are:
+
+   o  reliable or partially reliable delivery of file or in-memory
+      objects
+
+   o  ordered or unordered delivery of file or in-memory objects
+
+   o  per-object dynamic meta-data delivery
+
+   o  push delivery service
+
+   o  on-demand delivery service
+
+   o  per-packet authentication, integrity, and anti-replay services
+
+   o  proactive packet erasure coding (AL-FEC) to recover from packet
+      erasures and improve the on-demand delivery service
+
+   o  error detection (through UDP and lower level checksums)
+
+   o  congestion control for layered flows (e.g., with WEBRC)
+
+
+
+
+Fairhurst, et al.        Expires January 7, 2016               [Page 25]
+
+Internet-Draft               TAPS Transports                   July 2015
+
+
+   o  rate control transmission in a given channel
+
+   o  unicast transmission
+
+   o  multicast/broadcast transmission
+
+   o  port multiplexing (through UDP ports)
+
+
 
 ## NACK-Oriented Reliable Multicast (NORM)
 
