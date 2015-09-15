@@ -131,6 +131,12 @@ informative:
       -
         ins: R. T. Fielding
     date: 2000  
+  POSIX:
+    title: "IEEE Standard for Information Technology -- Portable Operating System Interface (POSIX) Base Specifications, Issue 7"
+    author:
+      -
+        ins: IEEE Std. 1003.1-2008
+    date: 2008
 
 --- abstract
 
@@ -162,8 +168,7 @@ of them using protocols such as WebSockets (which runs over TCP), RTP
 (over TCP or UDP) or WebRTC data channels (which run over SCTP over DTLS
 over UDP or TCP). Services built on top of UDP or UDP-Lite typically also
 need to specify additional mechanisms, including a congestion control
-mechanism (such as a windowed congestion control, TFRC or LEDBAT
-congestion control mechanism).  This extends the set of available
+mechanism (such as NewReno, TFRC or LEDBAT).  This extends the set of available
 Transport Services beyond those provided to applications by TCP and UDP.
 
 Transport protocols can also be differentiated by the features of the
@@ -257,12 +262,17 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-All TCP senders provide Congestion Control: This uses a separate window, where
-each time congestion is detected, this congestion window is reduced. A
-receiver detects congestion using one of three mechanisms: A retransmission
-timer, detection of loss (interpreted as a congestion signal), or Explicit
+All TCP senders provide Congestion Control {{RFC5681}}: This uses a separate window, where
+each time congestion is detected, this congestion window is reduced. Most of the
+used congestion control mechanisms use one of three mechanisms to detect congestion: A retransmission
+timer (with exponential back-up), detection of loss (interpreted as a congestion signal), or Explicit
 Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
-{{I-D.ietf-aqm-ecn-benefits}})
+{{I-D.ietf-aqm-ecn-benefits}}). In addition congestion control mechanism that 
+react on changes in delay as an early indication for congestion are used to 
+implement a scavenger service for e.g. background traffic auch as LEDBAT. 
+In most cases the congestion control mechanims are speficied independ of TCP 
+and can be used by other transport protocols as long as the required feedback
+information is available. 
 
 A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -273,18 +283,19 @@ buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g. to enable smoother interactive sessions.
 
-[EDITOR'S NOTE: add URGENT and PUSH flag (note {{RFC6093}} says SHOULD NOT use
-due to the range of TCP implementations that process TCP urgent indications
-differently.) ]
+TCP provides a push and a urgent function to enable data to be directly accessed 
+by the receiver wihout having to wait for in-order delivery of the data. 
+However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of 
+TCP implementations that process TCP urgent indications differently.
 
 A checksum provides an Integrity Check and is mandatory across the entire
 packet. The TCP checksum does not support partial corruption protection as in
-DCCP/UDP-Lite). This check protects from misdelivery of data corrupted data,
+DCCP/UDP-Lite). This check protects from misdelivery of corrupted data,
 but is relatively weak, and applications that require end to end integrity of
 data are recommended to include a stronger integrity check of their payload
 data.
 
-A TCP service is unicast.
+TCP only offers unicast connections.
 
 ### Interface description
 
@@ -293,12 +304,16 @@ Open, Send, Receive, Close, Status. This interface does not describe
 configuration of TCP options or parameters beside use of the PUSH and URGENT
 flags.
 
+{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting 
+soft error such as ICMP error message arrived, extensive retansmission or urgent 
+pointer advance, 2) providing a possibility to specify the Type-of-Service (TOS) for segments,
+3) providing a fush call to empty the TCP send queue, and 4) multihoming support.
+
 In API implementations derived from the BSD Sockets API, TCP sockets are
-created using the `SOCK_STREAM` socket type.
-
+created using the `SOCK_STREAM` socket type as described in the IEEE Portable 
+Operating System Interface (POSIX) Base Specifications {{POSIX}}.
 The features used by a protocol instance may be set and tuned via this API.
-
-(more on the API goes here)
+However, there is no RFC that documents this interface.
 
 ### Transport Protocol Components
 
@@ -338,17 +353,14 @@ By default, MPTCP exposes the same interface as TCP to the application.
 {{RFC6897}} however describes a richer API for MPTCP-aware applications.
 
 This Basic API describes how an application can
+
 - enable or disable MPTCP;
 - bind a socket to one or more selected local endpoints;
 - query local and remote endpoint addresses;
 - get a unique connection identifier (similar to an address--port pair for TCP).
 
-The document also recommend the use of extensions defined for SCTP {{RFC6458}}
+The document also recommends the use of extensions defined for SCTP {{RFC6458}}
 (see next section) to deal with multihoming.
-
-[AUTHOR'S NOTE: research work, and some implementation, also suggest that the
-scheduling algorithm, as well as the path manager, are configurable options that
-should be exposed to higher layer. Should this be discussed here?]
 
 ### Transport Protocol Components
 
