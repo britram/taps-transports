@@ -267,12 +267,12 @@ each time congestion is detected, this congestion window is reduced. Most of the
 used congestion control mechanisms use one of three mechanisms to detect congestion: A retransmission
 timer (with exponential back-up), detection of loss (interpreted as a congestion signal), or Explicit
 Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
-{{I-D.ietf-aqm-ecn-benefits}}). In addition congestion control mechanism that 
-react on changes in delay as an early indication for congestion are used to 
-implement a scavenger service for e.g. background traffic auch as LEDBAT. 
-In most cases the congestion control mechanims are speficied independ of TCP 
+{{I-D.ietf-aqm-ecn-benefits}}). In addition congestion control mechanism that
+react on changes in delay as an early indication for congestion are used to
+implement a scavenger service for e.g. background traffic auch as LEDBAT.
+In most cases the congestion control mechanims are speficied independ of TCP
 and can be used by other transport protocols as long as the required feedback
-information is available. 
+information is available.
 
 A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -283,9 +283,9 @@ buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g. to enable smoother interactive sessions.
 
-TCP provides a push and a urgent function to enable data to be directly accessed 
-by the receiver wihout having to wait for in-order delivery of the data. 
-However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of 
+TCP provides a push and a urgent function to enable data to be directly accessed
+by the receiver wihout having to wait for in-order delivery of the data.
+However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of
 TCP implementations that process TCP urgent indications differently.
 
 A checksum provides an Integrity Check and is mandatory across the entire
@@ -304,13 +304,13 @@ Open, Send, Receive, Close, Status. This interface does not describe
 configuration of TCP options or parameters beside use of the PUSH and URGENT
 flags.
 
-{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting 
-soft error such as ICMP error message arrived, extensive retansmission or urgent 
+{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting
+soft error such as ICMP error message arrived, extensive retansmission or urgent
 pointer advance, 2) providing a possibility to specify the Type-of-Service (TOS) for segments,
 3) providing a fush call to empty the TCP send queue, and 4) multihoming support.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are
-created using the `SOCK_STREAM` socket type as described in the IEEE Portable 
+created using the `SOCK_STREAM` socket type as described in the IEEE Portable
 Operating System Interface (POSIX) Base Specifications {{POSIX}}.
 The features used by a protocol instance may be set and tuned via this API.
 However, there is no RFC that documents this interface.
