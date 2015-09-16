@@ -106,11 +106,11 @@ informative:
   RFC7301:
   RFC7323:
   RFC7457:
+  RFC7496:
   RFC7525:
   RFC7540:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
-  I-D.ietf-tsvwg-sctp-prpolicies:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-natsupp:
   XHR:
@@ -523,7 +523,7 @@ defined in the document specifying the protocol extensions:
 - the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
 - the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
-- the additional PR-SCTP policies defined in {{I-D.ietf-tsvwg-sctp-prpolicies}}.
+- the additional PR-SCTP policies defined in {{RFC7496}}.
 
 Future documents describing SCTP protocol extensions are expected to describe
 the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
