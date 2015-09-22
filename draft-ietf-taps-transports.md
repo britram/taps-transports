@@ -130,7 +130,7 @@ informative:
     author:
       -
         ins: R. T. Fielding
-    date: 2000  
+    date: 2000
   POSIX:
     title: "IEEE Standard for Information Technology -- Portable Operating System Interface (POSIX) Base Specifications, Issue 7"
     author:
@@ -404,7 +404,8 @@ partial reliability for user messages.
 SCTP was originally developed for transporting telephony signalling messages
 and is deployed in telephony signalling networks, especially in mobile telephony
 networks.
-Additionally, it is used in the WebRTC framework for data channels and is therefore deployed in all WEB-browsers supporting WebRTC.
+Additionally, it is used in the WebRTC framework for data channels and is
+therefore deployed in all WEB-browsers supporting WebRTC.
 
 ### Protocol Description
 
@@ -440,7 +441,9 @@ are supported.
 
 {{RFC4960}} specifies a TCP friendly congestion control to protect the network
 against overload. SCTP also uses a sliding window flow control to protect
-receivers against overflow.
+receivers against overflow. Similar to TCP, SCTP also supports delaying
+acknowledgements. {{RFC7053}} provides a way for the sender of user messages
+to request the immediate sending of the corresponding acknowledgements.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in
 each direction. The number of streams can be different in each direction.
@@ -468,7 +471,7 @@ terminated in a non-graceful way, similar to the TCP behaviour.
 In addition to this reliable transfer, the partial reliability extension
 defined in {{RFC3758}} allows the sender to abandon user messages.
 The application can specify the policy for abandoning user messages.
-Examples for these policies include:
+Examples for these policies defined in {{RFC3758}} and {{RFC7496}} are:
 
 - Limiting the time a user message is dealt with by the sender.
 - Limiting the number of retransmissions for each fragment of a user message.
@@ -520,9 +523,9 @@ An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 For the following SCTP protocol extensions the BSD Sockets API extension is
 defined in the document specifying the protocol extensions:
 
-- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
 - the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
 - the additional PR-SCTP policies defined in {{RFC7496}}.
 
 Future documents describing SCTP protocol extensions are expected to describe
@@ -742,7 +745,7 @@ The transport protocol components provided by UDP-Lite are:
 Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is an
 IETF standards track
 bidirectional transport protocol that provides unicast connections of
-congestion-controlled unreliable messages.  
+congestion-controlled unreliable messages.
 
 The DCCP Problem Statement describes the goals that
 DCCP sought to address {{RFC4336}}. It is suitable for
@@ -889,7 +892,7 @@ dissemination has been designed for discrete file or memory-based "objects".
 Transmissions happen either in push mode, where content is sent once, or in
 on-demand mode, where content is continuously sent during periods of time that
 can largely exceed the average time required to download the session objects
-(see {{RFC5651}}, section 4.2).  
+(see {{RFC5651}}, section 4.2).
 
 Though FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
