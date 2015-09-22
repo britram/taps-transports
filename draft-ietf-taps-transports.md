@@ -513,6 +513,36 @@ the next subsection.
 ### Interface Description
 
 {{RFC4960}} defines an abstract API for the base protocol.
+The abstract functions callable by the upper layer of SCTP are:
+
+- Initialize
+- Associate
+- Send
+- Receive
+- Receive Unsent Message
+- Receive Unacknowledged Message
+- Shutdown
+- Abort
+- SetPrimary
+- Status
+- Change Heartbeat
+- Request Heartbeat
+- Get SRTT Report
+- Set Failure Threshold
+- Set Protocol Parameters
+- Destroy
+
+The following notifications are provided by the SCTP stack to the upper layer:
+
+- COMMUNICATION UP
+- DATA ARRIVE
+- SHUTDOWN COMPLETE
+- COMMUNICATION LOST
+- COMMUNICATION ERROR
+- RESTART
+- SEND FAILURE
+- NETWORK STATUS CHANGE
+
 An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 
 - the base protocol defined in {{RFC4960}}.
