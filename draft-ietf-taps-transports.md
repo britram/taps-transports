@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-07
-date: 2015-9-14
+date: 2015-9-30
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -54,9 +54,12 @@ informative:
   RFC3205:
   RFC3390:
   RFC3436:
+  RFC3450:
   RFC3452:
+  RFC3738:
   RFC3758:
   RFC3828:
+  RFC3926:
   RFC4324:
   RFC4336:
   RFC4340:
@@ -75,9 +78,11 @@ informative:
   RFC5405:
   RFC5595:
   RFC5596:
+  RFC5651:
   RFC5662:
   RFC5672:
   RFC5740:
+  RFC5775:
   RFC6773:
   RFC5925:
   RFC5681:
@@ -88,9 +93,12 @@ informative:
   RFC6298:
   RFC6347:
   RFC6356:
+  RFC6363:
   RFC6455:
   RFC6458:
+  RFC6584:
   RFC6691:
+  RFC6726:
   RFC6824:
   RFC6897:
   RFC6935:
@@ -136,8 +144,12 @@ informative:
     author:
       -
         ins: IEEE Std. 1003.1-2008
-    date: 2008
-
+  MBMS:
+    title:  "3GPP TS 26.346: Multimedia Broadcast/Multicast Service (MBMS); Protocols and codecs, release 13 (http://www.3gpp.org/DynaReport/26346.htm)."
+    author:
+      -
+        ins: 3GPP TSG WS S4
+    date: 2015
 --- abstract
 
 This document describes services provided by existing IETF protocols and
