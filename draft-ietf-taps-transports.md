@@ -106,11 +106,11 @@ informative:
   RFC7301:
   RFC7323:
   RFC7457:
+  RFC7496:
   RFC7525:
   RFC7540:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
-  I-D.ietf-tsvwg-sctp-prpolicies:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-natsupp:
   XHR:
@@ -130,7 +130,7 @@ informative:
     author:
       -
         ins: R. T. Fielding
-    date: 2000  
+    date: 2000
   POSIX:
     title: "IEEE Standard for Information Technology -- Portable Operating System Interface (POSIX) Base Specifications, Issue 7"
     author:
@@ -267,12 +267,12 @@ each time congestion is detected, this congestion window is reduced. Most of the
 used congestion control mechanisms use one of three mechanisms to detect congestion: A retransmission
 timer (with exponential back-up), detection of loss (interpreted as a congestion signal), or Explicit
 Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
-{{I-D.ietf-aqm-ecn-benefits}}). In addition congestion control mechanism that 
-react on changes in delay as an early indication for congestion are used to 
-implement a scavenger service for e.g. background traffic auch as LEDBAT. 
-In most cases the congestion control mechanims are speficied independ of TCP 
+{{I-D.ietf-aqm-ecn-benefits}}). In addition congestion control mechanism that
+react on changes in delay as an early indication for congestion are used to
+implement a scavenger service for e.g. background traffic auch as LEDBAT.
+In most cases the congestion control mechanims are speficied independ of TCP
 and can be used by other transport protocols as long as the required feedback
-information is available. 
+information is available.
 
 A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -283,9 +283,9 @@ buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g. to enable smoother interactive sessions.
 
-TCP provides a push and a urgent function to enable data to be directly accessed 
-by the receiver wihout having to wait for in-order delivery of the data. 
-However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of 
+TCP provides a push and a urgent function to enable data to be directly accessed
+by the receiver wihout having to wait for in-order delivery of the data.
+However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of
 TCP implementations that process TCP urgent indications differently.
 
 A checksum provides an Integrity Check and is mandatory across the entire
@@ -304,13 +304,13 @@ Open, Send, Receive, Close, Status. This interface does not describe
 configuration of TCP options or parameters beside use of the PUSH and URGENT
 flags.
 
-{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting 
-soft error such as ICMP error message arrived, extensive retansmission or urgent 
+{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting
+soft error such as ICMP error message arrived, extensive retansmission or urgent
 pointer advance, 2) providing a possibility to specify the Type-of-Service (TOS) for segments,
 3) providing a fush call to empty the TCP send queue, and 4) multihoming support.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are
-created using the `SOCK_STREAM` socket type as described in the IEEE Portable 
+created using the `SOCK_STREAM` socket type as described in the IEEE Portable
 Operating System Interface (POSIX) Base Specifications {{POSIX}}.
 The features used by a protocol instance may be set and tuned via this API.
 However, there is no RFC that documents this interface.
@@ -404,7 +404,8 @@ partial reliability for user messages.
 SCTP was originally developed for transporting telephony signalling messages
 and is deployed in telephony signalling networks, especially in mobile telephony
 networks.
-Additionally, it is used in the WebRTC framework for data channels and is therefore deployed in all WEB-browsers supporting WebRTC.
+Additionally, it is used in the WebRTC framework for data channels and is
+therefore deployed in all WEB-browsers supporting WebRTC.
 
 ### Protocol Description
 
@@ -440,7 +441,9 @@ are supported.
 
 {{RFC4960}} specifies a TCP friendly congestion control to protect the network
 against overload. SCTP also uses a sliding window flow control to protect
-receivers against overflow.
+receivers against overflow. Similar to TCP, SCTP also supports delaying
+acknowledgements. {{RFC7053}} provides a way for the sender of user messages
+to request the immediate sending of the corresponding acknowledgements.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in
 each direction. The number of streams can be different in each direction.
@@ -468,7 +471,7 @@ terminated in a non-graceful way, similar to the TCP behaviour.
 In addition to this reliable transfer, the partial reliability extension
 defined in {{RFC3758}} allows the sender to abandon user messages.
 The application can specify the policy for abandoning user messages.
-Examples for these policies include:
+Examples for these policies defined in {{RFC3758}} and {{RFC7496}} are:
 
 - Limiting the time a user message is dealt with by the sender.
 - Limiting the number of retransmissions for each fragment of a user message.
@@ -510,23 +513,65 @@ the next subsection.
 ### Interface Description
 
 {{RFC4960}} defines an abstract API for the base protocol.
+This API describes the following functions callable by the upper layer of SCTP:
+Initialize, Associate, Send, Receive, Receive Unsent Message,
+Receive Unacknowledged Message, Shutdown, Abort, SetPrimary, Status,
+Change Heartbeat, Request Heartbeat, Get SRTT Report, Set Failure Threshold,
+Set Protocol Parameters, and Destroy.
+The following notifications are provided by the SCTP stack to the upper layer:
+COMMUNICATION UP, DATA ARRIVE, SHUTDOWN COMPLETE, COMMUNICATION LOST,
+COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.
+
 An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 
-- the base protocol defined in {{RFC4960}}.
-- the SCTP Partial Reliability extension defined in {{RFC3758}}.
-- the SCTP Authentication extension defined in {{RFC4895}}.
+- the base protocol defined in {{RFC4960}}. The API allows to control the
+  local addresses and port numbers and the primary path. Furthermore
+  the application has fine control about parameters like retransmission
+  thresholds, the path supervision parameters, the delayed acknowledgement
+  timeout, and the fragmentation point. The API provides a mechanism
+  to allow the SCTP stack to notify the application about event if the
+  application has requested them. These notifications provide Information
+  about status changes of the association and each of the peer addresses.
+  In case of send failures that application can also be notified and user
+  messages can be returned to the application. When sending user messages,
+  the stream id, a payload protocol identifier, an indication whether ordered
+  delivery is requested or not. These parameters can also be provided on
+  message reception. Additionally a context can be provided when sending,
+  which can be use in case of send failures. The sending of arbitrary large
+  user messages is supported.
+- the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
+  for a user message the PR-SCTP policy and the policy specific parameter.
+- the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
+  the shared keys, the HMAC to use, set the chunk types which are only accepted
+  in an authenticated way, and get the list of chunks which are accepted by the
+  local and remote end point in an authenticated way.
 - the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+  It allows to manually add and delete local addresses for SCTP associations
+  and the enabling of automatic address addition and deletion. Furthermore
+  the peer can be given a hint for choosing its primary path.
+
 
 For the following SCTP protocol extensions the BSD Sockets API extension is
 defined in the document specifying the protocol extensions:
 
-- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+  The API allows to trigger the reset operation for incoming and
+  outgoing streams and the whole association. It provides also a way
+  to notify the association about the corresponding events. Furthermore
+  the application can increase the number of streams.
 - the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
-- the additional PR-SCTP policies defined in {{I-D.ietf-tsvwg-sctp-prpolicies}}.
+  The API allows the management of the remote UDP encapsulation port.
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+  The API allows the sender of a user message to request the receiver to
+  send the corresponding acknowledgement immediately.
+- the additional PR-SCTP policies defined in {{RFC7496}}.
+  The API allows to enable/disable the PR-SCTP extension,
+  choose the PR-SCTP policies defined in the document and provide statistical
+  information about abandoned messages.
 
 Future documents describing SCTP protocol extensions are expected to describe
-the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
+the corresponding BSD Sockets API extension in a `Socket API Considerations`
+section.
 
 The SCTP socket API supports two kinds of sockets:
 
@@ -742,7 +787,7 @@ The transport protocol components provided by UDP-Lite are:
 Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is an
 IETF standards track
 bidirectional transport protocol that provides unicast connections of
-congestion-controlled unreliable messages.  
+congestion-controlled unreliable messages.
 
 The DCCP Problem Statement describes the goals that
 DCCP sought to address {{RFC4336}}. It is suitable for
@@ -889,7 +934,7 @@ dissemination has been designed for discrete file or memory-based "objects".
 Transmissions happen either in push mode, where content is sent once, or in
 on-demand mode, where content is continuously sent during periods of time that
 can largely exceed the average time required to download the session objects
-(see {{RFC5651}}, section 4.2).  
+(see {{RFC5651}}, section 4.2).
 
 Though FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
