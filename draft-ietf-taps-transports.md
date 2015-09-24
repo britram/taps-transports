@@ -230,8 +230,6 @@ encapsulation).
 This section provides a list of known IETF transport protocol and
 transport protocol frameworks.
 
-[EDITOR'S NOTE: Contributions to the subsections below are welcome]
-
 ## Transport Control Protocol (TCP)
 
 TCP is an IETF standards track transport protocol.
@@ -327,23 +325,23 @@ Operating System Interface (POSIX) Base Specifications {{POSIX}}.
 The features used by a protocol instance may be set and tuned via this API.
 However, there is no RFC that documents this interface.
 
-### Transport Protocol Components
+### Transport Features
 
-The transport protocol components provided by TCP (new version) are:
+The transport features provided by TCP are:
 
-[EDITOR'S NOTE: discussion of how to map this to features and TAPS: what does the higher
-layer need to decide? what can the transport layer decide based on global
-settings? what must the transport layer decide based on network
-characteristics?]
+[EDITOR'S NOTE: expand each of these slightly]
 
-- Connection-oriented bidirectional communication using three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open: This implies both unicast addressing and a guarantee of return routability.
-- Single stream-oriented transmission: The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
-- Limited control over segment transmission scheduling (Nagle's algorithm): This allows for delay minimization in interactive applications by preventing the transport to add additional delays (by deactivating Nagle's algorithm).
-- Port multiplexing, with application-to-port mapping during connection setup: Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding purposes.
-- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event.
-- Error detection based on a checksum covering the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism to retransmit them.
-- Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64kB requires the use of an optional feature, which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
--  Window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN): Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals.
+- unicast
+- connection setup with feature negotiation and application-to-port mapping
+- port multiplexing
+- bidirectional communication
+- stream-oriented delivery in a single stream
+- fully reliable delivery
+- error detection (checksum)
+- segmentation
+- data bundling (Nagle's algorithm)
+- flow control
+- congestion control
 
 
 ## Multipath TCP (MPTCP)
