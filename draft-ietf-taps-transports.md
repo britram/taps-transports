@@ -524,21 +524,54 @@ COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.
 
 An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 
-- the base protocol defined in {{RFC4960}}.
-- the SCTP Partial Reliability extension defined in {{RFC3758}}.
-- the SCTP Authentication extension defined in {{RFC4895}}.
+- the base protocol defined in {{RFC4960}}. The API allows to control the
+  local addresses and port numbers and the primary path. Furthermore
+  the application has fine control about parameters like retransmission
+  thresholds, the path supervision parameters, the delayed acknowledgement
+  timeout, and the fragmentation point. The API provides a mechanism
+  to allow the SCTP stack to notify the application about event if the
+  application has requested them. These notifications provide Information
+  about status changes of the association and each of the peer addresses.
+  In case of send failures that application can also be notified and user
+  messages can be returned to the application. When sending user messages,
+  the stream id, a payload protocol identifier, an indication whether ordered
+  delivery is requested or not. These parameters can also be provided on
+  message reception. Additionally a context can be provided when sending,
+  which can be use in case of send failures. The sending of arbitrary large
+  user messages is supported.
+- the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
+  for a user message the PR-SCTP policy and the policy specific parameter.
+- the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
+  the shared keys, the HMAC to use, set the chunk types which are only accepted
+  in an authenticated way, and get the list of chunks which are accepted by the
+  local and remote end point in an authenticated way.
 - the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+  It allows to manually add and delete local addresses for SCTP associations
+  and the enabling of automatic address addition and deletion. Furthermore
+  the peer can be given a hint for choosing its primary path.
+
 
 For the following SCTP protocol extensions the BSD Sockets API extension is
 defined in the document specifying the protocol extensions:
 
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+  The API allows to trigger the reset operation for incoming and
+  outgoing streams and the whole association. It provides also a way
+  to notify the association about the corresponding events. Furthermore
+  the application can increase the number of streams.
 - the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
+  The API allows the management of the remote UDP encapsulation port.
 - the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+  The API allows the sender of a user message to request the receiver to
+  send the corresponding acknowledgement immediately.
 - the additional PR-SCTP policies defined in {{RFC7496}}.
+  The API allows to enable/disable the PR-SCTP extension,
+  choose the PR-SCTP policies defined in the document and provide statistical
+  information about abandoned messages.
 
 Future documents describing SCTP protocol extensions are expected to describe
-the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
+the corresponding BSD Sockets API extension in a `Socket API Considerations`
+section.
 
 The SCTP socket API supports two kinds of sockets:
 
