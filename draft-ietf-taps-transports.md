@@ -37,34 +37,38 @@ author:
     city: 8092 Zurich
     country: Switzerland
 
-normative:
-  RFC0791:
 informative:
   RFC0768:
+  RFC0792:
   RFC0793:
   RFC0896:
   RFC1122:
   RFC1191:
+  RFC1716:
   RFC1981:
   RFC2018:
   RFC2045:
   RFC2460:
+  RFC2461:
   RFC2617:
+  RFC2710:
   RFC3168:
   RFC3205:
-  RFC3390:
   RFC3436:
   RFC3450:
   RFC3452:
+  RFC3550:
   RFC3738:
   RFC3758:
   RFC3828:
   RFC3926:
+  RFC3971:
   RFC4324:
   RFC4336:
   RFC4340:
   RFC4341:
   RFC4342:
+  RFC4433:
   RFC4614:
   RFC4654:
   RFC4820:
@@ -74,7 +78,9 @@ informative:
   RFC5061:
   RFC5097:
   RFC5246:
-  RFC5348:
+  RFC5238:
+  RFC5404:
+  RFC5461:
   RFC5595:
   RFC5596:
   RFC5651:
@@ -82,22 +88,20 @@ informative:
   RFC5672:
   RFC5740:
   RFC5775:
-  RFC6773:
-  RFC5925:
   RFC5681:
+  RFC6056:
   RFC6083:
   RFC6093:
   RFC6525:
   RFC6546:
-  RFC6298:
   RFC6347:
   RFC6356:
   RFC6363:
   RFC6455:
   RFC6458:
   RFC6584:
-  RFC6691:
   RFC6726:
+  RFC6773:
   RFC6824:
   RFC6897:
   RFC6935:
@@ -1043,7 +1047,7 @@ carry other payload data. Each message carries an integrity check calculated in
 the same way as UDP.
 
 The RFC series defines additional IPv6 message formats to support a range of uses.
-In the case of IPv6 the protocol incorporates neighbour discovery {{RFC2461} {{RFC3971}}}
+In the case of IPv6 the protocol incorporates neighbour discovery {{RFC2461}} {{RFC3971}}}
 (provided by ARP for IPv4) and the Multicast Listener
 Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
 
@@ -1270,7 +1274,7 @@ carry congestion control specific information.  However FLUTE/ALC does not
 mandate the use of a particular congestion control mechanism although WEBRC is
 mandatory to support in case of Internet ({{RFC6726}}, section 1.1.4).
 FLUTE/ALC is often used over a network path with pre-provisoned capacity
-{{RFC5404.bis}} whete theres are no flows competing for capacity. In this
+{{RFC5404}} whete theres are no flows competing for capacity. In this
 case, a sender-based rate control mechanism and a single channel is
 sufficient.
 
