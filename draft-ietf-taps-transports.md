@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-07
-date: 2015-9-14
+date: 2015-9-30
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -54,9 +54,12 @@ informative:
   RFC3205:
   RFC3390:
   RFC3436:
+  RFC3450:
   RFC3452:
+  RFC3738:
   RFC3758:
   RFC3828:
+  RFC3926:
   RFC4324:
   RFC4336:
   RFC4340:
@@ -74,9 +77,11 @@ informative:
   RFC5348:
   RFC5595:
   RFC5596:
+  RFC5651:
   RFC5662:
   RFC5672:
   RFC5740:
+  RFC5775:
   RFC6773:
   RFC5925:
   RFC5681:
@@ -87,9 +92,12 @@ informative:
   RFC6298:
   RFC6347:
   RFC6356:
+  RFC6363:
   RFC6455:
   RFC6458:
+  RFC6584:
   RFC6691:
+  RFC6726:
   RFC6824:
   RFC6897:
   RFC6935:
@@ -105,12 +113,12 @@ informative:
   RFC7301:
   RFC7323:
   RFC7457:
+  RFC7496:
   RFC7525:
   RFC7540:
   I-D.ietf-tsvwg-rfc5405bis:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
-  I-D.ietf-tsvwg-sctp-prpolicies:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-natsupp:
   XHR:
@@ -130,14 +138,18 @@ informative:
     author:
       -
         ins: R. T. Fielding
-    date: 2000  
+    date: 2000
   POSIX:
     title: "IEEE Standard for Information Technology -- Portable Operating System Interface (POSIX) Base Specifications, Issue 7"
     author:
       -
         ins: IEEE Std. 1003.1-2008
-    date: 2008
-
+  MBMS:
+    title:  "3GPP TS 26.346: Multimedia Broadcast/Multicast Service (MBMS); Protocols and codecs, release 13 (http://www.3gpp.org/DynaReport/26346.htm)."
+    author:
+      -
+        ins: 3GPP TSG WS S4
+    date: 2015
 --- abstract
 
 This document describes services provided by existing IETF protocols and
@@ -222,8 +234,6 @@ encapsulation).
 This section provides a list of known IETF transport protocol and
 transport protocol frameworks.
 
-[EDITOR'S NOTE: Contributions to the subsections below are welcome]
-
 ## Transport Control Protocol (TCP)
 
 TCP is an IETF standards track transport protocol.
@@ -267,20 +277,14 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-All TCP senders provide Congestion Control {{RFC5681}}: This uses a separate window, where
-each time congestion is detected, this congestion window is reduced. Most of the
-used congestion control mechanisms use one of three mechanisms to detect congestion: A retransmission
-timer (with exponential back-up), detection of loss (interpreted as a congestion signal), or Explicit
+All TCP senders provide Congestion Control {{RFC5681}}: This uses a separate
+window, where each time congestion is detected, this congestion window is
+reduced. Most of the used congestion control mechanisms use one of three
+mechanisms to detect congestion: A retransmission timer (with exponential
+back-up), detection of loss (interpreted as a congestion signal), or Explicit
 Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
-{{I-D.ietf-aqm-ecn-benefits}}). In addition, a congestion control mechanism may 
-react to changes in delay as an early indication for congestion.
-
-[GF: This next part isn't TCP:
-,  are used to 
-implement a scavenger service for e.g. background traffic auch as LEDBAT. 
-Congestion control mechanims are speficied independent of TCP 
-and can be used by other transport protocols as long as the required feedback
-information is available. ]
+{{I-D.ietf-aqm-ecn-benefits}}). In addition, a congestion control mechanism
+may react to changes in delay as an early indication for congestion.
 
 A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -291,13 +295,13 @@ buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g., to reduce latency for interactive sessions.
 
-TCP provides a push and a urgent function to enable data to be directly accessed 
-by the receiver wihout having to wait for in-order delivery of the data. 
-However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of 
+TCP provides a push and a urgent function to enable data to be directly accessed
+by the receiver wihout having to wait for in-order delivery of the data.
+However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of
 TCP implementations that process TCP urgent indications differently.
 
 A checksum provides an Integrity Check and is mandatory across the entire
-packet. This check protects from delivery of corrupted data and  miselivery of 
+packet. This check protects from delivery of corrupted data and  miselivery of
 packets to the wrong endpoint.
 This check is  relatively weak, applications that require end to end integrity of
 data are recommended to include a stronger integrity check of their payload
@@ -313,37 +317,34 @@ Open, Send, Receive, Close, Status. This interface does not describe
 configuration of TCP options or parameters beside use of the PUSH and URGENT
 flags.
 
-{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting 
-soft errors such as reception fo ICMP error messages, extensive retansmission or urgent 
+{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting
+soft errors such as reception fo ICMP error messages, extensive retransmission or urgent
 pointer advance, 2) providing a possibility to specify the Type-of-Service (TOS) for segments,
 3) providing a fush call to empty the TCP send queue, and 4) multihoming support.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are
-created using the `SOCK_STREAM` socket type as described in the IEEE Portable 
+created using the `SOCK_STREAM` socket type as described in the IEEE Portable
 Operating System Interface (POSIX) Base Specifications {{POSIX}}.
 The features used by a protocol instance may be set and tuned via this API.
 However, there is no RFC that documents this interface.
 
-### Transport Protocol Components
+### Transport Features
 
-The transport protocol components provided by TCP (new version) are:
+The transport features provided by TCP are:
 
-[EDITOR'S NOTE: discussion of how to map this to features and TAPS: what does the higher
-layer need to decide? what can the transport layer decide based on global
-settings? what must the transport layer decide based on network
-characteristics?]
+[EDITOR'S NOTE: expand each of these slightly]
 
-- Connection-oriented bidirectional communication using three-way handshake connection setup with feature negotiation and an explicit distinction between passive and active open: This implies both unicast addressing and a guarantee of return routability. Optionally may also use a Half-Open or  simultaneous open mode.
-- Single stream-oriented transmission: The stream abstraction atop the datagram service provided by IP is implemented by dividing the stream into segments.
-- Limited control over segment transmission scheduling (Nagle's algorithm): This allows for delay minimization in interactive applications by preventing the transport to add additional delays (by deactivating Nagle's algorithm).
-- Port multiplexing, with application-to-port mapping during connection setup: Note that in the presence of network address and port translation (NAPT), TCP ports are in effect part of the endpoint address for forwarding.
-- Payload error and misdelivery detection.
-- Full reliability using (S)ACK- and RTO-based loss detection and retransmissions: Loss is sensed using duplicated ACKs ("fast retransmit"), which places a lower bound on the delay inherent in this approach to reliability. The retransmission timeout determines the upper bound on the delay (expect if also exponential back-off is performed). The use of selective acknowlegdements further reduces the latency for retransmissions if multiple packets are lost during one congestion event.
-- Error detection based on a checksum covering a pseudo header from the network and transport headers as well as payload: Packets that are detected as corrupted are dropped, relying on the reliability mechanism to retransmit them.
-- Window-based flow control, with receiver-side window management and signaling of available window: Scaling the flow control window beyond 64KB requires the use of an optional feature, which has performance implications in environments where this option is not supported; this can be the case either if the receiver does not implement window scaling or if a network node on the path strips the window scaling option.
--  Window-based congestion control reacting to loss, delay, retransmission timeout, or an explicit congestion signal (ECN): Most commonly used is a loss signal from the reliability component's retransmission mechanism. TCP reacts to a congestion signal by reducing the size of the congestion window; retransmission timeout is generally handled with a larger reaction than other signals, and br reset of state relating to the path.
-
-[GF: in above why "Generally" - I thought it was required for RTO to be conservative!]
+- unicast
+- connection setup with feature negotiation and application-to-port mapping
+- port multiplexing
+- bidirectional communication
+- stream-oriented delivery in a single stream
+- fully reliable delivery
+- error detection (checksum)
+- segmentation
+- data bundling (Nagle's algorithm)
+- flow control
+- congestion control
 
 
 ## Multipath TCP (MPTCP)
@@ -415,10 +416,10 @@ Furthermore, the extension specified in {{RFC3758}} introduces the concept of
 partial reliability for user messages.
 
 SCTP was originally developed for transporting telephony signalling messages
-and is deployed in telephony signalling networks, especially in mobile telephony
-networks. It can alos be used for other servuices, for example it is used in 
-the WebRTC framework for data channels 
-and is therefore deployed in all WEB-browsers supporting WebRTC.
+and is deployed in telephony signalling networks, especially in mobile
+telephony networks. It can also be used for other services, for example in the
+WebRTC framework for data channels and is therefore deployed in all
+WEB-browsers supporting WebRTC.
 
 ### Protocol Description
 
@@ -455,7 +456,9 @@ are supported.
 
 {{RFC4960}} specifies a TCP friendly congestion control to protect the network
 against overload. SCTP also uses a sliding window flow control to protect
-receivers against overflow.
+receivers against overflow. Similar to TCP, SCTP also supports delaying
+acknowledgements. {{RFC7053}} provides a way for the sender of user messages
+to request the immediate sending of the corresponding acknowledgements.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in
 each direction. The number of streams can be different in each direction.
@@ -484,7 +487,7 @@ terminated in a non-graceful way {{RFC4960}}, similar to TCP behaviour.
 In addition to this reliable transfer, the partial reliability extension
 {{RFC3758}} allows a sender to abandon user messages.
 The application can specify the policy for abandoning user messages.
-Examples for these policies include:
+Examples for these policies defined in {{RFC3758}} and {{RFC7496}} are:
 
 - Limiting the time a user message is dealt with by the sender.
 - Limiting the number of retransmissions for each fragment of a user message.
@@ -525,23 +528,65 @@ SCTP has a well-defined API,  described in the next subsection.
 ### Interface Description
 
 {{RFC4960}} defines an abstract API for the base protocol.
+This API describes the following functions callable by the upper layer of SCTP:
+Initialize, Associate, Send, Receive, Receive Unsent Message,
+Receive Unacknowledged Message, Shutdown, Abort, SetPrimary, Status,
+Change Heartbeat, Request Heartbeat, Get SRTT Report, Set Failure Threshold,
+Set Protocol Parameters, and Destroy.
+The following notifications are provided by the SCTP stack to the upper layer:
+COMMUNICATION UP, DATA ARRIVE, SHUTDOWN COMPLETE, COMMUNICATION LOST,
+COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.
+
 An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 
-- the base protocol defined in {{RFC4960}}.
-- the SCTP Partial Reliability extension defined in {{RFC3758}}.
-- the SCTP Authentication extension defined in {{RFC4895}}.
+- the base protocol defined in {{RFC4960}}. The API allows to control the
+  local addresses and port numbers and the primary path. Furthermore
+  the application has fine control about parameters like retransmission
+  thresholds, the path supervision parameters, the delayed acknowledgement
+  timeout, and the fragmentation point. The API provides a mechanism
+  to allow the SCTP stack to notify the application about event if the
+  application has requested them. These notifications provide Information
+  about status changes of the association and each of the peer addresses.
+  In case of send failures that application can also be notified and user
+  messages can be returned to the application. When sending user messages,
+  the stream id, a payload protocol identifier, an indication whether ordered
+  delivery is requested or not. These parameters can also be provided on
+  message reception. Additionally a context can be provided when sending,
+  which can be use in case of send failures. The sending of arbitrary large
+  user messages is supported.
+- the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
+  for a user message the PR-SCTP policy and the policy specific parameter.
+- the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
+  the shared keys, the HMAC to use, set the chunk types which are only accepted
+  in an authenticated way, and get the list of chunks which are accepted by the
+  local and remote end point in an authenticated way.
 - the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+  It allows to manually add and delete local addresses for SCTP associations
+  and the enabling of automatic address addition and deletion. Furthermore
+  the peer can be given a hint for choosing its primary path.
+
 
 For the following SCTP protocol extensions the BSD Sockets API extension is
 defined in the document specifying the protocol extensions:
 
-- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+  The API allows to trigger the reset operation for incoming and
+  outgoing streams and the whole association. It provides also a way
+  to notify the association about the corresponding events. Furthermore
+  the application can increase the number of streams.
 - the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
-- the additional PR-SCTP policies defined in {{I-D.ietf-tsvwg-sctp-prpolicies}}.
+  The API allows the management of the remote UDP encapsulation port.
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+  The API allows the sender of a user message to request the receiver to
+  send the corresponding acknowledgement immediately.
+- the additional PR-SCTP policies defined in {{RFC7496}}.
+  The API allows to enable/disable the PR-SCTP extension,
+  choose the PR-SCTP policies defined in the document and provide statistical
+  information about abandoned messages.
 
 Future documents describing SCTP protocol extensions are expected to describe
-the corresponding BSD Sockets API extension in a `Socket API Considerations` section.
+the corresponding BSD Sockets API extension in a `Socket API Considerations`
+section.
 
 The SCTP socket API supports two kinds of sockets:
 
@@ -613,7 +658,7 @@ The transport protocol components provided by SCTP are:
 
 UDP is a connection-less protocol that maintains message boundaries,
 with no connection setup or feature negotiation. The protocol uses
-independent messages, ordinarily called datagrams. Each stream of 
+independent messages, ordinarily called datagrams. Each stream of
 messages is independently
 managed, therefore retransmission does not hold back data sent using
 other logical streams. It provides detection
@@ -622,10 +667,10 @@ either of which result in discard of received datagrams.
 
 It is possible to create IPv4 UDP datagrams with no checksum, and
 while this is generally discouraged {{RFC1122}} {{I-D.ietf-tsvwg-rfc5405bis}}, certain
-special cases permit its use. These datagrams relie on the IPv4 
+special cases permit its use. These datagrams relie on the IPv4
 header checksum to protect from misdelivery to the wrong endpoint.
 IPv6 does not by permit UDP datagrams with no checksum, although
-in certain cases this rule may be relaxed {{RFC6935}}. 
+in certain cases this rule may be relaxed {{RFC6935}}.
 The checksum support
 considerations for omitting the checksum are defined in {{RFC6936}}.
 Note that due to the relatively weak form of checksum used by UDP,
@@ -635,7 +680,7 @@ data.
 
 It does not provide reliability and does not provide retransmission.
 This implies messages may be re-ordered,
-lost, or duplicated in transit. 
+lost, or duplicated in transit.
 
 A receiving application that is unable to
 run sufficiently fast, or frequently, may miss messages since
@@ -655,7 +700,7 @@ On transmission, UDP encapsulates each datagram into an IP packet,
 which may in turn be fragmented by IP and are reassembled before
 delivery to the UDP receiver.  
 
-Applications that need to provide 
+Applications that need to provide
 fragmentation or that have other requirements such as receiver flow
 control, congestion control, PathMTU discovery/PLPMTUD, support for
 ECN, etc need these to be provided by protocols operating over UDP {{I-D.ietf-tsvwg-rfc5405bis}}.
@@ -775,7 +820,7 @@ The transport protocol components provided by UDP-Lite are:
 Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is an
 IETF standards track
 bidirectional transport protocol that provides unicast connections of
-congestion-controlled unreliable messages.  
+congestion-controlled unreliable messages.
 
 The DCCP Problem Statement describes the goals that
 DCCP sought to address {{RFC4336}}. It is suitable for
@@ -825,7 +870,7 @@ in acknowledgments, to detect unacknowledged segments, to measure RTT,
 etc.
 The protocol may support ordered or unordered delivery of data, and does
 not
-itself provide retransmission. 
+itself provide retransmission.
 DCCP supports
 reduced checksum coverage, a partial integrity mechanisms similar to UDP-lIte.
 There is also a Data Checksum option that when enabled,
@@ -856,7 +901,7 @@ features it wishes to support. Simultaneous open
 the presence of middleboxes. The Connect packet includes
 a Service Code field {{RFC5595}} designed to allow middle
 boxes and endpoints to identify the characteristics
-required by a session. 
+required by a session.
 
 A lightweight UDP-based encapsulation (DCCP-UDP)
 has been defined {{RFC6773}} that permits DCCP to be
@@ -981,7 +1026,7 @@ It provides
 none of the following transport features: error correction,
 congestion control, or flow control. Some messages may be sent as
 broadcast datagrams (IPv4) or multicast datagrams (IPv4 and IPv6), in
-addition to unicast (and anycast) datagrams. 
+addition to unicast (and anycast) datagrams.
 
 ### Protocol Description
 
@@ -990,14 +1035,14 @@ The protocol uses
 independent messages, ordinarily called datagrams. Each message is required to
 carry a checksum as an integrity check and to protect from misdelivery to the wrong endpoint.
 
-ICMP messages typically relay diagnostic information from an endpoint {{RFC1122}} or 
+ICMP messages typically relay diagnostic information from an endpoint {{RFC1122}} or
 network device {{RFC1716}} addressed to the sender of a flow. This usually contains
 the network protocol header of a packet that encountered the reported issue.
 Some formats of messages may also
-carry other payload data. Each message carries an integrity check calculated in 
+carry other payload data. Each message carries an integrity check calculated in
 the same way as UDP.
 
-The RFC series defines additional IPv6 message formats to support a range of uses. 
+The RFC series defines additional IPv6 message formats to support a range of uses.
 In the case of IPv6 the protocol incorporates neighbour discovery {{RFC2461} {{RFC3971}}}
 (provided by ARP for IPv4) and the Multicast Listener
 Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
@@ -1009,13 +1054,13 @@ there is no flow or congestion control.
 In addition some network devices rate-limit ICMP messages.
 
 Transport Protocols and upper layer protocols can use ICMP messages to help them
-take appropriate decisions when network or endpoint errors are reported. 
+take appropriate decisions when network or endpoint errors are reported.
 For example to implement, ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} or
 assist in Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}}.
 Such reactions to received messages needs to protects from
 off-path data injection {{I-D.ietf-tsvwg-rfc5405bis}}, avoiding an application receiving
 packets that were created by an unauthorized third party.
-An application therefore needs to 
+An application therefore needs to
 ensure that aLL messaged are appropriately validated, by checking
  the payload of the messages to ensure these are received in response to
 actually transmitted traffic (e.g., a reported error condition that corresponds to
@@ -1035,7 +1080,7 @@ ICMP processing is integrated into many connection-oriented transports,
 but like other functions needs to be provided by an upper-layer protocol
 when usingh UDP and UDP-Lite.
 On some stacks, a bound socket also allows a UDP application to be notified
-when ICMP error messages are received for its transmissions 
+when ICMP error messages are received for its transmissions
 {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Transport Protocol Components
@@ -1058,21 +1103,21 @@ UDP-Lite, or DCCP.
 
 [GF: Added this section as a starting point]
 
-The RTP standard {{RFC3550}} defines a pair of protocols, RTP and the 
-Real Time Control Protocol, RTCP. The transport does not provide 
+The RTP standard {{RFC3550}} defines a pair of protocols, RTP and the
+Real Time Control Protocol, RTCP. The transport does not provide
 connection setup, but relies on out-of-band techniques or associated
 control protocols to setup, negotiate parameters or tear-down a session.
 
 An RTP sender encapsulates audio/video data into RTP packets
 to transport media streams.
-The RFC-series specifies RTP media formats allow packets to carry a 
+The RFC-series specifies RTP media formats allow packets to carry a
 wide range of media, and specifies a wide range of mulriplexing,
 error control and other support mechanisms.
 
 If a frame of media data is large, it will be fragment this
-into several RTP packets. If  small, several 
-frames may be bundled into a single RTP packet. 
-RTP may runs over a congestion-controlled or non-congestion-controlled 
+into several RTP packets. If  small, several
+frames may be bundled into a single RTP packet.
+RTP may runs over a congestion-controlled or non-congestion-controlled
 transport protocol.
 
 An RTP receiver collects RTP packets from network, validates them
@@ -1085,24 +1130,24 @@ payloads are decompressed to display or store the data.
 RTCP is an associated control protocol that works with RTP.
 Both the RTP sender and receiver can send RTCP report packets.
 This is used to periodically
-send control information and report performance. 
+send control information and report performance.
 Based on received RTCP feedback, an RTP sender
-can adjust the transmission, e.g., perform rate adaptation 
+can adjust the transmission, e.g., perform rate adaptation
 at the application layer in the case of congestion.
 
 An RTCP receiver report (RTCP RR ) is returned to the sender
-periodically to report key parameters (e.g, the fraction of packets 
-lost in the last reporting interval, the cumulative number of 
-packets lost, the highest sequence number received, and the 
+periodically to report key parameters (e.g, the fraction of packets
+lost in the last reporting interval, the cumulative number of
+packets lost, the highest sequence number received, and the
 inter-arrival jitter). The RTCP RR packets also contain timing
 information that allows the sender to estimate the network
 round trip time (RTT) to the receivers.
 
-The interval between reports sent from each receiver tends 
-to be on the order of a few seconds on average, although 
-this varies with the session rate, and sub-second reporting 
-intervals are possible for high rate sessions. 
-The interval is randomised to avoid synchronization of 
+The interval between reports sent from each receiver tends
+to be on the order of a few seconds on average, although
+this varies with the session rate, and sub-second reporting
+intervals are possible for high rate sessions.
+The interval is randomised to avoid synchronization of
 reports from multiple receivers.
 
 [EDITOR'S NOTE: Varun Singh signed up as contributor for this section. Given the complexity of RTP, suggest to have an abbreviated section here contrasting RTP with other transports, and focusing on those features that are RTP-unique.]
@@ -1136,7 +1181,7 @@ The FLUTE/ALC protocol has been designed to support massively scalable
 reliable bulk data dissemination to receiver groups of arbitrary size using IP
 Multicast over any type of delivery network, including unidirectional networks
 (e.g., broadcast wireless channels). However, the FLUTE/ALC protocol also
-supports point-to-point unicast transmissions. 
+supports point-to-point unicast transmissions.
 
 FLUTE/ALC bulk data
 dissemination has been designed for discrete file or memory-based "objects".
@@ -1147,7 +1192,7 @@ can largely exceed the average time required to download the session objects
 
 Altough FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
-HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6). 
+HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6).
 In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
 object in push mode. FLUTE/ALC uses packet erasure coding (also
 known as Application-Level Forward Erasure Correction, or AL-FEC) in a
@@ -1168,7 +1213,7 @@ to meet different application needs.
 The FLUTE/ALC protocol works on top of UDP (though it could work on top of any
 datagram delivery transport protocol), without requiring any connectivity from
 receivers to the sender. Purely unidirectional networks are therefore
-supported by FLUTE/ALC. This guarantees scalability to an 
+supported by FLUTE/ALC. This guarantees scalability to an
 unlimited number of receivers in a session, since
 the sender behaves exactly the same regardness of the number of receivers.
 
@@ -1223,9 +1268,9 @@ reception rates individually by joining and leaving channels associated with
 the session.  To that purpose, the ALC header provides a specific field to
 carry congestion control specific information.  However FLUTE/ALC does not
 mandate the use of a particular congestion control mechanism although WEBRC is
-mandatory to support in case of Internet ({{RFC6726}}, section 1.1.4). 
+mandatory to support in case of Internet ({{RFC6726}}, section 1.1.4).
 FLUTE/ALC is often used over a network path with pre-provisoned capacity
-{{RFC5404.bis}} whete theres are no flows competing for capacity. In this 
+{{RFC5404.bis}} whete theres are no flows competing for capacity. In this
 case, a sender-based rate control mechanism and a single channel is
 sufficient.
 
@@ -1615,6 +1660,6 @@ This document surveys existing transport protocols and protocols providing trans
 
 Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
 feedback, and discussion. This work is partially supported by the European
-Commission under grant agreements FP7-ICT-318627 mPlane and from the Horizon 2020 
+Commission under grant agreements FP7-ICT-318627 mPlane and from the Horizon 2020
 research and innovation program under grant agreement No. 644334 (NEAT); support does not imply
 endorsement.
