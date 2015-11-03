@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-07
-date: 2015-10-7
+docname: draft-ietf-taps-transports-08
+date: 2015-11-19
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -202,11 +202,6 @@ The following terms are defined throughout this document, and in
 subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.
 
-[EDITOR'S NOTE: we may want to add definitions for the different kinds of
-interfaces that are important here.]
-
-[GF: Interfaces may be covered by Micahel Welzl's companion document?]
-
 Transport Service Feature:
 : a specific end-to-end feature that a transport service provides to its
 clients. Examples include confidentiality, reliable delivery, ordered
@@ -335,8 +330,6 @@ However, there is no RFC that documents this interface.
 ### Transport Features
 
 The transport features provided by TCP are:
-
-[EDITOR'S NOTE: expand each of these slightly]
 
 - unicast transport
 - connection setup with feature negotiation and application-to-port mapping, implemented using SYN segments and the TCP option field to negotiate features.
@@ -742,6 +735,7 @@ The transport features provided by UDP are:
 - error and misdelivery detection (checksum).
 - optional checksum. All or none of the payload data is protected.
 
+
 ## Lightweight User Datagram Protocol (UDP-Lite)
 
 The Lightweight User Datagram Protocol (UDP-Lite) {{RFC3828}} is an IETF
@@ -815,7 +809,7 @@ The transport features provided by UDP-Lite are:
 - non-reliable delivery (as for UDP).
 - non-ordered delivery (as for UDP).
 - error and misdelivery detection (checksum).
-- partialor full integrity protection. The checksum coverage field indicates the size of the payload data covered by the checksum.
+- partial or full integrity protection. The checksum coverage field indicates the size of the payload data covered by the checksum.
 
 ## Datagram Congestion Control Protocol (DCCP)
 
@@ -945,78 +939,6 @@ The transport features provided by DCCP are:
 - partial and full integrity protection (with optional strong integrity check).
 
 
-## Lightweight User Datagram Protocol (UDP-Lite)
-
-The Lightweight User Datagram Protocol (UDP-Lite) {{RFC3828}} is an IETF
-standards track transport protocol. It provides a unidirectional,
-datagram protocol that preserves message boundaries.
-IETF guidance on the use of UDP-Lite is provided in
-{{I-D.ietf-tsvwg-rfc5405bis}}.
-
-
-### Protocol Description
-
-UDP-Lite is a connection-less datagram protocol,
-with no connection setup or feature negotiation.
-The protocol use messages,
-rather than a byte-stream. Each stream of messages is independently
-managed, therefore retransmission does not hold back data sent using
-other logical streams.
-
-It provides multiplexing to multiple sockets on each host using port
-numbers, and its operation follows that for UDP.
-An active UDP-Lite session is identified by its four-tuple of local and
-remote IP addresses and local port and remote port numbers.
-
-UDP-Lite changes the semantics of the UDP "payload length" field to
-that of a "checksum coverage length" field, and is identified by
-a different IP protocol/next-header value. Otherwise, UDP-Lite is
-semantically identical to UDP. Applications using UDP-Lite therefore
-can not make
-assumptions regarding the correctness of the data received in the
-insensitive part of the UDP-Lite payload.
-
-As for UDP, mechanisms for receiver flow control, congestion control,
-PMTU or PLPMTU
-discovery, support for ECN, etc need to be provided by
-upper layer protocols {{I-D.ietf-tsvwg-rfc5405bis}}.
-
-Examples of use include a class of applications that
-can derive benefit from having
-partially-damaged payloads delivered, rather than discarded. One
-use is to support error
-tolerate payload corruption when used over paths that include error-prone links,
-another
-application is when header integrity checks are required, but
-payload integrity is provided by some other mechanism (e.g., {{RFC6936}}.
-
-A UDP-Lite service may support IPv4 broadcast, multicast, anycast and
-unicast, and IPv6 multicast, anycast and unicast.
-
-### Interface Description
-
-There is no current API specified in the RFC Series, but guidance on
-use of common APIs is provided in {{I-D.ietf-tsvwg-rfc5405bis}}.
-
-The interface of UDP-Lite differs
-from that of UDP by the addition of a single (socket) option that
-communicates a checksum coverage length value: at the sender, this
-specifies the intended checksum coverage, with the remaining
-unprotected part of the payload called the "error-insensitive part".
-The checksum coverage may also be made visible to the application
-via the UDP-Lite MIB module {{RFC5097}}.
-
-### Transport Features
-
-The transport features provided by UDP-Lite are:
-
-- unicast
-- multicast, anycast, or IPv4 broadcast.
-- port multiplexing (as for UDP).
-- message-oriented delivery (as for UDP).
-- non-reliable delivery(as for UDP).
-- non-ordered delivery (as for UDP).
-- partial or full integrity protection.
 
 ## Internet Control Message Protocol (ICMP)
 
@@ -1104,9 +1026,6 @@ applications transmitting real-time data, such as audio, video or
 data, over multicast or unicast network services, including TCP, UDP,
 UDP-Lite, or DCCP.
 
-
-[EDITOR'S NOTE: Varun Singh signed up as contributor for this section. Given the complexity of RTP, suggest to have an abbreviated section here contrasting RTP with other transports, and focusing on those features that are RTP-unique. Gorry Fairhurst contributed this stub section]
-
 ### Protocol Description
 
 The RTP standard {{RFC3550}} defines a pair of protocols, RTP and the
@@ -1158,7 +1077,7 @@ reports from multiple receivers.
 
 ### Interface Description
 
-[EDITOR'S NOTE: to do]
+[EDITOR'S NOTE: to do. Colin to provide text on how tightly bound RTP generally is to the application.]
 
 ### Transport Features
 
@@ -1321,8 +1240,6 @@ The transport features provided by FLUTE/ALC are:
 NORM is an IETF standards track protocol specified in {{RFC5740}}. The protocol was designed to support reliable bulk data dissemination to receiver groups using IP Multicast but also provides for point-to-point unicast operation. Its support for bulk data dissemination includes discrete file or computer memory-based "objects" as well as byte- and message-streaming. NORM is designed to incorporate packet erasure coding as an inherent part of its selective ARQ in response to receiver negative acknowledgements. The packet erasure coding can also be proactively applied for forward protection from packet loss. NORM transmissions are governed by the TCP-friendly congestion control. NORM's reliability, congestion control, and flow control mechanism are distinct components and can be separately controlled to meet different application needs.
 
 ### Protocol Description
-
-[EDITOR'S NOTE: needs to be more clear about the application of FEC and packet erasure coding; expand ARQ.]
 
 The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For purposes of loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation. {{RFC5740}} does not specify a handshake protocol for connection establishment and separate session initiation can be used to coordinate port numbers. However, in-band "client-server" style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.
 
@@ -1578,54 +1495,6 @@ The transport protocol components analyzed in this document which can be used as
   - confidentiality
   - cryptographic integrity protection
 
-A future revision of this document will define transport service features based upon this list.
-
-[EDITOR'S NOTE: this section will drawn from the candidate features provided by protocol components in the
-previous section -- please discuss on taps@ietf.org list]
-
-## Complete Protocol Feature Matrix
-
-[EDITOR'S NOTE: Dave Thaler has signed up as a contributor for this section. Michael Welzl also has a beginning of a matrix which could be useful here.]
-
-[EDITOR'S NOTE: The below is a strawman proposal below by Gorry Fairhurst for initial discussion]
-
-The table below summarises protocol mechanisms that have been standardised. It does not make an assessment on whether specific implementations are fully compliant to these specifications.
-
-|-----------------|---------|---------|---------|---------|---------|
-| Mechanism       | UDP     | UDP-L   | DCCP    | SCTP    | TCP     |
-|-----------------|---------|---------|---------|---------|---------|
-| Unicast         | Yes     | Yes     | Yes     | Yes     | Yes     |
-| Mcast/IPv4Bcast | Yes(2)  | Yes     | No      | No      | No      |
-| Port Mux        | Yes     | Yes     | Yes     | Yes     | Yes     |
-|-----------------|---------|---------|---------|---------|---------|
-| Mode            | Dgram   | Dgram   | Dgram   | Dgram   | Stream  |
-| Connected       | No      | No      | Yes     | Yes     | Yes     |
-| Data bundling   | No      | No      | No      | Yes     | Yes     |
-|-----------------|---------|---------|---------|---------|---------|
-| Feature Nego    | No      | No      | Yes     | Yes     | Yes     |
-| Options         | No      | No      | Support | Support | Support |
-| Data priority   | *       | *       | *       | Yes     | No      |
-| Data bundling   | No      | No      | No      | Yes     | Yes     |
-|-----------------|---------|---------|---------|---------|---------|
-| Reliability     | None    | None    | None    | Select  | Full    |
-| Ordered deliv   | No      | No      | No      | Stream  | Yes     |
-| Corruption Tol. | No      | Support | Support | No      | No      |
-| Flow Control    | No      | No      | Support | Yes     | Yes     |
-| PMTU/PLPMTU     | (1)     | (1)     | Yes     | Yes     | Yes     |
-|-----------------|---------|---------|---------|---------|---------|
-| Cong Control    | (1)     | (1)     | Yes     | Yes     | Yes     |
-| ECN Support     | (1)     | (1)     | Yes     | TBD     | Yes     |
-|-----------------|---------|---------|---------|---------|---------|
-| NAT support     | Limited | Limited | Support | TBD     | Support |
-| Security        | DTLS    | DTLS    | DTLS    | DTLS    | TLS, AO |
-| UDP encaps      | N/A     | None    | Yes     | Yes     | None    |
-| RTP support     | Support | Support | Support | ?       | Support |
-|-----------------|---------|---------|---------|---------|---------|
-
-Note (1): this feature requires support in an upper layer protocol.
-
-Note (2): this feature requires support in an upper layer protocol when used with IPv6.
-
 # IANA Considerations
 
 This document has no considerations for IANA.
@@ -1635,8 +1504,6 @@ This document has no considerations for IANA.
 This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new components or mechanisms for providing these features. Each RFC listed in this document discusses the security considerations of the specification it contains.
 
 # Contributors
-
-[Editor's Note: turn this into a real contributors section with addresses once we figure out how to trick the toolchain into doing so]
 
 <!--
  -
@@ -1665,6 +1532,6 @@ This document surveys existing transport protocols and protocols providing trans
 
 Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
 feedback, and discussion. This work is partially supported by the European
-Commission under grant agreements FP7-ICT-318627 mPlane and from the Horizon 2020
-research and innovation program under grant agreement No. 644334 (NEAT); support does not imply
-endorsement.
+Commission under grant agreements FP7-ICT-318627 mPlane and from the Horizon
+2020 research and innovation program under grant agreement No. 644334 (NEAT);
+support does not imply endorsement.
