@@ -1431,54 +1431,55 @@ The transport protocol components analyzed in this document which can be used as
 
 - Control Functions
   - Addressing
-    - unicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - multicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - IPv4 broadcast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - anycast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+    - unicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, TLS, HTTP)
+    - multicast (UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM)
+    - IPv4 broadcast (UDP, UDP-Lite, DCCP)
+    - anycast (UDP, UDP-Lite, DCCP). Connection-oriented protocols such as TCP can be and are used with anycast routing, with the risk that routing changes may cause connection failure.
   - Multihoming support
-    - multihoming for resilience (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - multihoming for mobility (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - multihoming for load-balancing (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+    - multihoming for resilience (MPTCP, SCTP)
+    - multihoming for mobility (MPTCP, SCTP)
+    - multihoming for load-balancing (MPTCP)
   - Application to port mapping (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-        - use of NAPT-compatible port numbers (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-        - with commonly deployed support in NAPT (TCP, MPTCP, UDP, HTTP)
+    - use of NAPT-compatible port numbers (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP) 
+    - with commonly deployed support in NAPT (TCP, MPTCP, UDP, FLUTE/ALC, NORM, TLS, HTTP)
 
 - Delivery
   - reliability
-    - fully reliable delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - partially reliable delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - using packet erasure coding (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - unreliable delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - drop notification (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+    - fully reliable delivery (TCP, MPTCP, SCTP, FLUTE/ALC, NORM, TLS, HTTP)
+    - partially reliable delivery (SCTP, NORM)
+      - using packet erasure coding (NORM)
+    - unreliable delivery (SCTP, UDP, UDP-Lite, DCCP)
+      - drop notification (DCCP)
     - Integrity protection
       - checksum for error detection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - partial payload checksum protection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - checksum optional (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+      - partial payload checksum protection (UDP-Lite, DCCP)
+      - checksum optional (UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM)
   - ordering
-    - ordered delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - unordered delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+    - ordered delivery (TCP, MPTCP, SCTP, TLS, HTTP)
+    - unordered delivery (SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM)
   - type/framing
-    - stream-oriented delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - with multiple streams per association (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - message-oriented delivery (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - object-oriented delivery of discrete data or file items (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-      - range-based partial object transmission (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+    - stream-oriented delivery (TCP, MPTCP, SCTP, TLS)
+      - with multiple streams per association (SCTP)
+    - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, TLS)
+    - object-oriented delivery of discrete data or file items (FLUTE/ALC, NORM, HTTP)
+
+- [EDITOR'S NOTE: work pointer here]
 
 - Transmission control
-  - rate control (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - rate control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
     - timer-based (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
     - ACK-based (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - congestion control (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - flow control (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - segmentation (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - congestion control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - flow control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - segmentation (TCP, MPTCP, SCTP,  FLUTE/ALC, NORM, TLS, HTTP)
   - data/message bundling (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - stream scheduling prioritization (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - stream scheduling prioritization (SCTP)
 
 - Security
-  - authentication of one end of a connection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - authentication of both ends of a connection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - confidentiality (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - cryptographic integrity protection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - authentication of one end of a connection (TLS,)
+  - authentication of both ends of a connection (TLS)
+  - confidentiality (TLS)
+  - cryptographic integrity protection (TLS)
 
 # IANA Considerations
 
