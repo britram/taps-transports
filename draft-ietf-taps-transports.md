@@ -124,6 +124,7 @@ informative:
   I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-ndata:
+  I-D.ietf-tsvwg-sctp-failover:
   I-D.ietf-tsvwg-natsupp:
   XHR:
     title: "XMLHttpRequest working draft (http://www.w3.org/TR/XMLHttpRequest/)"
@@ -156,16 +157,13 @@ informative:
     date: 2015
 --- abstract
 
-This document describes services provided by existing IETF protocols and
-congestion control mechanisms.  It is designed to help application and
-network stack programmers and to inform the work of the IETF TAPS Working
-Group.
+This document describes transport services provided by existing IETF
+protocols.  It is designed to help application and network stack programmers
+and to inform the work of the IETF TAPS Working Group.
 
 --- middle
 
 # Introduction
-
-[EDITOR'S NOTE: We are missing edits from Karen Nielsen's feedback; please incorporate.]
 
 Most Internet applications make use of the Transport Services provided by
 TCP (a reliable, in-order stream protocol) or UDP (an unreliable datagram
@@ -235,16 +233,13 @@ transport protocol frameworks.
 
 ## Transport Control Protocol (TCP)
 
-TCP is an IETF standards track transport protocol.
-{{RFC0793}} introduces TCP as follows: "The
-Transmission Control Protocol (TCP) is intended for use as a highly
-reliable host-to-host protocol between hosts
-in packet-switched computer communication networks, and in interconnected
-systems of such networks." Since its introduction, TCP has become the
-default connection-oriented,
-stream-based transport protocol in the Internet. It is widely implemented
-by endpoints and
-widely used by common applications.
+TCP is an IETF standards track transport protocol. {{RFC0793}} introduces TCP
+as follows: "The Transmission Control Protocol (TCP) is intended for use as a
+highly reliable host-to-host protocol between hosts in packet-switched
+computer communication networks, and in interconnected systems of such
+networks." Since its introduction, TCP has become the default connection-
+oriented, stream-based transport protocol in the Internet. It is widely
+implemented by endpoints and widely used by common applications.
 
 ### Protocol Description
 
@@ -276,16 +271,20 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-All TCP senders provide Congestion Control {{RFC5681}}: This uses a separate
-window, where each time congestion is detected, this congestion window is
-reduced. Most of the used congestion control mechanisms use one of three
-mechanisms to detect congestion: A retransmission timer (with exponential
-back-up), detection of loss (interpreted as a congestion signal), or Explicit
-Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see
-{{I-D.ietf-aqm-ecn-benefits}}). In addition, a congestion control mechanism
-may react to changes in delay as an early indication for congestion.
+All TCP senders provide congestion control {{RFC5681}}. Each time congestion
+is detected, a separate congestion window is reduced. Most of the commonly deployed
+congestion control mechanisms use one of three mechanisms to detect
+congestion:
 
-A TCP protocol instance can be extended {{RFC4614}} and tuned. Some features
+- a retransmission timer (with exponential back-off)
+- detection of loss (interpreted as a congestion signal), or 
+- Explicit Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see {{I-D.ietf-aqm-ecn-
+benefits}}). 
+
+In addition, congestion control mechanisms may react to changes
+in delay as an early indication for congestion.
+
+TCP protocol instances can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
 receiver-side only, some are explicitly negotiated during connection setup.
 
@@ -398,15 +397,17 @@ the same session.
 ## Stream Control Transmission Protocol (SCTP)
 
 SCTP is a message-oriented standards track transport protocol. The base
-protocol is specified in {{RFC4960}}.
-It supports multi-homing to handle path failures.
-It also optionally supports path failover to provide resilliance to path failures.
-An SCTP association has multiple unidirectional streams in each direction and
-provides in-sequence delivery of user messages only within each stream. This
-allows it to minimize head of line blocking.
-SCTP is extensible and the currently defined extensions include mechanisms
-for dynamic re-configurations of streams {{RFC6525}} and
-IP-addresses {{RFC5061}}.
+protocol is specified in {{RFC4960}}. It supports multi-homing to handle path
+failures. It also supports path failover to provide resiliance to
+path failures. An SCTP association has multiple unidirectional streams in each
+direction and provides in-sequence delivery of user messages within each
+stream. This allows it to minimize head of line blocking. SCTP supports
+multiple stream scheduling schemes controlling stream multiplexing, including
+priority and fair weighting schemes.
+
+SCTP is extensible
+and the currently defined extensions include mechanisms for dynamic re-
+configurations of streams {{RFC6525}} and IP-addresses {{RFC5061}}.
 Furthermore, the extension specified in {{RFC3758}} introduces the concept of
 partial reliability for user messages.
 
@@ -490,19 +491,16 @@ Examples for these policies defined in {{RFC3758}} and {{RFC7496}} are:
   to UDP.
 - Abandoning messages of lower priority in case of a send buffer shortage.
 
-SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses
-and a single port number. These addresses can be any mixture of IPv4 and IPv6
-addresses.
-These addresses are negotiated during the handshake and the address
+SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses and
+a single port number. These addresses can be any mixture of IPv4 and IPv6
+addresses. These addresses are negotiated during the handshake and the address
 re-configuration extension specified in {{RFC5061}} in combination with
 {{RFC4895}} can be used to change these addresses in an authenticated way
-during the livetime of an SCTP association.
-This allows for transport layer mobility.
-Multiple addresses are used for improved resilience.
-If a remote address becomes unreachable, the traffic is switched over to a
-reachable one, if one exists.
-Each SCTP end-point supervises continuously the reachability of all peer
-addresses using a heartbeat mechanism.
+during the livetime of an SCTP association. This allows for transport layer
+mobility. Multiple addresses are used for improved resilience. If a remote
+address becomes unreachable, the traffic is switched over to a reachable one,
+if one exists. {{I-D.ietf-tsvwg-sctp-failover}} specifies a quicker failover
+operation reducing the latency of the failover.
 
 For securing user messages, the use of TLS over SCTP has been specified in
 {{RFC3436}}. However, this solution does not support all services provided
@@ -542,7 +540,8 @@ An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
   to allow the SCTP stack to notify the application about event if the
   application has requested them. These notifications provide Information
   about status changes of the association and each of the peer addresses.
-  In case of send failures that application can also be notified and user
+  In case of send failures, including drop of messages sent unreliably, 
+  the application can also be notified and user
   messages can be returned to the application. When sending user messages,
   the stream id, a payload protocol identifier, an indication whether ordered
   delivery is requested or not. These parameters can also be provided on
@@ -601,7 +600,7 @@ marked as notifications.
 New functions have been introduced to support the use of
 multiple local and remote addresses.
 Additional SCTP-specific send and receive calls have been defined to permit
-SCTP-specific information to be snet without using ancillary data
+SCTP-specific information to be sent without using ancillary data
 in the form of additional cmsgs.
 These functions provide support for detecting partial delivery of
 user messages and notifications.
@@ -621,7 +620,7 @@ The transport features provided by SCTP are:
 - connection setup with feature negotiation and application-to-port mapping.
 - port multiplexing.
 - message-oriented delivery.
-- fully reliable or partially reliable delivery.
+- fully reliable, partially reliable, or unreliable delivery.
 - ordered and unordered delivery within a stream.
 - support for multiple concurrent streams.
 - support for stream scheduling prioritization.
@@ -779,7 +778,7 @@ unicast, and IPv6 multicast, anycast and unicast.
 
 ### Interface Description
 
-There is no current API specified in the RFC Series, but guidance on
+There is no API currently specified in the RFC Series, but guidance on
 use of common APIs is provided in {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 The interface of UDP-Lite differs
@@ -912,7 +911,7 @@ API characteristics include:
 - Slow Receiver flow control at a receiver.
 - Detect a Slow receiver at the sender.
 
-There is no current API currently specified in the RFC Series.
+There is no API currently specified in the RFC Series.
 
 ### Transport Features
 
@@ -1423,11 +1422,7 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 
 # Transport Service Features
 
-[EDITOR'S NOTE: This section is still work-in-progress. This list is probably not complete and/or too detailed.]
-
 The transport protocol components analyzed in this document which can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
-
-[Canonical order: (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)]
 
 - Control Functions
   - Addressing
@@ -1449,7 +1444,7 @@ The transport protocol components analyzed in this document which can be used as
     - partially reliable delivery (SCTP, NORM)
       - using packet erasure coding (NORM)
     - unreliable delivery (SCTP, UDP, UDP-Lite, DCCP)
-      - drop notification (DCCP)
+      - with drop notification (SCTP, DCCP)
     - Integrity protection
       - checksum for error detection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
       - partial payload checksum protection (UDP-Lite, DCCP)
@@ -1463,20 +1458,15 @@ The transport protocol components analyzed in this document which can be used as
     - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, TLS)
     - object-oriented delivery of discrete data or file items (FLUTE/ALC, NORM, HTTP)
 
-- [EDITOR'S NOTE: work pointer here]
-
 - Transmission control
-  - rate control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - timer-based (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-    - ACK-based (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - congestion control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
   - flow control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
-  - segmentation (TCP, MPTCP, SCTP,  FLUTE/ALC, NORM, TLS, HTTP)
-  - data/message bundling (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - congestion control (TCP, MPTCP, SCTP, DCCP, FLUTE/ALC, NORM, TLS, HTTP)
+  - segmentation (TCP, MPTCP, SCTP, FLUTE/ALC, NORM, TLS, HTTP)
+  - data/message bundling (TCP, MPTCP, SCTP, TLS, HTTP)
   - stream scheduling prioritization (SCTP)
 
 - Security
-  - authentication of one end of a connection (TLS,)
+  - authentication of one end of a connection (TLS)
   - authentication of both ends of a connection (TLS)
   - confidentiality (TLS)
   - cryptographic integrity protection (TLS)
