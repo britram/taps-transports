@@ -271,6 +271,8 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
+[EDITOR'S NOTE new section 4 on congestion control algoritms?]
+
 All TCP senders provide congestion control {{RFC5681}}. Each time congestion
 is detected, a separate congestion window is reduced. Most of the commonly deployed
 congestion control mechanisms use one of three mechanisms to detect
@@ -292,6 +294,8 @@ By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to
 buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g., to reduce latency for interactive sessions.
+
+[EDITOR'S NOTE: note deprecation more strongly, drop PSH flag mention?]
 
 TCP provides a push and a urgent function to enable data to be directly accessed
 by the receiver wihout having to wait for in-order delivery of the data.
