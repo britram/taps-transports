@@ -102,6 +102,7 @@ informative:
   RFC6584:
   RFC6726:
   RFC6773:
+  RFC6817:
   RFC6824:
   RFC6897:
   RFC6935:
@@ -912,8 +913,6 @@ The transport features provided by DCCP are:
 - timestamps.
 - partial and full integrity protection (with optional strong integrity check).
 
-
-
 ## Internet Control Message Protocol (ICMP)
 
 The Internet Control Message Protocol (ICMP) {{RFC0792}} for IPv4 and {{RFC4433}} for IPv6 are IETF
@@ -1428,8 +1427,14 @@ mechanisms to detect congestion:
 benefits}}); and/or
 - a retransmission timer with exponential back-off.
 
-In addition, congestion control mechanisms may react to changes
-in delay as an early indication for congestion.
+In addition, congestion control mechanisms may react to changes in delay as an
+indication for congestion. Delay-based congestion detection methods tend to
+induce less loss than loss-based methods, and therefore generally do not
+compete well with them across shared bottleneck links. However, such methods,
+such as LEDBAT {{RFC6824}}, are are deployed in the Internet for scavenger
+traffic, which will use unused capacity but readily yield to presumably
+interactive or otherwise higher-priority, loss-based congestion-controller
+traffic.
 
 
 # Transport Service Features
