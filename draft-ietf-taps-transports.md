@@ -244,19 +244,18 @@ implemented by endpoints and widely used by common applications.
 ### Protocol Description
 
 TCP is a connection-oriented protocol, providing a three way handshake to
-allow a client and server to set up a connection and negotiate features,
-and mechanisms for orderly
-completion and immediate teardown of a connection. TCP is defined by a family
-of RFCs {{RFC4614}}.
+allow a client and server to set up a connection and negotiate features, and
+mechanisms for orderly completion and immediate teardown of a connection. TCP
+is defined by a family of RFCs {{RFC4614}}.
 
-TCP provides multiplexing to multiple sockets on each host using port numbers.]
+TCP provides multiplexing to multiple sockets on each host using port numbers.
 A similar approach is adopted by other IETF-defined transports.
 An active TCP session is identified by its four-tuple of local and remote IP
 addresses and local port and remote port numbers. The destination port during
 connection setup is often used to indicate the requested service.
 
 TCP partitions a continuous stream of bytes into segments, sized to fit in IP
-packets. ICMP-based PathMTU discovery {{RFC1191}}{{RFC1981}} as well as
+packets. ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}} as well as
 Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} are supported.
 
 Each byte in the stream is identified by a sequence number. The sequence
@@ -271,20 +270,8 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-[EDITOR'S NOTE new section 4 on congestion control algoritms?]
-
-All TCP senders provide congestion control {{RFC5681}}. Each time congestion
-is detected, a separate congestion window is reduced. Most of the commonly deployed
-congestion control mechanisms use one of three mechanisms to detect
-congestion:
-
-- a retransmission timer (with exponential back-off)
-- detection of loss (interpreted as a congestion signal), or 
-- Explicit Congestion Notification (ECN) {{RFC3168}} to provide early signaling (see {{I-D.ietf-aqm-ecn-
-benefits}}). 
-
-In addition, congestion control mechanisms may react to changes
-in delay as an early indication for congestion.
+TCP provides congestion control {{RFC5681}}, described further in
+{{congestion-control}} below.
 
 TCP protocol instances can be extended {{RFC4614}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -295,22 +282,16 @@ buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
 transmit more immediately, e.g., to reduce latency for interactive sessions.
 
-[EDITOR'S NOTE: note deprecation more strongly, drop PSH flag mention?]
+TCP provides an "urgent data" function for limited out-of-order delivery of
+the data. This function is deprecated {{RFC6093}}.
 
-TCP provides a push and a urgent function to enable data to be directly accessed
-by the receiver wihout having to wait for in-order delivery of the data.
-However, {{RFC6093}} does not recommend the use of the urgent flag due to the range of
-TCP implementations that process TCP urgent indications differently.
+A mandatory checksum provides a basic integrity check against misdelivery and
+data corruption over the entire packet. Applications that require end to end
+integrity of data are recommended to include a stronger integrity check of
+their payload data. The TCP checksum does not support partial corruption
+protection (as in DCCP/UDP-Lite).
 
-A checksum provides an Integrity Check and is mandatory across the entire
-packet. This check protects from delivery of corrupted data and  miselivery of
-packets to the wrong endpoint.
-This check is  relatively weak, applications that require end to end integrity of
-data are recommended to include a stronger integrity check of their payload
-data. The TCP checksum does not support partial corruption protection (as in
-DCCP/UDP-Lite).
-
-TCP only supports unicast connections.
+TCP supports only unicast connections.
 
 ### Interface description
 
@@ -319,10 +300,12 @@ Open, Send, Receive, Close, Status. This interface does not describe
 configuration of TCP options or parameters beside use of the PUSH and URGENT
 flags.
 
-{{RFC1122}} describes extensions of the TCP/application layer interface for 1) reporting
-soft errors such as reception fo ICMP error messages, extensive retransmission or urgent
-pointer advance, 2) providing a possibility to specify the Type-of-Service (TOS) for segments,
-3) providing a fush call to empty the TCP send queue, and 4) multihoming support.
+{{RFC1122}} describes extensions of the TCP/application layer interface for:
+
+- reporting soft errors such as reception of ICMP error messages, extensive retransmission or urgent pointer advance,
+- providing a possibility to specify the Type-of-Service (TOS) for segments,
+- providing a flush call to empty the TCP send queue, and
+- multihoming support.
 
 In API implementations derived from the BSD Sockets API, TCP sockets are
 created using the `SOCK_STREAM` socket type as described in the IEEE Portable
@@ -381,9 +364,9 @@ As an extension to TCP, MPTCP provides mostly the same features. By
 establishing multiple sessions between available endpoints, it can additionally
 provide soft failover solutions should one of the paths become unusable. In
 addition, by multiplexing one byte stream over separate paths, it can achieve a
-higher throughput than TCP in certain situations (note however that coupled
+higher throughput than TCP in certain situations. Note, however, that coupled
 congestion control {{RFC6356}} might limit this benefit to maintain fairness to
-other flows at the bottleneck). When aggregating capacity over multiple paths,
+other flows at the bottleneck. When aggregating capacity over multiple paths,
 and depending on the way packets are scheduled on each TCP subflow, an
 additional delay and higher jitter might be observed observed before in-order
 delivery of data to the applications.
@@ -395,8 +378,6 @@ The transport features provided by MPTCP in addition to TCP therefore are:
 - address family multiplexing: sub-flows can be started over IPv4 or IPv6 for
 the same session.
 - resilience to network failure and/or handover.
-
-[AUTHOR'S NOTE: it is unclear whether MPTCP has to provide data bundling.]
 
 ## Stream Control Transmission Protocol (SCTP)
 
@@ -428,11 +409,10 @@ an SCTP association and a three way message exchange to gracefully shut it down.
 It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite, and
 only supports unicast.
 
-SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors
-and miselivery of packets to the wrong endpoint.
-This is stronger than the 16-bit checksums used by TCP or UDP.
-However, a partial checksum coverage, as provided by DCCP or UDP-Lite is not
-supported.
+SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors and
+miselivery of packets to the wrong endpoint. This is stronger than the 16-bit
+checksums used by TCP or UDP. However, partial checksum coverage as
+provided by DCCP or UDP-Lite is not supported.
 
 SCTP has been designed with extensibility in mind. Each SCTP packet starts with
 a single common header containing the port numbers, a verification tag and
@@ -442,17 +422,16 @@ Each chunk consists of a type field, flags, a length field and a value.
 {{RFC4960}} defines how a receiver processes chunks with an unknown chunk type.
 The support of extensions can be negotiated during the SCTP handshake.
 
-SCTP provides a message-oriented service. Multiple small user messages can
-be bundled into a single SCTP packet to improve the efficiency.
-For example, this bundling may be done by delaying user messages at the sender
- similar to the Nagle algorithm used by TCP.
-User messages which would result in IP packets larger than the MTU will be
-fragmented at the sender and reassembled at the receiver.
-There is no protocol limit on the user message size.
-ICMP-based path MTU discovery as specified for IPv4 in {{RFC1191}} and for IPv6
-in {{RFC1981}} as well as packetization layer path MTU discovery as specified in
-{{RFC4821}} with probe packets using the padding chunks defined the {{RFC4820}}
-are supported.
+SCTP provides a message-oriented service. Multiple small user messages can be
+bundled into a single SCTP packet to improve efficiency. For example, this
+bundling may be done by delaying user messages at the sender  similar to
+Nagle's algorithm used by TCP. User messages which would result in IP packets
+larger than the MTU will be fragmented at the sender and reassembled at the
+receiver. There is no protocol limit on the user message size. ICMP-based path
+MTU discovery as specified for IPv4 in {{RFC1191}} and for IPv6 in {{RFC1981}}
+as well as packetization layer path MTU discovery as specified in {{RFC4821}}
+with probe packets using the padding chunks defined the {{RFC4820}} are
+supported.
 
 {{RFC4960}} specifies a TCP friendly congestion control to protect the network
 against overload. SCTP also uses a sliding window flow control to protect
@@ -508,7 +487,7 @@ operation reducing the latency of the failover.
 
 For securing user messages, the use of TLS over SCTP has been specified in
 {{RFC3436}}. However, this solution does not support all services provided
-by SCTP (for example un-ordered delivery or partial reliability), and therefore
+by SCTP, such as un-ordered delivery or partial reliability. Therefore,
 the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
 limitations. When using DTLS over SCTP, the application can use almost all
 services provided by SCTP.
@@ -520,7 +499,7 @@ SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
 as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
 is used within the WebRTC context.
 
-SCTP has a well-defined API,  described in the next subsection.
+SCTP has a well-defined API, described in the next subsection.
 
 ### Interface Description
 
@@ -1423,6 +1402,35 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 - authentication (of one or both ends of a connection).
 - confidentiality.
 - integrity protection.
+
+# Congestion Control
+
+A variety of techniques are used to provide congestion control in the
+Internet. Each technique requires that the protocol provide a method for
+deriving the metric the congestion control algorithm uses to detect congestion
+and the property of a packet it uses to determine when to send. Given these
+relatively wide constraints,  the congestion control techniques that can be
+applied by different transport protocols are largely orthogonal to the choice
+of transport protocols themselves. This section provides an overview of the
+congestion control techniques available to the protocols described in
+{{existing-transport-protocols}}.
+
+Protocols such as SCTP and TCP {{RFC5681}} that use sliding-window-based
+receiver flow control commonly use a separate congestion window for congestion
+control. Each time congestion is detected, this separate congestion window is
+reduced. Data in flight is capped to the minimum of the two windows.
+
+Most commonly deployed congestion control mechanisms use one of three
+mechanisms to detect congestion:
+
+- detection of loss, which is interpreted as a congestion signal; 
+- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-
+benefits}}); and/or
+- a retransmission timer with exponential back-off.
+
+In addition, congestion control mechanisms may react to changes
+in delay as an early indication for congestion.
+
 
 # Transport Service Features
 
