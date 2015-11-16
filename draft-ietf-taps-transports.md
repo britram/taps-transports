@@ -1423,8 +1423,7 @@ Most commonly deployed congestion control mechanisms use one of three
 mechanisms to detect congestion:
 
 - detection of loss, which is interpreted as a congestion signal; 
-- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-
-benefits}}); and/or
+- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-benefits}}); and/or
 - a retransmission timer with exponential back-off.
 
 In addition, congestion control mechanisms may react to changes in delay as an
@@ -1513,9 +1512,13 @@ This document surveys existing transport protocols and protocols providing trans
     email: tuexen@fh-muenster.de
 -->
 
+In addition to the editors, this document is the work of Brian Adamson,
+Dragana Damjanovic, Kevin Fall, Simone Ferlin-Oliviera, Ralph Holz, Olivier
+Mehani, Karen Nielsen, Vincent Roca, and Michael Tuexen.
+
 - {{multipath-tcp-mptcp}} on MPTCP was contributed by Simone Ferlin-Oliviera (ferlin@simula.no) and Olivier Mehani (olivier.mehani@nicta.com.au)
 - {{user-datagram-protocol-udp}} on UDP was contributed by Kevin Fall (kfall@kfall.com)
-- {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de)
+- {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de) and Karen Nielsen (karen.nielsen@tieto.com)
 - {{file-delivery-over-unidirectional-transportasynchronous-layered-coding-reliable-multicast-flutealc}} on FLUTE/ALC was contributed by Vincent Roca (vincent.roca@inria.fr)
 - {{nack-oriented-reliable-multicast-norm}} on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)
 - {{transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport}} on TLS and DTLS was contributed by Ralph Holz (ralph.holz@nicta.com.au) and Olivier Mehani (olivier.mehani@nicta.com.au)
@@ -1523,8 +1526,8 @@ This document surveys existing transport protocols and protocols providing trans
 
 # Acknowledgments
 
-Thanks to Karen Nielsen, Joe Touch, and Michael Welzl for the comments,
-feedback, and discussion. This work is partially supported by the European
-Commission under grant agreements FP7-ICT-318627 mPlane and from the Horizon
-2020 research and innovation program under grant agreement No. 644334 (NEAT);
-support does not imply endorsement.
+Thanks to Joe Touch, Michael Welzl, and the TAPS Working Group for the
+comments, feedback, and discussion. This work is partially supported by the
+European Commission under grant agreements FP7-ICT-318627 mPlane and from the
+Horizon 2020 research and innovation program under grant agreement No. 644334
+(NEAT); support does not imply endorsement.
