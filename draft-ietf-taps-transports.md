@@ -234,7 +234,7 @@ encapsulation).
 # Transport Service Features
 
 Transport protocols can be differentiated by the features of the
-services they provide: 
+services they provide.
 
 One fundamental feature is whether a transport offers a service that divides
 the data into transmission units based on network packets (known as a 
@@ -250,7 +250,7 @@ providing full or partial reliability and allowing to minimize the head of line
 blocking due to the support of unordered and unordered message delivery within
 multiple streams, UDP-Lite and DCCP provide partial integrity protection.
 
-A transport service can provide congestion control. TCP and SCTP provide 
+A transport service can provide congestion control (see {{congestion-control}}). TCP and SCTP provide 
 congestion control for use in the Internet, whereas UDP leaves this function
 to the upper layer protocol that uses UDP. DCCP offers a range of congestion
 control approaches and LEDBAT can support low-priority "scavenger" communication,
@@ -267,7 +267,7 @@ differentiated in many other ways.
 
 Congestion control is critical to the stable operation of the
 Internet, applications and other protocols that choose to use a datagram protocol
-(e.g, UDP or UDP-Lite) need to employ mechanisms to prevent congestion
+(e.g., UDP or UDP-Lite) need to employ mechanisms to prevent congestion
 collapse and to establish some degree of fairness with concurrent
 traffic.
 
@@ -1612,7 +1612,7 @@ transports that may be directly layered over the network, and
 +---------------+------+------+------+------+------+------+------+
 
 ~~~~~~~~~~
-{: #tabtp title="Summary comparison: Upper layer transports and frameworks"}
+{: #tabtp title="Summary comparison: Transport protocols"}
 
 ~~~~~~~~~~
 
@@ -1637,7 +1637,7 @@ transports that may be directly layered over the network, and
 +---------------+------+------+------+------+------+
 
 ~~~~~~~~~~
-{: #tabult title="Summary comparison: Upper layer transports and frameworks"}
+{: #tabult title="Upper layer transports and frameworks"}
 
 The transport protocol components analyzed in this document that can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
 
