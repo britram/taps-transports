@@ -238,8 +238,8 @@ services they provide:
 
 One fundamental feature is whether a transport offers a service that divides
 the data into transmission units based on network packets (known as a 
-Datagram service), or whether it combines and segements data across multiple
-packets (e.g., the Stream service provieded by TCP).
+Datagram service), or whether it combines and segments data across multiple
+packets (e.g., the Stream service provided by TCP).
 
 Another fundamental feature is whether a transport requires a control exchange
  across the network at setup (e.g., TCP), or whether it connection-less (e.g., UDP).
@@ -257,10 +257,10 @@ control approaches and LEDBAT can support low-priority "scavenger" communication
 intending to defer use of capacity to other Internet flows sharing a congested
 bottleneck.
 
-Transport services may be unidirectional or bidirection, to a single a single
+Transport services may be unidirectional or bidirectional, to a single a single
 endpoint, to one of multiple endpoints, or multicast simultaneously to multiple endpoints.
 
-The service offered by transport protocols and farmeworks can also be 
+The service offered by transport protocols and frameworks can also be 
 differentiated in many other ways. 
 
 ## Congestion Control
@@ -294,13 +294,11 @@ control. Each time congestion is detected, this separate congestion window is
 reduced. Data in flight is capped to the minimum of the two windows. This
 approach is also used by DCCP CCID-2 for datagram congestion control.
 
-{Z! This section needs RFC References !%$}
-
 Rate-based methods have also been defined based on the loss ratio and observed
 round trip time, such as TFRC {{RFC5348}} and TFRC-SP {{RFC4828}}. These
 methods utlise a throughput equation to determine the maximum acceptable rate.
 Such methods are used with DCCP CCID-3 {{RFC4342}} and CCID-4 {{RFC5622}},
-WebRTC and other applications.
+WEBRC {{RFC3738}}, and other applications.
 
 In addition, a congestion control mechanism may react to changes in delay as an
 indication for congestion. Delay-based congestion detection methods tend to
@@ -391,7 +389,7 @@ flags.
 {{RFC1122}} describes extensions of the TCP/application layer interface for:
 
 - reporting soft errors such as reception of ICMP error messages, extensive retransmission or urgent pointer advance,
-- providing a possibility to specify the differentiated code pointn (formerly, the Type-of-Service, TOS) for segments,
+- providing a possibility to specify the Differentiated Services Code Point (DSCP) (formerly, the Type-of-Service, TOS) for segments,
 - providing a flush call to empty the TCP send queue, and
 - multihoming support.
 
@@ -461,7 +459,7 @@ delivery of data to the applications.
 
 The transport features provided by MPTCP in addition to TCP therefore are:
 
-- congestion control with load balancing over mutiple connections.
+- congestion control with load balancing over multiple connections.
 - endpoint multiplexing of a single byte stream (higher throughput).
 - address family multiplexing: sub-flows can be started over IPv4 or IPv6 for
 the same session.
@@ -471,7 +469,7 @@ the same session.
 
 SCTP is a message-oriented IETF standards track transport protocol. The base
 protocol is specified in {{RFC4960}}. It supports multi-homing and path
-failover to provide resiliance to path failures. An SCTP association has
+failover to provide resilience to path failures. An SCTP association has
 multiple streams in each direction, providing in-sequence delivery of user
 messages within each stream. This allows it to minimize head of line blocking.
 SCTP supports multiple stream scheduling schemes controlling stream
@@ -496,7 +494,7 @@ down. It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite.
 SCTP only supports unicast.
 
 SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors and
-miselivery of packets to an unintended endpoint. This is stronger than the 16-bit
+misdelivery of packets to an unintended endpoint. This is stronger than the 16-bit
 checksums used by TCP or UDP. However, partial checksum coverage as
 provided by DCCP or UDP-Lite is not supported.
 
@@ -522,9 +520,9 @@ supported.
 {{RFC4960}} specifies TCP-friendly congestion control to protect the network
 against overload; see {{congestion-control}} for more. SCTP also uses sliding
 window flow control to protect receivers against overflow. Similar to TCP,
-SCTP also supports delaying acknowledgements. {{RFC7053}} provides a way for
+SCTP also supports delaying acknowledgments. {{RFC7053}} provides a way for
 the sender of user messages to request the immediate sending of the
-corresponding acknowledgements.
+corresponding acknowledgments.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in each
 direction. The number of streams can be different in each direction. Every
@@ -532,7 +530,7 @@ user message is sent on a particular stream. User messages can be sent un-
 ordered, or ordered upon request by the upper layer. Un-ordered messages can be
 delivered as soon as they are completely received. Ordered messages sent on
 the same stream are delivered at the receiver in the same order as sent by the
-sender. For user messages not requiring fragmentation, this minimises head of
+sender. For user messages not requiring fragmentation, this minimizes head of
 line blocking.
 
 The base protocol defined in {{RFC4960}} does not allow interleaving of user-
@@ -604,7 +602,7 @@ An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
 - the base protocol defined in {{RFC4960}}. The API allows control over
   local addresses and port numbers and the primary path. Furthermore
   the application has fine control about parameters like retransmission
-  thresholds, the path supervision parameters, the delayed acknowledgement
+  thresholds, the path supervision parameters, the delayed acknowledgment
   timeout, and the fragmentation point. The API provides a mechanism
   to allow the SCTP stack to notify the application about event if the
   application has requested them. These notifications provide Information
@@ -641,7 +639,7 @@ defined in the document specifying the protocol extensions:
   The API allows the management of the remote UDP encapsulation port.
 - the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
   The API allows the sender of a user message to request the receiver to
-  send the corresponding acknowledgement immediately.
+  send the corresponding acknowledgment immediately.
 - the additional PR-SCTP policies defined in {{RFC7496}}.
   The API allows to enable/disable the PR-SCTP extension,
   choose the PR-SCTP policies defined in the document and provide statistical
@@ -721,7 +719,7 @@ connection setup or feature negotiation. The protocol uses independent
 messages, ordinarily called datagrams. Each stream of messages is
 independently managed, therefore retransmission does not hold back data sent
 using other logical streams. It provides detection of payload errors and
-misdelivery of packets to an unitended endpoint, either of which result in
+misdelivery of packets to an unintended endpoint, either of which result in
 discard of received datagrams, with no indication to the user of the service.
 
 It is possible to create IPv4 UDP datagrams with no checksum, and while this
@@ -751,7 +749,8 @@ delivery to the UDP receiver.
 Applications that need to provide
 fragmentation or that have other requirements such as receiver flow
 control, congestion control, PathMTU discovery/PLPMTUD, support for
-ECN, etc need these to be provided by protocols operating over UDP {{I-D.ietf-tsvwg-rfc5405bis}}.
+ECN, etc need these to be provided by protocols operating over UDP 
+{{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Interface Description
 
@@ -971,14 +970,14 @@ The transport features provided by DCCP are:
 The Internet Control Message Protocol (ICMP) {{RFC0792}} for IPv4 and {{RFC4433}} for IPv6 are IETF
 standards track protocols.
 
-ICMP a conection-less unidirectional protocol that delivers individual
+ICMP is a connection-less unidirectional protocol that delivers individual
 messages, without error correction, congestion control, or flow control. 
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
 (IPv4 and IPv6), in addition to anycast datagrams.
 
 ### Protocol Description
 
-ICMP is a conection-less unidirectional protocol that delivers individual
+ICMP is a connection-less unidirectional protocol that delivers individual
 messages. The protocol uses independent messages, ordinarily called datagrams.
 Each message is required to carry a checksum as an integrity check and to
 protect from misdelivery to an unintended endpoint.
@@ -991,7 +990,7 @@ data. Each message carries an integrity check calculated in the same way as
 for UDP, this checksum is not optional.
 
 The RFC series defines additional IPv6 message formats to support a range of uses.
-In the case of IPv6 the protocol incorporates neighbour discovery {{RFC2461}} {{RFC3971}}}
+In the case of IPv6 the protocol incorporates neighbor discovery {{RFC2461}} {{RFC3971}}}
 (provided by ARP for IPv4) and the Multicast Listener
 Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
 
@@ -1057,7 +1056,7 @@ setup, negotiate parameters or tear down a session.
 
 An RTP sender encapsulates audio/video data into RTP packets to transport
 media streams. The RFC-series specifies RTP media formats allow packets to
-carry a wide range of media, and specifies a wide range of mulriplexing, error
+carry a wide range of media, and specifies a wide range of multiplexing, error
 control and other support mechanisms.
 
 If a frame of media data is large, it will be fragmented  into several RTP
@@ -1089,7 +1088,7 @@ The interval between reports sent from each receiver tends
 to be on the order of a few seconds on average, although
 this varies with the session rate, and sub-second reporting
 intervals are possible for high rate sessions.
-The interval is randomised to avoid synchronization of
+The interval is randomized to avoid synchronization of
 reports from multiple receivers.
 
 ### Interface Description
@@ -1115,7 +1114,7 @@ The transport features provided by RTP are:
 - message-oriented delivery.
 - associated protocols for connection setup with feature negotiation and application-to-port mapping.
 - support for media types and other extensions.
-- a range oif reliability functions, including the possibility of using packet erasure coding.
+- a range of reliability functions, including the possibility of using packet erasure coding.
 - segmentation and aggregation.
 - performance reporting.
 - drop notification.
@@ -1147,7 +1146,7 @@ on-demand mode, where content is continuously sent during periods of time that
 can largely exceed the average time required to download the session objects
 (see {{RFC5651}}, section 4.2).
 
-Altough FLUTE/ALC is not well adapted to byte- and message-streaming, there is
+Although FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
 HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6).
 In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
@@ -1165,7 +1164,7 @@ which a sender-based rate control mechanism is sufficient. In any case,
 FLUTE/ALC's reliability, delivery mode, congestion control, and flow/rate
 control mechanisms are distinct components that can be separately controlled
 to meet different application needs. Section 4.1 of {{I-D.ietf-tsvwg-rfc5405bis}}
-describes multicast congestion cotnrol requirements for UDP.
+describes multicast congestion control requirements for UDP.
 
 ### Protocol Description
 
@@ -1174,7 +1173,7 @@ datagram delivery transport protocol), without requiring any connectivity from
 receivers to the sender. Purely unidirectional networks are therefore
 supported by FLUTE/ALC. This guarantees scalability to an
 unlimited number of receivers in a session, since
-the sender behaves exactly the same regardness of the number of receivers.
+the sender behaves exactly the same regardless of the number of receivers.
 
 FLUTE/ALC supports the transfer of bulk objects such as file or in- memory
 content, using either a push or an on-demand mode. in push mode, content is
@@ -1228,7 +1227,7 @@ the session.  To that purpose, the ALC header provides a specific field to
 carry congestion control specific information.  However FLUTE/ALC does not
 mandate the use of a particular congestion control mechanism although WEBRC is
 mandatory to support for the Internet ({{RFC6726}}, section 1.1.4).
-FLUTE/ALC is often used over a network path with pre-provisoned capacity
+FLUTE/ALC is often used over a network path with pre-provisioned capacity
 {{I-D.ietf-tsvwg-rfc5405bis}} where there are no flows competing for
 capacity. In this
 case, a sender-based rate control mechanism and a single channel is
@@ -1266,23 +1265,80 @@ The transport features provided by FLUTE/ALC are:
 
 ## NACK-Oriented Reliable Multicast (NORM)
 
-NORM is an IETF standards track protocol specified in {{RFC5740}}. The protocol was designed to support reliable bulk data dissemination to receiver groups using IP Multicast but also provides for point-to-point unicast operation.  Support for bulk data dissemination includes discrete file or computer memory-based "objects" as well as byte- and message-streaming. NORM is designed to incorporate packet erasure coding as an inherent part of its selective ARQ in response to receiver negative acknowledgements. The packet erasure coding can also be proactively applied for forward protection from packet loss. NORM transmissions are governed by the TCP-friendly congestion control. NORM's reliability, congestion control, and flow control mechanism are distinct components and can be separately controlled to meet different application needs.
+NORM is an IETF standards track protocol specified in {{RFC5740}}. The
+protocol was designed to support reliable bulk data dissemination to receiver
+groups using IP Multicast but also provides for point-to-point unicast
+operation.  Support for bulk data dissemination includes discrete file or
+computer memory-based "objects" as well as byte- and message-streaming. NORM
+is designed to incorporate packet erasure coding as an inherent part of its
+selective ARQ in response to receiver negative acknowledgments. The packet
+erasure coding can also be proactively applied for forward protection from
+packet loss. NORM transmissions are governed by the TCP-friendly congestion
+control. NORM's reliability, congestion control, and flow control mechanism
+are distinct components and can be separately controlled to meet different
+application needs.
 
 ### Protocol Description
 
-The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation. {{RFC5740}} does not specify a handshake protocol for connection establishment and separate session initiation can be used to coordinate port numbers. However, in-band "client-server" style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.
+The NORM protocol is encapsulated in UDP datagrams and thus provides
+multiplexing for multiple sockets on hosts using port numbers. For loosely
+coordinated IP Multicast, NORM is not strictly connection-oriented although
+per-sender state is maintained by receivers for protocol operation.
+{{RFC5740}} does not specify a handshake protocol for connection establishment
+and separate session initiation can be used to coordinate port numbers.
+However, in-band "client-server" style connection establishment can be
+accomplished with the NORM congestion control signaling messages using port
+binding techniques like those for TCP client-server connections.
 
-NORM supports bulk "objects" such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme {{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.
+NORM supports bulk "objects" such as file or in-memory content but also can
+treat a stream of data as a logical bulk object for purposes of packet erasure
+coding. In the case of stream transport, NORM can support either byte streams
+or message streams where application-defined message boundary information is
+carried in the NORM protocol messages. This allows the receiver(s) to join/re-
+join and recover message boundaries mid-stream as needed. Application content
+is carried and identified by the NORM protocol with encoding symbol
+identifiers depending upon the Forward Error Correction (FEC) Scheme
+{{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver
+the application content to the receiver(s). NORM proactively measures round-
+trip timing information to scale ARQ timers appropriately and to support
+congestion control. For multicast operation, timer-based feedback suppression
+is uses to achieve group size scaling with low feedback traffic levels. The
+feedback suppression is not applied for unicast operation.
 
-NORM uses rate-based congestion control based upon the TCP-Friendly Rate Control (TFRC) {{RFC4324}} principles that are also used in DCCP {{RFC4340}}. NORM uses control messages to measure RTT and collect congestion event (e..g, loss event, ECN event, etc) information from the receiver(s) to support dynamic rate control adjustment. The TCP-Friendly Multicast Congestion Control (TFMCC) {{RFC4654}} used provides some extra features to support multicast but is functionally equivalent to TFRC in the unicast case.
+NORM uses rate-based congestion control based upon the TCP-Friendly Rate
+Control (TFRC) {{RFC4324}} principles that are also used in DCCP {{RFC4340}}.
+NORM uses control messages to measure RTT and collect congestion event (e..g,
+loss event, ECN event, etc) information from the receiver(s) to support
+dynamic rate control adjustment. The TCP-Friendly Multicast Congestion Control
+(TFMCC) {{RFC4654}} used provides some extra features to support multicast but
+is functionally equivalent to TFRC in the unicast case.
 
-NORM's reliability mechanism is decoupled from congestion control. This allows alternative arrangements of transport services to be invoked. For example, fixed-rate reliable delivery can be supported or unreliable (but optionally "better than best effort" via packet erasure coding) delivery with rate-control per TFRC can be achieved. Additionally, alternative congestion control techniques may be applied. For example, TFRC rate control with congestion event detection based on ECN for links with high packet loss (e.g., wireless) has been implemented and demonstrated with NORM.
+NORM's reliability mechanism is decoupled from congestion control. This allows
+alternative arrangements of transport services to be invoked. For example,
+fixed-rate reliable delivery can be supported or unreliable (but optionally
+"better than best effort" via packet erasure coding) delivery with rate-
+control per TFRC can be achieved. Additionally, alternative congestion control
+techniques may be applied. For example, TFRC rate control with congestion
+event detection based on ECN for links with high packet loss (e.g., wireless)
+has been implemented and demonstrated with NORM.
 
-While NORM is NACK-based for reliability transfer, it also supports a positive acknowledgment (ACK) mechanism that can be used for receiver flow control. Again, since this mechanism is decoupled from the reliability and congestion control, applications that have different needs in this aspect can use the protocol differently. One example is the use of NORM for quasi-reliable delivery where timely delivery of newer content may be favored over completely reliable delivery of older content within buffering and RTT constraints.
+While NORM is NACK-based for reliability transfer, it also supports a positive
+acknowledgment (ACK) mechanism that can be used for receiver flow control.
+Again, since this mechanism is decoupled from the reliability and congestion
+control, applications that have different needs in this aspect can use the
+protocol differently. One example is the use of NORM for quasi-reliable
+delivery where timely delivery of newer content may be favored over completely
+reliable delivery of older content within buffering and RTT constraints.
 
 ### Interface Description
 
-The NORM specification does not describe a specific application programming interface (API) to control protocol operation. A freely-available, open source reference implementation of NORM is available at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented API is provided for this implementation. While a sockets-like API is not currently documented, the existing API supports the necessary functions for that to be implemented.
+The NORM specification does not describe a specific application programming
+interface (API) to control protocol operation. A freely-available, open source
+reference implementation of NORM is available at
+https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented API is
+provided for this implementation. While a sockets-like API is not currently
+documented, the existing API supports the necessary functions for that to be
+implemented.
 
 ### Transport Features
 
@@ -1328,21 +1384,21 @@ together. The features they provide are:
 * Peer authentication (optional)
 * Perfect forward secrecy (optional)
 
-The authentication of the peer entity can be omitted; a common web use
-case is where the server is authenticated and the client is not.
-TLS also provides a completely anonymous operation mode in which neither
-peer's identity is authenticated.
-It is important to note that TLS itself does not specify how a peering entity's identity
-should be interpreted.  For example, in the common use case of
-authentication by means of an X.509 certificate, it is the application's
-decision whether the certificate of the peering entity is acceptable for authorization decisions.
-Perfect forward secrecy, if enabled and supported by the selected algorithms,
-ensures that traffic encrypted and captured during a session at time t0 cannot be
-later decrypted at time t1 (t1 > t0), even if the long-term secrets of the
-communicating peers are later compromised.
+The authentication of the peer entity can be omitted; a common web use case is
+where the server is authenticated and the client is not. TLS also provides a
+completely anonymous operation mode in which neither peer's identity is
+authenticated. It is important to note that TLS itself does not specify how a
+peering entity's identity should be interpreted.  For example, in the common
+use case of authentication by means of an X.509 certificate, it is the
+application's decision whether the certificate of the peering entity is
+acceptable for authorization decisions. Perfect forward secrecy, if enabled
+and supported by the selected algorithms, ensures that traffic encrypted and
+captured during a session at time t0 cannot be later decrypted at time t1 (t1
+> t0), even if the long-term secrets of the communicating peers are later
+compromised.
 
-As DTLS is generally used over an unreliable datagram transport such as UDP, applications
-will need to tolerate lost, re-ordered, or duplicated datagrams.
+As DTLS is generally used over an unreliable datagram transport such as UDP,
+applications will need to tolerate lost, re-ordered, or duplicated datagrams.
 Like TLS, DTLS conveys application data in a sequence of independent records.
 However, because records are mapped to unreliable datagrams, there are several
 features unique to DTLS that are not applicable to TLS:
@@ -1362,12 +1418,12 @@ when operating on independent encrypted records.
 
 ### Interface Description
 
-TLS is commonly invoked using an API provided by packages such as OpenSSL, wolfSSL, or GnuTLS.
-Using such APIs entails the manipulation of several important abstractions, which
-fall into the following categories:
-long-term keys and algorithms, session state, and communications/connections.
-There may also be special APIs required to deal with time and/or random numbers, both of which
-are needed by a variety of encryption algorithms and protocols.
+TLS is commonly invoked using an API provided by packages such as OpenSSL,
+wolfSSL, or GnuTLS. Using such APIs entails the manipulation of several
+important abstractions, which fall into the following categories: long-term
+keys and algorithms, session state, and communications/connections. There may
+also be special APIs required to deal with time and/or random numbers, both of
+which are needed by a variety of encryption algorithms and protocols.
 
 Considerable care is required in the use of TLS APIs to ensure creation of a secure
 application.  The programmer should have at least a basic understanding of encryption
@@ -1375,15 +1431,14 @@ and digital signature algorithms and their strengths, public key infrastructure 
 X.509 certificates and certificate revocation), and the sockets API.
 See {{RFC7525}} and {{RFC7457}}, as mentioned above.
 
-As an example, in the case of OpenSSL,
-the primary abstractions are the library itself and method (protocol),
-session, context, cipher and connection.
-After initializing the library and setting the method, a cipher suite
-is chosen and used to configure a context object.
-Session objects may then be minted according to the parameters present
-in a context object and associated with individual connections.
-Depending on how precisely the programmer wishes to select different
-algorithmic or protocol options, various levels of details may be required.
+As an example, in the case of OpenSSL, the primary abstractions are the
+library itself and method (protocol), session, context, cipher and connection.
+After initializing the library and setting the method, a cipher suite is
+chosen and used to configure a context object. Session objects may then be
+minted according to the parameters present in a context object and associated
+with individual connections. Depending on how precisely the programmer wishes
+to select different algorithmic or protocol options, various levels of details
+may be required.
 
 ### Transport Features
 
@@ -1418,32 +1473,93 @@ The data protocol, when used with an appropriate cipher, provides:
 
 ## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
 
-The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely used on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}} {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in {{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443, although it can be used with other transports. When used over TCP it inherits its properties.
+The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely
+used on the Internet. Version 1.1 of the protocol is specified in {{RFC7230}}
+{{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in
+{{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443,
+although it can be used with other transports. When used over TCP it inherits
+its properties.
 
-HTTP is used as a substrate for other application-layer protocols. There are various reasons for this practice listed in {{RFC3205}}; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to traverse firewalls makes it work over many types of infrastructure, and in cases where a application server often needs to support HTTP anyway.
+HTTP is used as a substrate for other application-layer protocols. There are
+various reasons for this practice listed in {{RFC3205}}; these include being a
+well-known and well-understood protocol, reusability of existing servers and
+client libraries, easy use of existing security mechanisms such as HTTP digest
+authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to
+traverse firewalls makes it work over many types of infrastructure, and in
+cases where a application server often needs to support HTTP anyway.
 
-Depending on application need, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g., HTTP headers, suitability of the HTTP security model, etc.). {{RFC3205}} addresses this issue and provides some guidelines and concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.
+Depending on application need, the use of HTTP as a substrate protocol may add
+complexity and overhead in comparison to a special-purpose protocol (e.g.,
+HTTP headers, suitability of the HTTP security model, etc.). {{RFC3205}}
+addresses this issue and provides some guidelines and concerns about the use
+of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction
+with existing firewalls, proxies and NATs.
 
 
 ### Protocol Description
 
-Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client sends a request containing a request method, URI and protocol version followed by a MIME-like message (see {{RFC7231}} for the differences between an HTTP object and a MIME message), containing information about the client and request modifiers. The message can contain a message body carrying application data as well. The server responds with a status or error code followed by a MIME-like message containing information about the server and information about carried data and it can include a message body. It is possible to specify a data format for the message body using MIME media types {{RFC2045}}. Furthermore, the protocol has numerous additional features; features relevant to pseudotransport are described below.
+Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client
+sends a request containing a request method, URI and protocol version followed
+by a MIME-like message (see {{RFC7231}} for the differences between an HTTP
+object and a MIME message), containing information about the client and
+request modifiers. The message can contain a message body carrying application
+data as well. The server responds with a status or error code followed by a
+MIME-like message containing information about the server and information
+about carried data and it can include a message body. It is possible to
+specify a data format for the message body using MIME media types {{RFC2045}}.
+Furthermore, the protocol has numerous additional features; features relevant
+to pseudotransport are described below.
 
-Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP for selecting a representation on a requested resource. The client and server negotiate acceptable data formats, charsets, data encoding (e.g., data can be transferred compressed using gzip), etc. HTTP can accommodate exchange of messages as well as data streaming (using chunked transfer encoding {{RFC7230}}). It is also possible to request a part of a resource using range requests specified in {{RFC7233}}. The protocol provides powerful cache control signalling defined in {{RFC7234}}.
+Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP
+for selecting a representation on a requested resource. The client and server
+negotiate acceptable data formats, charsets, data encoding (e.g., data can be
+transferred compressed using gzip), etc. HTTP can accommodate exchange of
+messages as well as data streaming (using chunked transfer encoding
+{{RFC7230}}). It is also possible to request a part of a resource using range
+requests specified in {{RFC7233}}. The protocol provides powerful cache
+control signalling defined in {{RFC7234}}.
 
-HTTP 1.1's and HTTP 2.0's persistent connections can be use to perform multiple request-response transactions during the life-time of a single HTTP connection. Moreover, HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single transport connection. This reduces connection establishment overhead and the effect of the transport layer slow-start on each transaction, important in reducing latency for HTTP's primary use case.
+HTTP 1.1's and HTTP 2.0's persistent connections can be use to perform
+multiple request-response transactions during the life-time of a single HTTP
+connection. Moreover, HTTP 2.0 connections can multiplex many request/response
+pairs in parallel on a single transport connection. This reduces connection
+establishment overhead and the effect of the transport layer slow-start on
+each transaction, important in reducing latency for HTTP's primary use case.
 
-It is possible to combine HTTP with security mechanisms, like TLS (denoted by HTTPS), which adds protocol properties provided by such a mechanism (e.g., authentication, encryption). The TLS Application-Layer Protocol Negotiation (ALPN) extension {{RFC7301}} can be used for HTTP version negotiation within the TLS handshake, which eliminates the latency of addition round-trips. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.
+It is possible to combine HTTP with security mechanisms, like TLS (denoted by
+HTTPS), which adds protocol properties provided by such a mechanism (e.g.,
+authentication, encryption). The TLS Application-Layer Protocol Negotiation
+(ALPN) extension {{RFC7301}} can be used for HTTP version negotiation within
+the TLS handshake, which eliminates the latency of addition round-trips.
+Arbitrary cookie strings, included as part of the MIME headers, are often used
+as bearer tokens in HTTP.
 
-Application layer protocols using HTTP as substrate may use an existing method and data formats, or specify new methods and data formats. Furthermore some protocols may not fit a request/response paradigm and instead rely on HTTP to send messages (e.g., {{RFC6546}}). Because HTTP works in many restricted infrastructures, it is also used to tunnel other application-layer protocols.
+Application layer protocols using HTTP as substrate may use an existing method
+and data formats, or specify new methods and data formats. Furthermore some
+protocols may not fit a request/response paradigm and instead rely on HTTP to
+send messages (e.g., {{RFC6546}}). Because HTTP works in many restricted
+infrastructures, it is also used to tunnel other application-layer protocols.
 
 ### Interface Description
 
-There are many HTTP libraries available exposing different APIs. The APIs provide a way to specify a request by providing a URI, a method, request modifiers and optionally a request body. For the response, callbacks can be registered that will be invoked when the response is received. If TLS is used, API expose a registration of callbacks in case a server requests client authentication and when certificate verification is needed.
+There are many HTTP libraries available exposing different APIs. The APIs
+provide a way to specify a request by providing a URI, a method, request
+modifiers and optionally a request body. For the response, callbacks can be
+registered that will be invoked when the response is received. If TLS is used,
+API expose a registration of callbacks in case a server requests client
+authentication and when certificate verification is needed.
 
-World Wide Web Consortium (W3C) standardized the XMLHttpRequest API {{XHR}}, an API that can be use for sending HTTP/HTTPS requests and receiving server responses. Besides XML data format, request and response data format can also be JSON, HTML and plain text. Specifically JavaScript and XMLHttpRequest are a ubiquitous programming model for websites, and more general applications, where native code is less attractive.
+World Wide Web Consortium (W3C) standardized the XMLHttpRequest API {{XHR}},
+an API that can be use for sending HTTP/HTTPS requests and receiving server
+responses. Besides XML data format, request and response data format can also
+be JSON, HTML and plain text. Specifically JavaScript and XMLHttpRequest are a
+ubiquitous programming model for websites, and more general applications,
+where native code is less attractive.
 
-Representational State Transfer (REST) {{REST}} is another example how applications can use HTTP as transport protocol. REST is an architecture style for building application on the Internet. It uses HTTP as a communication protocol.
+Representational State Transfer (REST) {{REST}} is another example how
+applications can use HTTP as transport protocol. REST is an architecture style
+for building application on the Internet. It uses HTTP as a communication
+protocol.
 
 ### Transport features
 
@@ -1468,7 +1584,7 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 
 # Transport Service Features
 
-The tables below summarise some key features to illustrate the range of
+The tables below summarize some key features to illustrate the range of
 functions provided across the IETF-specified transports. {{tabtp}} considers
 transports that may be directly layered over the network, and
 {{tabult}} considers transports layered over another transport service.
