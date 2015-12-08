@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-08
-date: 2015-11-19
+date: 2015-12-8
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -52,6 +52,7 @@ informative:
   RFC2461:
   RFC2617:
   RFC2710:
+  RFC2736:
   RFC3168:
   RFC3205:
   RFC3436:
@@ -73,13 +74,14 @@ informative:
   RFC4654:
   RFC4820:
   RFC4821:
+  RFC4828:
   RFC4895:
   RFC4960:
   RFC5061:
   RFC5097:
   RFC5246:
   RFC5238:
-  RFC5404:
+  RFC5348:
   RFC5461:
   RFC5595:
   RFC5596:
@@ -97,18 +99,17 @@ informative:
   RFC6347:
   RFC6356:
   RFC6363:
-  RFC6455:
   RFC6458:
   RFC6584:
   RFC6726:
   RFC6773:
-  RFC6817:
   RFC6824:
   RFC6897:
   RFC6935:
   RFC6936:
   RFC6951:
   RFC7053:
+  RFC7202:
   RFC7230:
   RFC7231:
   RFC7232:
@@ -156,6 +157,14 @@ informative:
       -
         ins: 3GPP TSG WS S4
     date: 2015
+  ClarkArch:
+    title: Architectural Considerations for a New Generation of Protocols (Proc. ACM SIGCOMM)
+    author:
+      -
+        ins: D. Clark
+      -
+        ins: D. Tennenhouse
+    date: 1990
 --- abstract
 
 This document describes transport services provided by existing IETF
@@ -287,10 +296,11 @@ approach is also used by DCCP CCID-2 for datagram congestion control.
 
 {Z! This section needs RFC References !%$}
 
-Rate-based methods have also been defined based on the loss ratio
-and observed round trip time, such as TFRC and TFRC-SP. These methods
-utlise a throughput equation to determine the maximum acceptable rate. Such
-methods are used with DCCP CCID-1 and CCID-3, WEBRC and other applications.
+Rate-based methods have also been defined based on the loss ratio and observed
+round trip time, such as TFRC {{RFC5348}} and TFRC-SP {{RFC4828}}. These
+methods utlise a throughput equation to determine the maximum acceptable rate.
+Such methods are used with DCCP CCID-3 {{RFC4342}} and CCID-4 {{RFC5622}},
+WebRTC and other applications.
 
 In addition, a congestion control mechanism may react to changes in delay as an
 indication for congestion. Delay-based congestion detection methods tend to
@@ -298,17 +308,15 @@ induce less loss than loss-based methods, and therefore generally do not
 compete well with them across shared bottleneck links. However, such methods,
 such as LEDBAT {{RFC6824}}, are are deployed in the Internet for scavenger
 traffic, which will use unused capacity but readily yield to presumably
-interactive or otherwise higher-priority, loss-based congestion-controller
+interactive or otherwise higher-priority, loss-based congestion-controlled
 traffic.
-
 
 # Existing Transport Protocols
 
-This section provides a list of known IETF transport protocols and
-transport protocol frameworks. 
-It does not make an assessment about whether specific
-implementations of protocols are fully compliant to current
-IETF specifications.
+This section provides a list of known IETF transport protocols and transport
+protocol frameworks.  It does not make an assessment about whether specific
+implementations of protocols are fully compliant to current IETF
+specifications.
 
 ## Transport Control Protocol (TCP)
 
@@ -1005,8 +1013,7 @@ transmitted traffic (e.g., a reported error condition that corresponds to a
 UDP datagram or TCP segment was actually sent by the application). This
 requires context {{RFC6056}}, such as local state about communication
 instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).
-This state is not always maintained by UDP-based applications {{I-D.ietf-
-tsvwg-rfc5405bis}}.
+This state is not always maintained by UDP-based applications {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 Any response to ICMP error messages ought to be robust to temporary
 routing failures (sometimes called "soft errors"), e.g., transient ICMP
@@ -1087,7 +1094,15 @@ reports from multiple receivers.
 
 ### Interface Description
 
-[EDITOR'S NOTE: to do. Colin to provide text on how tightly bound RTP generally is to the application.]
+There is no standard application programming interface defined for RTP or
+RTCP. Implementations are typically tightly integrated with a particular
+application, and closely follow the principles of application level framing
+and integrated layer processing {{ClarkArch}} in media processing {{RFC2736}},
+error recovery and concealment, rate adaptation, and security {{RFC7202}}.
+Accordingly, RTP implementations tend to be targeted at particular application
+domains (e.g., voice-over-IP, IPTV, or video conferencing), with a feature set
+optimised for that domain, rather than being general purpose implementations
+of the protocol.
 
 ### Transport Features
 
@@ -1214,7 +1229,7 @@ carry congestion control specific information.  However FLUTE/ALC does not
 mandate the use of a particular congestion control mechanism although WEBRC is
 mandatory to support for the Internet ({{RFC6726}}, section 1.1.4).
 FLUTE/ALC is often used over a network path with pre-provisoned capacity
-{{{I-D.ietf-tsvwg-rfc5405bis}} where there are no flows competing for
+{{I-D.ietf-tsvwg-rfc5405bis}} where there are no flows competing for
 capacity. In this
 case, a sender-based rate control mechanism and a single channel is
 sufficient.
@@ -1454,9 +1469,11 @@ HTTPS (HTTP over TLS) additionally provides the following components:
 # Transport Service Features
 
 The tables below summarise some key features to illustrate the range of
-functions provided across the IETF-specified transports. Table 1 considers
+functions provided across the IETF-specified transports. {{tabtp}} considers
 transports that may be directly layered over the network, and
-table 2 consuders transports layered over another transport service.
+{{tabult}} considers transports layered over another transport service.
+
+~~~~~~~~~~
 
 +---------------+------+------+------+------+------+------+------+
 | Feature       | TCP  | MPTCP| SCTP | UDP  | UDP-L|DCCP  |ICMP  |
@@ -1478,7 +1495,10 @@ table 2 consuders transports layered over another transport service.
 | Multicast Cap.| No   | No   | No   | Yes  | Yes  | No   | No   |
 +---------------+------+------+------+------+------+------+------+
 
-Table 1 Summary comparison: transports protocols.
+~~~~~~~~~~
+{: #tabtp title="Summary comparison: Upper layer transports and frameworks"}
+
+~~~~~~~~~~
 
 +---------------+------+------+------+------+------+
 | Feature       | RTP  | FLUTE| NORM |(D)TLS| HTTP |
@@ -1500,7 +1520,8 @@ Table 1 Summary comparison: transports protocols.
 | Multicast Cap.| Yes  | Yes  | Yes  | No   | No   |
 +---------------+------+------+------+------+------+
 
-Table 2 Summary comparison: Upper layer transports and frameworks.
+~~~~~~~~~~
+{: #tabult title="Summary comparison: Upper layer transports and frameworks"}
 
 The transport protocol components analyzed in this document that can be used as a basis for defining common transport service features, normalized and separated into categories, are as follows:
 
