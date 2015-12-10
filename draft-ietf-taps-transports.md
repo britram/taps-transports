@@ -70,7 +70,6 @@ informative:
   RFC4341:
   RFC4342:
   RFC4433:
-  RFC4614:
   RFC4654:
   RFC4820:
   RFC4821:
@@ -118,6 +117,7 @@ informative:
   RFC7235:
   RFC7301:
   RFC7323:
+  RFC7414:
   RFC7457:
   RFC7496:
   RFC7525:
@@ -167,9 +167,17 @@ informative:
     date: 1990
 --- abstract
 
-This document describes transport services provided by existing IETF
-protocols.  It is designed to help application and network stack programmers
-and to inform the work of the IETF TAPS Working Group.
+This document describes surveys, classifies and compares the protocol
+mechanisms provided by existing IETF protocols, as background for determining
+a common set of transport services. It examines the Transmission Control
+Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol
+(SCTP), the User Datagram Protocol (UDP), UDP-Lite, the Datagram Congestion
+Control Protocol (DCCP), the Internet Control Message Protocol (ICMP), the
+Realtime Transport Protocol (RTP), File Delivery over Unidirectional
+Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and
+NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS),
+Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP) when used as
+a pseudotransport.
 
 --- middle
 
@@ -331,7 +339,7 @@ implemented by endpoints and widely used by common applications.
 TCP is a connection-oriented protocol, providing a three way handshake to
 allow a client and server to set up a connection and negotiate features, and
 mechanisms for orderly completion and immediate teardown of a connection. TCP
-is defined by a family of RFCs {{RFC4614}}.
+is defined by a family of RFCs {{RFC7414}}.
 
 TCP provides multiplexing to multiple sockets on each host using port numbers.
 A similar approach is adopted by other IETF-defined transports.
@@ -359,7 +367,7 @@ option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 TCP provides congestion control {{RFC5681}}, described further in
 {{congestion-control}} below.
 
-TCP protocol instances can be extended {{RFC4614}} and tuned. Some features
+TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
 receiver-side only, some are explicitly negotiated during connection setup.
 
