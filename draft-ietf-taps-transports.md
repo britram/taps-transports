@@ -324,12 +324,12 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
+All TCP senders provide congestion control, such as described in [RFC5681].
 TCP's congestion control mechanism is tied to a sliding window as well
-{{RFC5681}}, described further in {{congestion-control}}. The sending window
-at a given point in time is the minimum of the receiver window and the
-congestion window.
+{{RFC5681}}. Examples for different kind of congestion control schemes are given in {{congestion-control}}. The sending window at a given point in time is the minimum of the receiver window and the congestion window. The congestion window is increased in the absence of congestion and, resopectively, decreased if congestion is detected. Often loss is implicitly handled as a congestion indication which is detected in TCP (also as input for retransmission handling) based on two mechanisms:
+A retransmission timer with exponential back-up or the reception of three acknowledgement for the same segment, so called duplicated ACKs (Fast retransmit). In addition Explicit Congestion
+Notification (ECN) [RFC3168] can be used in TCP, if supported by both endpoints, that allows a network node to signal congestion without inducing loss. Alternatively, a delay-based congestion control scheme can be used in TCP that reacts to changes in delay as an early indication of congestion as also further described in {{congestion-control}}.
 
-[EDNOTE mirja add stuff here]
 
 TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -837,7 +837,7 @@ bidirectional transport protocol that provides unicast connections of
 congestion-controlled messages without providing reliability.
 
 The DCCP Problem Statement describes the goals that
-DCCP sought to address {{RFC4336}}. It is suitable for
+DCCP sought to address {{RFC4336}}: It is suitable for
 applications that transfer fairly large amounts of data and that can
 benefit from control over the trade off between timeliness and
 reliability {{RFC4336}}.
@@ -1583,35 +1583,19 @@ HTTPS (HTTP over TLS) additionally provides the following features:
 # Congestion Control
 
 Congestion control is critical to the stable operation of the Internet. A
-variety of mechanisms have been used to provide the congestion control needed
-by an Internet transport protocol. Congestion is detected based on sensing of
+variety of mechanisms are used to provide the congestion control needed
+by many Internet transport protocols. Congestion is detected based on sensing of
 network conditions, whether through explicit or implicit feedback. The
 congestion control mechanisms that can be applied by different transport
 protocols are largely orthogonal to the choice of transport protocol. This
 section provides an overview of the congestion control mechanisms available to
 the protocols described in {{existing-transport-protocols}}.
 
-Some protocols such as SCTP and TCP {{RFC5681}} offer a transport service
-controlled by a sliding-window-based receiver flow control; protocols based on
-TCP use the congestion control provided by TCP. These methods commonly use a
-separate congestion window for congestion control, which allows the transport
-service to send bursts of data under the control of a separate congestion
-control window. Each time congestion is detected, the congestion window is
-reduced. Most commonly deployed congestion control mechanisms use one of three
-methods to detect congestion:
-
-[EDNOTE mirja stick this in TCP?]
-
-- detection of loss, which is interpreted as a congestion signal; 
-- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-benefits}}); and/or
-- a retransmission timer with exponential back-off.
-
-The volume of data in flight is capped to the minimum of the two windows. This
-approach is also used by DCCP CCID-2 {{RFC4341}} for datagram congestion
-control.
+Many protocols use a separate window to determine the maximum sending rate that is allowed by the congestion control. The used congestion control mechanism will increase the congestion window if feedback is received that indicates that the currently used network path is not congested, and will reduce the window otherwise. Window-based mechanisms often increase their window slowing over multiple RTTs, while decreasing strongly when the first indication of congestion is received. One example are Additive Increase Multiplicative Decrease (AIMD) schemes, where the window is increased by a certain number of packets/bytes for each data segment that has been successfully transmitted, while the window is multiplicatively decrease on the occurrence of a congestion event. This can lead to a rather unstable, oscillating sending rate, but will resolve a congestion situation quickly. TCP New Reno {{5681}} which is one of the initial proposed schemes for TCP as well as TCP Cubic {{draft-ietf-tcpm-cubic-01}} which is the default mechanism for TCP in Linux are two examples for window-based AIMD schemes.
+This approach is also used by DCCP CCID-2 for datagram congestion control.
 
 Some classes of applications prefer to use a transport service that allows
-sending at a specific rate, and prefer to vary this rate in response to
+sending at a more stable rate, that is slowly varied in response to
 congestion. Rate-based methods offer this type of congestion control and have
 been  defined based on the loss ratio and observed round trip time, such as
 TFRC {{RFC5348}} and TFRC-SP {{RFC4828}}. These methods utilise a throughput
@@ -1619,17 +1603,12 @@ equation to determine the maximum acceptable rate. Such methods are used with
 DCCP CCID-3 {{RFC4342}} and CCID-4 {{RFC5622}}, WEBRC {{RFC3738}}, and other
 applications.
 
-Another class of applications prefer a transport service that has been
-designed to allow unused capacity to be utilised, with a goal to readily
-yield to interactive or otherwise higher-priority, or loss-based congestion-
-controlled traffic. Such a congestion control method could react to changes in
-delay as an indication of congestion, and tends to  induce less loss than a
-loss-based method. These methods generally do not compete well with them
-across shared bottleneck links. However, methods such as LEDBAT {{RFC6824}},
-are deployed in the Internet for scavenger traffic. The methods are designed
-to allow unused capacity to be utilised, while have a goal to readily yield to
-interactive or otherwise higher-priority, or loss-based congestion-controlled
-traffic.
+Another class of applications prefer a transport service that
+yields to other (higher-priority) traffic, such as interactive transmissions.
+While most traffic in the Internet uses loss-based congestion control and therefore need to fill the network buffers (to a certain level if Active Queue Management (AQM) is used), low-priority congestion control methods often react to changes in delay as an earlier indication of congestion. This approach tends to  induce less loss than a
+loss-based method but does generally not compete well with loss-based traffic
+across shared bottleneck links. Therefore, methods such as LEDBAT {{RFC6824}},
+are deployed in the Internet for scavenger traffic that aim to only utilize otherwise unused capacity.
 
 # Transport Features
 
