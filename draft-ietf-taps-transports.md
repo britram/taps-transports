@@ -122,12 +122,14 @@ informative:
   RFC7496:
   RFC7525:
   RFC7540:
-  I-D.ietf-tsvwg-rfc5405bis:
   I-D.ietf-aqm-ecn-benefits:
+  I-D.ietf-tsvwg-rfc5405bis:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-sctp-failover:
   I-D.ietf-tsvwg-natsupp:
+  I-D.ietf-tcpm-cubic:
+
   XHR:
     title: "XMLHttpRequest working draft (http://www.w3.org/TR/XMLHttpRequest/)"
     author:
@@ -326,10 +328,20 @@ option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
 All TCP senders provide congestion control, such as described in [RFC5681].
 TCP's congestion control mechanism is tied to a sliding window as well
-{{RFC5681}}. Examples for different kind of congestion control schemes are given in {{congestion-control}}. The sending window at a given point in time is the minimum of the receiver window and the congestion window. The congestion window is increased in the absence of congestion and, resopectively, decreased if congestion is detected. Often loss is implicitly handled as a congestion indication which is detected in TCP (also as input for retransmission handling) based on two mechanisms:
-A retransmission timer with exponential back-up or the reception of three acknowledgement for the same segment, so called duplicated ACKs (Fast retransmit). In addition Explicit Congestion
-Notification (ECN) [RFC3168] can be used in TCP, if supported by both endpoints, that allows a network node to signal congestion without inducing loss. Alternatively, a delay-based congestion control scheme can be used in TCP that reacts to changes in delay as an early indication of congestion as also further described in {{congestion-control}}.
-
+{{RFC5681}}. Examples for different kind of congestion control schemes are
+given in {{congestion-control}}. The sending window at a given point in time
+is the minimum of the receiver window and the congestion window. The
+congestion window is increased in the absence of congestion and, respectively,
+decreased if congestion is detected. Often loss is implicitly handled as a
+congestion indication which is detected in TCP (also as input for
+retransmission handling) based on two mechanisms: A retransmission timer with
+exponential back-up or the reception of three acknowledgment for the same
+segment, so called duplicated ACKs (Fast retransmit). In addition, Explicit
+Congestion Notification (ECN) [RFC3168] can be used in TCP, if supported by
+both endpoints, that allows a network node to signal congestion without
+inducing loss. Alternatively, a delay-based congestion control scheme can be
+used in TCP that reacts to changes in delay as an early indication of
+congestion as also further described in {{congestion-control}}.
 
 TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -1591,8 +1603,22 @@ protocols are largely orthogonal to the choice of transport protocol. This
 section provides an overview of the congestion control mechanisms available to
 the protocols described in {{existing-transport-protocols}}.
 
-Many protocols use a separate window to determine the maximum sending rate that is allowed by the congestion control. The used congestion control mechanism will increase the congestion window if feedback is received that indicates that the currently used network path is not congested, and will reduce the window otherwise. Window-based mechanisms often increase their window slowing over multiple RTTs, while decreasing strongly when the first indication of congestion is received. One example are Additive Increase Multiplicative Decrease (AIMD) schemes, where the window is increased by a certain number of packets/bytes for each data segment that has been successfully transmitted, while the window is multiplicatively decrease on the occurrence of a congestion event. This can lead to a rather unstable, oscillating sending rate, but will resolve a congestion situation quickly. TCP New Reno {{5681}} which is one of the initial proposed schemes for TCP as well as TCP Cubic {{draft-ietf-tcpm-cubic-01}} which is the default mechanism for TCP in Linux are two examples for window-based AIMD schemes.
-This approach is also used by DCCP CCID-2 for datagram congestion control.
+Many protocols use a separate window to determine the maximum sending rate
+that is allowed by the congestion control. The used congestion control
+mechanism will increase the congestion window if feedback is received that
+indicates that the currently used network path is not congested, and will
+reduce the window otherwise. Window-based mechanisms often increase their
+window slowing over multiple RTTs, while decreasing strongly when the first
+indication of congestion is received. One example are Additive Increase
+Multiplicative Decrease (AIMD) schemes, where the window is increased by a
+certain number of packets/bytes for each data segment that has been
+successfully transmitted, while the window is multiplicatively decrease on the
+occurrence of a congestion event. This can lead to a rather unstable,
+oscillating sending rate, but will resolve a congestion situation quickly. TCP
+New Reno {{RFC5681}} which is one of the initial proposed schemes for TCP as
+well as TCP Cubic {{I-D.ietf-tcpm-cubic}} which is the default mechanism for
+TCP in Linux are two examples for window-based AIMD schemes. This approach is
+also used by DCCP CCID-2 for datagram congestion control.
 
 Some classes of applications prefer to use a transport service that allows
 sending at a more stable rate, that is slowly varied in response to
