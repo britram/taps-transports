@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-09
-date: 2016-1-13
+date: 2016-1-22
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -206,43 +206,13 @@ need to specify additional mechanisms, including a congestion control
 mechanism (such as NewReno, TFRC or LEDBAT).  This extends the set of available
 Transport Services beyond those provided to applications by TCP and UDP.
 
-
-# Terminology
-
-The following terms are defined throughout this document, and in
-subsequent documents produced by TAPS describing the composition and
-decomposition of transport services.
-
-Transport Service Feature:
-: a specific end-to-end feature that a transport service provides to its
-clients. Examples include confidentiality, reliable delivery, ordered
-delivery, message-versus-stream orientation, etc.
-
-Transport Service:
-: a set of Transport Features, without an association to any given
-framing protocol, which provides a complete service to an application.
-
-Transport Protocol:
-: an implementation that provides one or more different transport services
-using a specific framing and header format on the wire.
-
-Transport Service Instance:
-: an arrangement of transport protocols with a selected set of features
-and configuration parameters that implements a single transport service,
-e.g., a protocol stack (RTP over UDP).
-
-Application:
-: an entity that uses the transport layer for end-to-end delivery data
-across the network (this may also be an upper layer protocol or tunnel
-encapsulation).
-
-# Transport Features
+## Overview of Transport Features
 
 Transport protocols can be differentiated by the features of the
 services they provide.
 
 One fundamental feature is whether a transport offers a service that divides
-the data into transmission units based on network packets (known as a 
+the data into transmission units based on network packets (known as a
 Datagram service), or whether it combines and segments data across multiple
 packets (e.g., the Stream service provided by TCP).
 
@@ -275,62 +245,36 @@ endpoint, to one of multiple endpoints, or multicast simultaneously to multiple 
 The service offered by transport protocols and frameworks can also be 
 differentiated in many other ways. 
 
-## Congestion Control
 
-Congestion control is critical to the stable operation of the
-Internet, applications and other protocols that choose to use a protocol
-that does not itself provide congestion control
-(e.g., UDP or UDP-Lite), need to employ mechanisms to prevent congestion
-collapse and to establish some degree of fairness with concurrent
-traffic.
+# Terminology
 
-A variety of mechanisms have been used to provide the congestion control 
-needed by an Internet Transport Protocol. 
-A method is needed to
-deriving a metric that a congestion control algorithm uses to detect congestion
-and the property of a packet it uses to determine when to send. Given these
-relatively wide constraints, the congestion control mechanisms that can be
-applied by different transport protocols are largely orthogonal to the choice
-of transport protocol. This section provides an overview of the
-congestion control mechanisms available to the protocols described in
-{{existing-transport-protocols}}.
+The following terms are defined throughout this document, and in
+subsequent documents produced by TAPS describing the composition and
+decomposition of transport services.
 
+Transport Service Feature:
+: a specific end-to-end feature that a transport service provides to its
+clients. Examples include confidentiality, reliable delivery, ordered
+delivery, message-versus-stream orientation, etc.
 
-Some protocols such as SCTP and TCP {{RFC5681}} offer a transport service 
-controlled by a sliding-window-based
-receiver flow control. These methods commonly use a separate congestion window for congestion
-control, which allows the transport service to send bursts of data under the control of a separate congestion control window.
-Each time congestion is detected, the congestion window is
-reduced. Most commonly deployed congestion control mechanisms use one of three
-methods to detect congestion:
-- detection of loss, which is interpreted as a congestion signal; 
-- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-benefits}}); and/or
-- a retransmission timer with exponential back-off.
-The volume of data in flight is capped to the minimum of the two windows. This
-approach is also used by DCCP CCID-2 {{RFC4341}} for datagram congestion control.
+Transport Service:
+: a set of Transport Features, without an association to any given
+framing protocol, which provides a complete service to an application.
 
-Some classes of applications prefer to use a transport service that allows
-sending at a specific rate, and prefer to vary this rate in response to congestion.
-Rate-based methods offer this type of congestion control and have been 
-defined based on the loss ratio and observed
-round trip time, such as TFRC {{RFC5348}} and TFRC-SP {{RFC4828}}. These
-methods utilise a throughput equation to determine the maximum acceptable rate.
-Such methods are used with DCCP CCID-3 {{RFC4342}} and CCID-4 {{RFC5622}},
-WEBRC {{RFC3738}}, and other applications.
+Transport Protocol:
+: an implementation that provides one or more different transport services
+using a specific framing and header format on the wire.
 
-Another class of applications prefer a transport service that has been designed to 
-allow unused capacity to be utilised, with a goal to readily yield to
-interactive or otherwise higher-priority, or loss-based congestion-controlled
-traffic.
-Such a congestion control method could react to
-changes in delay as an indication of congestion, and tends to 
-induce less loss than a loss-based method. These methods generally do not
-compete well with them across shared bottleneck links. However, methods
-such as LEDBAT {{RFC6824}}, are deployed in the Internet for scavenger
-traffic. The methods are designed to allow unused capacity to be utilised,
-while have a goal to readily yield to
-interactive or otherwise higher-priority, or loss-based congestion-controlled
-traffic.
+Transport Service Instance:
+: an arrangement of transport protocols with a selected set of features
+and configuration parameters that implements a single transport service,
+e.g., a protocol stack (RTP over UDP).
+
+Application:
+: an entity that uses the transport layer for end-to-end delivery data
+across the network (this may also be an upper layer protocol or tunnel
+encapsulation).
+
 
 # Existing Transport Protocols
 
@@ -380,9 +324,12 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
+TCP's congestion control mechanism is tied to a sliding window as well
+{{RFC5681}}, described further in {{congestion-control}}. The sending window
+at a given point in time is the minimum of the receiver window and the
+congestion window.
 
-TCP provides congestion control {{RFC5681}}, described further in
-{{congestion-control}}.
+[EDNOTE mirja add stuff here]
 
 TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -1633,7 +1580,56 @@ HTTPS (HTTP over TLS) additionally provides the following features:
 - confidentiality.
 - integrity protection.
 
+# Congestion Control
 
+Congestion control is critical to the stable operation of the Internet. A
+variety of mechanisms have been used to provide the congestion control needed
+by an Internet transport protocol. Congestion is detected based on sensing of
+network conditions, whether through explicit or implicit feedback. The
+congestion control mechanisms that can be applied by different transport
+protocols are largely orthogonal to the choice of transport protocol. This
+section provides an overview of the congestion control mechanisms available to
+the protocols described in {{existing-transport-protocols}}.
+
+Some protocols such as SCTP and TCP {{RFC5681}} offer a transport service
+controlled by a sliding-window-based receiver flow control; protocols based on
+TCP use the congestion control provided by TCP. These methods commonly use a
+separate congestion window for congestion control, which allows the transport
+service to send bursts of data under the control of a separate congestion
+control window. Each time congestion is detected, the congestion window is
+reduced. Most commonly deployed congestion control mechanisms use one of three
+methods to detect congestion:
+
+[EDNOTE mirja stick this in TCP?]
+
+- detection of loss, which is interpreted as a congestion signal; 
+- Explicit Congestion Notification (ECN) {{RFC3168}} to provide explicit signaling of congestion without inducing loss (see {{I-D.ietf-aqm-ecn-benefits}}); and/or
+- a retransmission timer with exponential back-off.
+
+The volume of data in flight is capped to the minimum of the two windows. This
+approach is also used by DCCP CCID-2 {{RFC4341}} for datagram congestion
+control.
+
+Some classes of applications prefer to use a transport service that allows
+sending at a specific rate, and prefer to vary this rate in response to
+congestion. Rate-based methods offer this type of congestion control and have
+been  defined based on the loss ratio and observed round trip time, such as
+TFRC {{RFC5348}} and TFRC-SP {{RFC4828}}. These methods utilise a throughput
+equation to determine the maximum acceptable rate. Such methods are used with
+DCCP CCID-3 {{RFC4342}} and CCID-4 {{RFC5622}}, WEBRC {{RFC3738}}, and other
+applications.
+
+Another class of applications prefer a transport service that has been
+designed to allow unused capacity to be utilised, with a goal to readily
+yield to interactive or otherwise higher-priority, or loss-based congestion-
+controlled traffic. Such a congestion control method could react to changes in
+delay as an indication of congestion, and tends to  induce less loss than a
+loss-based method. These methods generally do not compete well with them
+across shared bottleneck links. However, methods such as LEDBAT {{RFC6824}},
+are deployed in the Internet for scavenger traffic. The methods are designed
+to allow unused capacity to be utilised, while have a goal to readily yield to
+interactive or otherwise higher-priority, or loss-based congestion-controlled
+traffic.
 
 # Transport Features
 
