@@ -210,41 +210,51 @@ Transport Services beyond those provided to applications by TCP and UDP.
 
 ## Overview of Transport Features
 
-Transport protocols can be differentiated by the features of the
-services they provide.
+Transport protocols can be differentiated by the features of the services they provide.
 
-One fundamental feature is whether a transport offers a service that divides
-the data into transmission units based on network packets (known as a
-Datagram service), or whether it combines and segments data across multiple
-packets (e.g., the Stream service provided by TCP).
+Some of these provided feature are closely related to basic control function 
+that a protocol needs to work over a network path, such as addressing.
+<!---There are different ways that a transport protocol may use the addressing capabilities
+ of the under-lying network service.--->
+Further transport services must be<!-- unidirectional or bidirectional,---> either to a single
+endpoint, to one of multiple endpoints, or multicast simultaneously to multiple endpoints.
+<!-- Editors note: uni-/bi-directional not mentioned on section 5-->
 
-Another fundamental feature is whether a transport requires a control exchange
-across the network at setup (e.g., TCP), or whether it connection-less (e.g., UDP).
+<!---Another fundamental feature is whether a transport requires a control exchange
+across the network at setup (e.g., TCP), or whether it connection-less (e.g., UDP).--->
+<!--- Editor note: connection setup is not metioned in section 5.--->
 
-A transport service can deliver packets with full reliability, providing detection
+For the delivery of the packets itself, reliability (incl. integrety protection), ordering, 
+as well as the used frameing have been identified as basic features. However, these features are 
+implement in different protocols supporting different levels of assurance.
+As an example, a transport service may provide full reliability, providing detection
 of loss and retransmission (e.g., TCP). SCTP offers a message-based service
 that can provide full or partial reliability and allows the protocol to minimize the head of line
-blocking due to the support of 
-ordered and unordered message delivery within
+blocking due to the support of ordered and unordered message delivery within
 multiple streams. UDP-Lite and DCCP can provide partial integrity protection to enable 
 corruption tolerance of the transport service.
 
-A transport service can provide flow control to allow a receiver to regulate
-the transmission rate of a sender.
+Usually a protocol has been designed to support one spcific type of delivery/framing where
+either data needs to be devided into transmission units based on network packets (known as a
+Datagram service), a data stream is segmented and re-combined across multiple
+packets (e.g., the Stream service provided by TCP), or whole objects such as files are handled accordingly.
+This descision influences strongly the interface that is provided to the upper layer.
 
-A transport service can provide congestion control (see {{congestion-control}}). TCP and SCTP provide 
+In addition transport protocols offer a certain support on transmission control.
+E.g., a transport service can provide flow control to allow a receiver to regulate
+the transmission rate of a sender. Further a transport service can provide congestion control 
+(see {{congestion-control}}). As an example TCP and SCTP provide 
 congestion control for use in the Internet, whereas UDP leaves this function
-to the upper layer protocol that uses UDP. DCCP offers a range of congestion
+to the upper layer protocol that uses UDP. <!---DCCP offers a range of congestion
 control approaches and LEDBAT can support low-priority "scavenger" communication,
 intending to defer use of capacity to other Internet flows sharing a congested
-bottleneck.
+bottleneck.-->
+<!-- Editors note: Name segmentation, message bundling and stream scheduling here...? -->
 
-There are different ways that a transport protocol may use the addressing capabilities
-of the under-lying network service.
-Transport services may be unidirectional or bidirectional, to a single a single
-endpoint, to one of multiple endpoints, or multicast simultaneously to multiple endpoints.
 
-The service offered by transport protocols and frameworks can also be 
+<!--- Editors note: Add one sentence/paragraph on security? Multi-homing is also not mentioned, but I think that's okay--->
+
+The service(s) offered by transport protocols and frameworks can also be 
 differentiated in many other ways. 
 
 
