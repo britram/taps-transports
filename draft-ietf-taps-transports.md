@@ -55,6 +55,7 @@ informative:
   RFC2736:
   RFC3168:
   RFC3205:
+  RFC3260:
   RFC3436:
   RFC3450:
   RFC3452:
@@ -169,7 +170,7 @@ informative:
     date: 1990
 --- abstract
 
-This document describes surveys, classifies and compares the protocol
+This document describes, surveys, classifies and compares the protocol
 mechanisms provided by existing IETF protocols, as background for determining
 a common set of transport services. It examines the Transmission Control
 Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol
@@ -265,8 +266,8 @@ subsequent documents produced by TAPS describing the composition and
 decomposition of transport services.
 
 Transport Service Feature:
-: a specific end-to-end feature that a transport service provides to its
-clients. Examples include confidentiality, reliable delivery, ordered
+: a specific end-to-end feature that the transport layer provides to 
+an application. Examples include confidentiality, reliable delivery, ordered
 delivery, message-versus-stream orientation, etc.
 
 Transport Service:
@@ -319,7 +320,8 @@ addresses and local port and remote port numbers. The destination port during
 connection setup is often used to indicate the requested service.
 
 TCP partitions a continuous stream of bytes into segments, sized to fit in IP
-packets. ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}} as well as
+packets based on a negotiated maximum segment size and further constrained by 
+the effective MTU from PMTUD. ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}} as well as
 Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} have been
 defined by the IETF.
 
@@ -327,7 +329,7 @@ Each byte in the stream is identified by a sequence number. The sequence
 number is used to order segments on receipt, to identify segments in
 acknowledgments, and to detect unacknowledged segments for retransmission.
 This is the basis of the reliable, ordered delivery of data in a TCP stream. TCP
-Selective Acknowledgment {{RFC2018}} extends this mechanism by making it
+Selective Acknowledgment (SACK) {{RFC2018}} extends this mechanism by making it
 possible to provide earlier identification of which segments are missing, 
 allowing faster retransmission. SACK-based methods (e.g. DSACK) can also result 
 in less spurious retransmission.
@@ -336,7 +338,7 @@ Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
-All TCP senders provide congestion control, such as described in [RFC5681].
+All TCP senders provide congestion control, such as described in {{RFC5681}}.
 TCP's congestion control mechanism is tied to a sliding window as well
 {{RFC5681}}. Examples for different kind of congestion control schemes are
 given in {{congestion-control}}. The sending window at a given point in time
@@ -347,7 +349,7 @@ congestion indication which is detected in TCP (also as input for
 retransmission handling) based on two mechanisms: A retransmission timer with
 exponential back-up or the reception of three acknowledgment for the same
 segment, so called duplicated ACKs (Fast retransmit). In addition, Explicit
-Congestion Notification (ECN) [RFC3168] can be used in TCP, if supported by
+Congestion Notification (ECN) {{RFC3168}} can be used in TCP, if supported by
 both endpoints, that allows a network node to signal congestion without
 inducing loss. Alternatively, a delay-based congestion control scheme can be
 used in TCP that reacts to changes in delay as an early indication of
@@ -357,11 +359,10 @@ TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
 receiver-side only, some are explicitly negotiated during connection setup.
 
-The TCP transport service may buffer data, e.g., to optimise processing or
+TCP may buffer data, e.g., to optimise processing or
 capacity usage. TCP can therefore provides mechanisms to control this, including
 an optional "PUSH" function {{RFC0793}} that explicitly requests the 
 transport service not to  delay data. 
-
 By default, TCP segment partitioning uses Nagle's algorithm {{RFC0896}} to
 buffer data at the sender into large segments, potentially incurring
 sender-side buffering delay; this algorithm can be disabled by the sender to
@@ -388,7 +389,7 @@ flags.
 {{RFC1122}} describes extensions of the TCP/application layer interface for:
 
 - reporting soft errors such as reception of ICMP error messages, extensive retransmission or urgent pointer advance,
-- providing a possibility to specify the Differentiated Services Code Point (DSCP) (formerly, the Type-of-Service, TOS) for segments,
+- providing a possibility to specify the Differentiated Services Code Point (DSCP) {{RFC3260}} (formerly, the Type-of-Service, TOS) for segments,
 - providing a flush call to empty the TCP send queue, and
 - multihoming support.
 
@@ -402,34 +403,42 @@ There are currently no documents in the RFC Series that describe this interface.
 
 The transport features provided by TCP are:
 
-- unicast transport
-- connection setup with feature negotiation and application-to-port mapping, implemented using SYN segments and the TCP option field to negotiate features.
-- port multiplexing: each TCP session is uniquely identified by a combination of the ports and IP address fields.
-- Uni-or bidirectional communication.
-- stream-oriented delivery in a single stream.
-- fully reliable delivery, implemented using ACKs sent from the receiver to confirm delivery.
-- error detection: a segment checksum verifies delivery to the correct endpoint and integrity of the data and options.
-- segmentation: packets are fragmented to a negotiated maximum segment size, further constrained by the effective MTU from PMTUD.
-- data bundling, an optional mechanism that uses Nagle's algorithm to coalesce data sent within the same RTT into full-sized segments.
-- flow control using a window-based mechanism, where the receiver advertises the window that it is willing to buffer.
-- congestion control: a window-based method that uses slow start and other mechanisms to conservatively choose a rate, adapting the sending rate
-after congestion is detected (e.g., 
-Additive Increase Multiplicative Decrease, AIMD).
+- unicast transport,
+- connection setup with feature negotiation and application-to-port mapping (implemented using SYN segments and the TCP option field to negotiate features),
+- port multiplexing, <!--each TCP session is uniquely identified by a combination of the ports and IP address fields,-->
+- uni-or bidirectional communication,
+- stream-oriented delivery in a single stream,
+- fully reliable delivery (implemented using ACKs sent from the receiver to confirm delivery),
+- error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data and options), <!-- editors note: stream integrity protection-->
+- segmentation and aggregation,
+- data bundling (optional; uses Nagle's algorithm to coalesce data sent within the same RTT into full-sized segments),
+- flow control (implemented using a window-based mechanism where the receiver advertises the window that it is willing to buffer),
+- congestion control (usually implemented using a window-based mechanism and four algorithm for different phases of the transmission: slow start, congestion avoidance, fast retransmit, and fast recovery {{RFC5681}}).
 
 
 ## Multipath TCP (MPTCP)
 
 Multipath TCP {{RFC6824}} is an extension for TCP to support multi-homing for
 resilience, mobility and load-balancing. It is
-designed to be as transparent as possible to middle-boxes. It does so by
+designed to be as transparent as possible to middleboxes. It does so by
 establishing regular TCP flows between a pair of source/destination endpoints,
 and multiplexing the application's stream over these flows. 
+Sub-flows can be started over IPv4 or IPv6 for
+the same session.
 
 ### Protocol Description
 
 MPTCP uses TCP options for its control plane. They are used to signal multipath
 capabilities, as well as to negotiate data sequence numbers, and advertise other
 available IP addresses and establish new sessions between pairs of endpoints.
+
+By multiplexing one byte stream over separate paths, MPTCP can achieve a
+higher throughput than TCP in certain situations. Note, however, that coupled
+congestion control {{RFC6356}} might limit this benefit to maintain fairness to
+other flows at the bottleneck. When aggregating capacity over multiple paths,
+and depending on the way packets are scheduled on each TCP subflow,
+additional delay and higher jitter might be observed observed before in-order
+delivery of data to the applications.
 
 ### Interface Description
 
@@ -450,21 +459,13 @@ The document also recommends the use of extensions defined for SCTP {{RFC6458}}
 
 As an extension to TCP, MPTCP provides mostly the same features. By
 establishing multiple sessions between available endpoints, it can additionally
-provide soft failover solutions should one of the paths become unusable. In
-addition, by multiplexing one byte stream over separate paths, it can achieve a
-higher throughput than TCP in certain situations. Note, however, that coupled
-congestion control {{RFC6356}} might limit this benefit to maintain fairness to
-other flows at the bottleneck. When aggregating capacity over multiple paths,
-and depending on the way packets are scheduled on each TCP subflow,
-additional delay and higher jitter might be observed observed before in-order
-delivery of data to the applications.
+provide soft failover solutions should one of the paths become unusable. 
 
 The transport features provided by MPTCP in addition to TCP therefore are:
 
-- congestion control with load balancing over multiple connections.
-- endpoint multiplexing of a single byte stream (higher throughput).
-- address family multiplexing: sub-flows can be started over IPv4 or IPv6 for
-the same session.
+- congestion control with load balancing over multiple connections,
+- endpoint multiplexing of a single byte stream (higher throughput),
+- address family multiplexing (using IPv4 and IPv6 for the same session),
 - resilience to network failure and/or handover.
 
 ## Stream Control Transmission Protocol (SCTP)
@@ -476,11 +477,6 @@ multiple streams in each direction, providing in-sequence delivery of user
 messages within each stream. This allows it to minimize head of line blocking.
 SCTP supports multiple stream scheduling schemes controlling stream
 multiplexing, including priority and fair weighting schemes.
-
-SCTP is extensible. Currently defined extensions include mechanisms for
-dynamic re-configuration of streams {{RFC6525}} and IP addresses
-{{RFC5061}}. Furthermore, the extension specified in {{RFC3758}} introduces
-the concept of partial reliability for user messages.
 
 SCTP was originally developed for transporting telephony signalling messages
 and is deployed in telephony signalling networks, especially in mobile
@@ -499,26 +495,30 @@ misdelivery of packets to an unintended endpoint. This is stronger than the 16-b
 checksums used by TCP or UDP. However, partial payload checksum coverage as
 provided by DCCP or UDP-Lite is not supported.
 
-SCTP has been designed with extensibility in mind. Each SCTP packet starts
+SCTP has been designed with extensibility in mind. <!--Each SCTP packet starts
 with a single common header containing the port numbers, a verification tag
-and the CRC32c checksum. This common header is followed by a sequence of
-chunks. Each chunk consists of a type field, flags, a length field and a
-value. {{RFC4960}} defines how a receiver processes chunks with an unknown
+and the CRC32c checksum. This--> A common header is followed by a sequence of
+chunks. <!--Each chunk consists of a type field, flags, a length field and a
+value.--> {{RFC4960}} defines how a receiver processes chunks with an unknown
 chunk type. The support of extensions can be negotiated during the SCTP
-handshake.
+handshake. Currently defined extensions include mechanisms for
+dynamic re-configuration of streams {{RFC6525}} and IP addresses
+{{RFC5061}}. Furthermore, the extension specified in {{RFC3758}} introduces
+the concept of partial reliability for user messages.
 
 SCTP provides a message-oriented service. Multiple small user messages can be
 bundled into a single SCTP packet to improve efficiency. For example, this
 bundling may be done by delaying user messages at the sender, similar to
 Nagle's algorithm used by TCP. User messages which would result in IP packets
 larger than the MTU will be fragmented at the sender and reassembled at the
-receiver. There is no protocol limit on the user message size. ICMP-based path
+receiver. There is no protocol limit on the user message size. <!--ICMP-based path
 MTU discovery is specified for IPv4 in {{RFC1191}} and for IPv6 in {{RFC1981}},
-as well as packetization layer path MTU discovery, specified in {{RFC4821}},
-utilising probe packets with padding chunks, defined in {{RFC4820}}.
+as well as packetization layer path MTU discovery, specified in {{RFC4821}},-->
+For MTU discovery the same meachnism than for TCP can be used {{RFC1981, RFC4821}},
+as well as utilising probe packets with padding chunks, as defined in {{RFC4820}}.
 
 {{RFC4960}} specifies TCP-friendly congestion control to protect the network
-against overload; see {{congestion-control}} for more. SCTP also uses sliding
+against overload. SCTP also uses sliding
 window flow control to protect receivers against overflow. Similar to TCP,
 SCTP also supports delaying acknowledgments. {{RFC7053}} provides a way for
 the sender of user messages to request the immediate sending of the
@@ -526,8 +526,8 @@ corresponding acknowledgments.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in each
 direction. The number of streams can be different in each direction. Every
-user message is sent on a particular stream. User messages can be sent un-
-ordered, or ordered upon request by the upper layer. Un-ordered messages can be
+user message is sent on a particular stream. User messages can be sent un-ordered, 
+or ordered upon request by the upper layer. Un-ordered messages can be
 delivered as soon as they are completely received. Ordered messages sent on
 the same stream are delivered at the receiver in the same order as sent by the
 sender. For user messages not requiring fragmentation, this minimizes head of
@@ -550,13 +550,6 @@ terminated in a non-graceful way {{RFC4960}}, similar to TCP behaviour.
 In addition to this reliable transfer, the partial reliability extension
 {{RFC3758}} allows a sender to abandon user messages.
 The application can specify the policy for abandoning user messages.
-Examples of these policies defined in {{RFC3758}} and {{RFC7496}} are:
-
-- Limiting the time a user message is dealt with by the sender.
-- Limiting the number of retransmissions for each fragment of a user message.
-  If the number of retransmissions is limited to 0, one gets a service similar
-  to UDP.
-- Abandoning messages of lower priority in case of a send buffer shortage.
 
 SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses and
 a single port number. These addresses can be any mixture of IPv4 and IPv6
@@ -566,8 +559,8 @@ re-configuration extension specified in {{RFC5061}} in combination with
 during the livetime of an SCTP association. This allows for transport layer
 mobility. Multiple addresses are used for improved resilience. If a remote
 address becomes unreachable, the traffic is switched over to a reachable one,
-if one exists. {{I-D.ietf-tsvwg-sctp-failover}} specifies a quicker failover
-operation reducing the latency of the failover.
+if one exists. <!--{{I-D.ietf-tsvwg-sctp-failover}} specifies a quicker failover
+operation reducing the latency of the failover.-->
 
 For securing user messages, the use of TLS over SCTP has been specified in
 {{RFC3436}}. However, this solution does not support all services provided
@@ -577,7 +570,7 @@ limitations. When using DTLS over SCTP, the application can use almost all
 services provided by SCTP.
 
 {{I-D.ietf-tsvwg-natsupp}} defines methods for endpoints and
-middleboxes to provide support NAT for SCTP over IPv4.
+middleboxes to provide NAT traversal for SCTP over IPv4.
 For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
 SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
 as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
@@ -604,8 +597,8 @@ An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
   the application has fine control about parameters like retransmission
   thresholds, the path supervision parameters, the delayed acknowledgment
   timeout, and the fragmentation point. The API provides a mechanism
-  to allow the SCTP stack to notify the application about event if the
-  application has requested them. These notifications provide Information
+  to allow the SCTP stack to notify the application about events if the
+  application has requested them. These notifications provide information
   about status changes of the association and each of the peer addresses.
   In case of send failures, including drop of messages sent unreliably, 
   the application can also be notified and user
@@ -615,12 +608,21 @@ An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
   message reception. Additionally a context can be provided when sending,
   which can be use in case of send failures. The sending of arbitrary large
   user messages is supported.
+
 - the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
   for a user message the PR-SCTP policy and the policy specific parameter.
+  Examples of these policies defined in {{RFC3758}} and {{RFC7496}} are:
+  - Limiting the time a user message is dealt with by the sender.
+  - Limiting the number of retransmissions for each fragment of a user message.
+    If the number of retransmissions is limited to 0, one gets a service similar
+    to UDP.
+  - Abandoning messages of lower priority in case of a send buffer shortage.
+
 - the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
   the shared keys, the HMAC to use, set the chunk types which are only accepted
   in an authenticated way, and get the list of chunks which are accepted by the
   local and remote end point in an authenticated way.
+
 - the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
   It allows to manually add and delete local addresses for SCTP associations
   and the enabling of automatic address addition and deletion. Furthermore
@@ -683,22 +685,21 @@ corresponding supported protocol extensions.
 
 The transport features provided by SCTP are:
 
-- unicast.
-- connection setup with feature negotiation and application-to-port mapping.
-- port multiplexing.
-- Uni-or bidirectional communication.
-- message-oriented delivery supporting multiple concurrent streams.
-- fully reliable, partially reliable, or unreliable delivery.
-- ordered and unordered delivery within a stream.
-- user message fragmentation and reassembly.
-- support for stream scheduling prioritization.
-- user message bundling.
-- flow control using a window-based mechanism.
-- drop notification. 
-- congestion control using methods similar to TCP.
-- strong error/misdelivery detection (CRC32c).
-- transport layer multihoming for resilience and mobility.
-- transport layer mobility.
+- unicast transport,
+- connection setup with feature negotiation and application-to-port mapping,
+- port multiplexing,
+- uni-or bidirectional communication,
+- message-oriented delivery supporting multiple concurrent streams,
+- fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification, <!-- Editors note: is this a separate feature?-->
+- ordered and unordered delivery within a stream,
+- user message fragmentation and reassembly, <!-- Editors note: Do we call this segementation and aggregation?-->
+- support for stream scheduling prioritization,
+- user message bundling,
+- flow control using a window-based mechanism,
+- congestion control using methods similar to TCP,
+- strong error/misdelivery detection (CRC32c),
+- transport layer multihoming for resilience and mobility, <!-- Editors note: is this a separate feature?-->
+- transport layer mobility,
 - resilience to network failure and/or handover.
 
 
@@ -706,30 +707,30 @@ The transport features provided by SCTP are:
 
 The User Datagram Protocol (UDP) {{RFC0768}} {{RFC2460}} is an IETF standards
 track transport protocol. It provides a unidirectional datagram protocol that
-preserves message boundaries. It provides  no error correction,congestion
+preserves message boundaries. It provides  no error correction, congestion
 control, or flow control. It can be used to send  broadcast datagrams (IPv4)
 or multicast datagrams (IPv4 and IPv6), in addition to unicast and anycast
-datagrams. IETF guidance on the use of UDP is provided in {{I-D.ietf-tsvwg-
-rfc5405bis}}. UDP is widely implemented and widely used by common
-applications, including DNS.
+datagrams. IETF guidance on the use of UDP is provided in 
+{{I-D.ietf-tsvwg-rfc5405bis}}. UDP is widely implemented and widely used by 
+common applications, including DNS.
 
 ### Protocol Description
 
 UDP is a connection-less protocol that maintains message boundaries, with no
 connection setup or feature negotiation. The protocol uses independent
-messages, ordinarily called datagrams. Each stream of messages is
-independently managed, therefore retransmission does not hold back data sent
-using other logical streams. It provides detection of payload errors and
+messages, ordinarily called datagrams. <!--Each stream of messages is
+independently managed, therefore a retransmission does not hold back data sent
+using other logical streams.--> It provides detection of payload errors and
 misdelivery of packets to an unintended endpoint, either of which result in
 discard of received datagrams, with no indication to the user of the service.
 
 It is possible to create IPv4 UDP datagrams with no checksum, and while this
 is generally discouraged {{RFC1122}} {{I-D.ietf-tsvwg-rfc5405bis}}, certain
 special cases permit this use. These datagrams rely on the IPv4 header checksum
-to protect from misdelivery to an unintended endpoint. IPv6 does not by permit UDP
+to protect from misdelivery to an unintended endpoint. IPv6 does not permit UDP
 datagrams with no checksum, although in certain cases this rule may be relaxed
-{{RFC6935}}. The checksum support considerations for omitting the checksum are
-defined in {{RFC6936}}. 
+{{RFC6935}}. <!--The checksum support considerations for omitting the checksum are
+defined in {{RFC6936}}. -->
 
 UDP does not provide reliability and does not provide retransmission. This
 implies messages may be re-ordered, lost, or duplicated in transit.
@@ -752,7 +753,7 @@ making this transparent to the user of the transport service.
 Applications that need to provide
 fragmentation or that have other requirements such as receiver flow
 control, congestion control, PathMTU discovery/PLPMTUD, support for
-ECN, etc. This need these to be provided by protocols operating over UDP 
+ECN, etc. need these to be provided by protocols operating over UDP 
 {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Interface Description
@@ -762,11 +763,11 @@ Guidance on use of common APIs is provided in {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 A UDP endpoint consists of a tuple of (IP address, port number).
 Demultiplexing using multiple abstract endpoints (sockets) on the
-same IP address are supported. The same socket may be used by a
+same IP address is supported. The same socket may be used by a
 single server to interact with multiple clients (note: this behavior
 differs from TCP, which uses a pair of tuples to identify a
-connection). Multiple server instances (processes) that bind the same
-socket can cooperate to service multiple clients-- the socket
+connection). Multiple server instances (processes) that bind to the same
+socket can cooperate to service multiple clients. The socket
 implementation arranges to not duplicate the same received unicast
 message to multiple server processes.
 
@@ -781,16 +782,14 @@ and to filter the traffic for the specified addresses and ports
 
 The transport features provided by UDP are:
 
-- unicast.
-- multicast, anycast, or IPv4 broadcast.
-- port multiplexing. A receiving port can be configured to receive datagrams from multiple senders.
-- message-oriented delivery.
-- Uni-or bidirectional communication. Transmission in each direction is independent.
-- non-reliable delivery.
-- non-ordered delivery.
-- error detection: a segment checksum verifies delivery to the correct endpoint and integrity of the data.
-This checksum is optional for IPv4, and optional under specific conditions for IPv6 where all or none of the payload data is protected.
-- IPv6 jumbograms.
+- unicast, multicast, anycast, or IPv4 broadcast,
+- port multiplexing (where a receiving port can be configured to receive datagrams from multiple senders),
+- message-oriented delivery,
+- uni- or bidirectional communication where the transmissions in each direction are independent,
+- non-reliable delivery,
+- unordered delivery,
+- error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data; optional for IPv4 and optional under specific conditions for IPv6 where all or none of the payload data is protected),
+- support of IPv6 jumbograms. <!-- editors note: not mentioned in the protocol description. Is this a feature? Does the application care about this?-->
 
 
 ## Lightweight User Datagram Protocol (UDP-Lite)
@@ -798,21 +797,9 @@ This checksum is optional for IPv4, and optional under specific conditions for I
 The Lightweight User Datagram Protocol (UDP-Lite) {{RFC3828}} is an IETF
 standards track transport protocol. It provides a unidirectional, datagram
 protocol that preserves message boundaries. IETF guidance on the use of UDP-
-Lite is provided in {{I-D.ietf-tsvwg-rfc5405bis}}.
-
-### Protocol Description
-
-Like UDP, UDP-Lite is a connection-less datagram protocol, with no connection
-setup or feature negotiation. It changes the semantics of the UDP "payload
-length" field to that of a "checksum coverage length" field, and is identified
-by a different IP protocol/next-header value. Otherwise, UDP-Lite is
-semantically identical to UDP. Applications using UDP-Lite therefore cannot
-make assumptions regarding the correctness of the data received in the
-insensitive part of the UDP-Lite payload.
-
-In the same way as for UDP, mechanisms for receiver flow control, congestion control, PMTU or
-PLPMTU discovery, support for ECN, etc. This needs to be provided by upper layer
-protocols {{I-D.ietf-tsvwg-rfc5405bis}}.
+Lite is provided in {{I-D.ietf-tsvwg-rfc5405bis}}. A UDP-Lite service may support 
+IPv4 broadcast, multicast, anycast and
+unicast, and IPv6 multicast, anycast and unicast.
 
 Examples of use include a class of applications that can derive benefit from
 having partially-damaged payloads delivered, rather than discarded. One use is
@@ -821,8 +808,23 @@ error-prone links, another application is when header integrity checks are
 required, but payload integrity is provided by some other mechanism (e.g.,
 {{RFC6936}}).
 
-A UDP-Lite service may support IPv4 broadcast, multicast, anycast and
-unicast, and IPv6 multicast, anycast and unicast.
+### Protocol Description
+
+Like UDP, UDP-Lite is a connection-less datagram protocol, with no connection
+setup or feature negotiation. It changes the semantics of the UDP "payload
+length" field to that of a "checksum coverage length" field, and is identified
+by a different IP protocol/next-header value. The "checksum coverage length" field
+specifies the intended checksum coverage, with the remaining
+unprotected part of the payload called the "error-insensitive part". 
+Applications using UDP-Lite therefore cannot
+make assumptions regarding the correctness of the data received in the
+insensitive part of the UDP-Lite payload.
+
+Otherwise, UDP-Lite is semantically identical to UDP. 
+In the same way as for UDP, mechanisms for receiver flow control, congestion control, PMTU or
+PLPMTU discovery, support for ECN, etc. needs to be provided by upper layer
+protocols {{I-D.ietf-tsvwg-rfc5405bis}}.
+
 
 ### Interface Description
 
@@ -831,9 +833,7 @@ use of common APIs is provided in {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 The interface of UDP-Lite differs
 from that of UDP by the addition of a single (socket) option that
-communicates a checksum coverage length value: at the sender, this
-specifies the intended checksum coverage, with the remaining
-unprotected part of the payload called the "error-insensitive part".
+communicates a checksum coverage length value.
 The checksum coverage may also be made visible to the application
 via the UDP-Lite MIB module {{RFC5097}}.
 
@@ -841,15 +841,14 @@ via the UDP-Lite MIB module {{RFC5097}}.
 
 The transport features provided by UDP-Lite are:
 
-- unicast (as for UDP).
-- multicast, anycast, or IPv4 broadcast (as for UDP).
-- port multiplexing (as for UDP).
-- message-oriented delivery (as for UDP).
-- Uni-or bidirectional communication. Transmission in each direction is independent (as for UDP).
-- non-reliable delivery (as for UDP).
-- non-ordered delivery (as for UDP).
-- mis-delivery detection (the checksum always provides protection from mis-delivery).
-- partial or full payload protection. The checksum coverage field indicates the size of the payload data covered by the checksum.
+- unicast, multicast, anycast, or IPv4 broadcast (as for UDP),
+- port multiplexing (as for UDP),
+- message-oriented delivery (as for UDP),
+- Uui-or bidirectional communication where the transmissions in each direction are independent (as for UDP),
+- non-reliable delivery (as for UDP),
+- non-ordered delivery (as for UDP),
+- mis-delivery detection (the checksum always provides protection from mis-delivery), <!-- editors note: is this an own feature? If yes, change everywhere incl. section 5-->
+- partial or full payload protection (where the checksum coverage field indicates the size of the payload data covered by the checksum).
 
 ## Datagram Congestion Control Protocol (DCCP)
 
@@ -869,8 +868,8 @@ common to UDP, but can avoid "re-inventing the wheel"
 each time a new multimedia application emerges.
 Specifically it includes core transport functions (feature
 negotiation, path state management, RTT calculation,
-PMTUD, etc.): DCCP applications to select how they send packets
-and, where suitable, to choose common algorithms to
+PMTUD, etc.): DCCP applications select how they send packets
+and, where suitable, choose common algorithms to
 manage their functions.
 Examples of applications that can benefit from such transport services
 include interactive applications,
@@ -882,14 +881,26 @@ streaming media, or on-line games {{RFC4336}}.
 DCCP is a connection-oriented datagram protocol, providing a three-way
 handshake to allow a client and server to set up a connection,
 and mechanisms for orderly completion and immediate teardown of
-a connection. The protocol is defined by a family of RFCs.
+a connection.
+
+A DCCP protocol instance can be extended {{RFC4340}} and tuned using
+additional features. Some features are sender-side only, requiring no
+negotiation with the receiver; some are receiver-side only; and some are
+explicitly negotiated during connection setup.
+
+DCCP uses a Connect packet to initiate a session, and permits each endpoint 
+to choose the features it wishes to support.
+Simultaneous open {{RFC5596}}, as in TCP, can enable interoperability in the
+presence of middleboxes. The Connect packet includes a Service Code
+{{RFC5595}} that identifies the application or
+protocol using DCCP, providing middleboxes with information about the
+intended use of a connection.
+
+DCCP service is unicast-only.
 
 It provides multiplexing to multiple sockets at each endpoint using
 port numbers. An active DCCP session is identified by its four-tuple
 of local and remote IP addresses and local port and remote port numbers.
-At connection setup, DCCP also exchanges the service code {{RFC5595}},
-a mechanism that allows transport instantiations to indicate
-the service treatment that is expected from the network.
 
 The protocol segments data into messages, typically sized to
 fit in IP packets, but which may be fragmented providing they
@@ -910,45 +921,34 @@ enable endpoints to detect application data corruption.
 Receiver flow control is supported, which limits the amount of unacknowledged
 data that can be outstanding at a given time.
 
-A DCCP protocol instance can be extended {{RFC4340}} and tuned using
-additional features. Some features are sender-side only, requiring no
-negotiation with the receiver; some are receiver-side only; and some are
-explicitly negotiated during connection setup.
-
-DCCP service is unicast-only.
-
-It supports negotiation of the congestion control profile, to provide plug-
-and-play congestion control mechanisms. Examples of specified profiles include
+DCCP supports negotiation of the congestion control profile, 
+<!-- editors note: with other endpoint?-->
+to provide plug-and-play congestion control mechanisms. 
+Examples of specified profiles include
 "TCP-like" {{RFC4341}}, "TCP-friendly" {{RFC4342}}, and "TCP-friendly for
 small packets" {{RFC5622}}. Additional mechanisms are recorded in an IANA
 registry.
 
-DCCP uses a Connect packet to initiate a session, and permits each endpoint 
-to choose the features it wishes to support.
-Simultaneous open {{RFC5596}}, as in TCP, can enable interoperability in the
-presence of middleboxes. The Connect packet includes a Service Code field
-{{RFC5595}} designed to allow middleboxes and endpoints to identify the
-characteristics required by a session.
-
 A lightweight UDP-based encapsulation (DCCP-UDP) has been defined {{RFC6773}}
 that permits DCCP to be used over paths where DCCP is not natively supported.
 Support for DCCP in NAPT/NATs is defined in {{RFC4340}} and {{RFC5595}}.
-
 Upper layer protocols specified on top of DCCP include DTLS {{RFC5595}}, RTP
 {{RFC5672}}, ICE/SDP {{RFC6773}}.
 
-A common packet format has allowed tools to evolve that can
-read and interpret DCCP packets (e.g., Wireshark).
+<!--A common packet format has allowed tools to evolve that can
+read and interpret DCCP packets (e.g., Wireshark).-->
 
 ### Interface Description
 
 API characteristics include:
 
-- Datagram transmission.
-- Notification of the current maximum packet size.
-- Send and reception of zero-length payloads.
-- Slow Receiver flow control at a receiver.
+- datagram transmission,
+- notification of the current maximum packet size,
+- send and reception of zero-length payloads,
+- slow receiver flow control at a receiver,
 - ability to detect a slow receiver at the sender.
+
+<!-- editors note: what about the cc nego and the service code?-->
 
 There is no API currently specified in the RFC Series.
 
@@ -956,17 +956,17 @@ There is no API currently specified in the RFC Series.
 
 The transport features provided by DCCP are:
 
-- unicast transport.
-- connection setup with feature negotiation and application-to-port mapping.
-- Service Codes. Identifies the upper layer service to the endpoint and network.
-- port multiplexing.
-- Uni-or bidirectional communication.
-- message-oriented delivery.
-- non-reliable delivery.
-- ordered delivery.
-- flow control. The slow receiver function allows a receiver to control the rate of the sender.
-- drop notification. Allows a receiver to notify which datagrams were not delivered to the peer upper layer protocol.
-- timestamps.
+- unicast transport,
+- connection setup with feature negotiation and application-to-port mapping,
+- siganling of application class for middlebox support (implemented using Service Codes), <!-- editor note: is this a feature?-->
+- port multiplexing,
+- uni-or bidirectional communication,
+- message-oriented delivery,
+- unreliable delivery with drop notification, <!--Allows a receiver to notify which datagrams were not delivered to the peer upper layer protocol.-->
+   <!-- editors note: drop notification is not an own feature, is it?-->
+<!-- - timestamps. --><!-- editors note: is this a feature?-->
+- ordered and unordered delivery, <!-- editors note: unorder added as described in the text. Is that correct?-->
+- flow control (implemented using the slow receiver function)
 - partial and full payload protection (with optional strong integrity check).
 
 ## Internet Control Message Protocol (ICMP)
@@ -977,6 +977,21 @@ It is a connection-less unidirectional protocol that delivers individual
 messages, without error correction, congestion control, or flow control. 
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
 (IPv4 and IPv6), in addition to anycast datagrams.
+
+Transport Protocols and upper layer protocols can use received ICMP messages to help
+them take appropriate decisions when network or endpoint errors are reported.
+For example, to implement, ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}}
+or assist in Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}}. Such
+reactions to received messages need to protect from off-path data injection
+{{I-D.ietf-tsvwg-rfc5405bis}}, to avoid an application receiving packets created 
+by an unauthorized third party. An application therefore needs to
+ensure that all messages are appropriately validated, by checking the payload
+of the messages to ensure these are received in response to actually
+transmitted traffic (e.g., a reported error condition that corresponds to a
+UDP datagram or TCP segment was actually sent by the application). This
+requires context {{RFC6056}}, such as local state about communication
+instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).
+This state is not always maintained by UDP-based applications {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Protocol Description
 
@@ -1002,45 +1017,34 @@ unable to run sufficiently fast, or frequently, may miss messages since there
 is no flow or congestion control. In addition some network devices rate-limit
 ICMP messages.
 
-Transport Protocols and upper layer protocols can use received ICMP messages to help
-them take appropriate decisions when network or endpoint errors are reported.
-For example, to implement, ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}}
-or assist in Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}}. Such
-reactions to received messages need to protect from off-path data injection
-{{I-D.ietf-tsvwg-rfc5405bis}}, to avoid an application receiving packets created 
-by an unauthorized third party. An application therefore needs to
-ensure that all messages are appropriately validated, by checking the payload
-of the messages to ensure these are received in response to actually
-transmitted traffic (e.g., a reported error condition that corresponds to a
-UDP datagram or TCP segment was actually sent by the application). This
-requires context {{RFC6056}}, such as local state about communication
-instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).
-This state is not always maintained by UDP-based applications {{I-D.ietf-tsvwg-rfc5405bis}}.
+### Interface Description
+
+ICMP processing is integrated in many connection-oriented transports,
+but like other functions needs to be provided by an upper-layer protocol
+when using UDP and UDP-Lite.
+
+On some stacks, a bound socket also allows a UDP application to be notified
+when ICMP error messages are received for its transmissions
+{{I-D.ietf-tsvwg-rfc5405bis}}.
 
 Any response to ICMP error messages ought to be robust to temporary
 routing failures (sometimes called "soft errors"), e.g., transient ICMP
 "unreachable" messages ought to not normally cause a communication abort
 {{RFC5461}} {{I-D.ietf-tsvwg-rfc5405bis}}.
 
-### Interface Description
-
-ICMP processing is integrated in many connection-oriented transports,
-but like other functions needs to be provided by an upper-layer protocol
-when using UDP and UDP-Lite.
-On some stacks, a bound socket also allows a UDP application to be notified
-when ICMP error messages are received for its transmissions
-{{I-D.ietf-tsvwg-rfc5405bis}}.
-
 ### Transport Features
+
+<!-- editors note: Isn't this just one feature ('handling  of control and measurement data')? 
+ Does the ICMP section need to follow the same structure than other protocol sections?-->
 
 The transport features provided by ICMP are:
 
-- unidirectional.
-- multicast, anycast and IP4 broadcast.
-- message-oriented delivery of control and measurement data.
-- non-reliable delivery of control and measurement data.
-- non-ordered delivery of control and measurement data.
-- error and mis-delivery detection (checksum, as in UDP).
+- unidirectional transmission of control and measurement data,
+- multicast, anycast and IP4 broadcast  of control and measurement data,
+- message-oriented delivery of control and measurement data,
+- non-reliable delivery of control and measurement data,
+- non-ordered delivery of control and measurement data,
+- error and mis-delivery detection of control and measurement data (checksum, as in UDP).
 
 
 ## Realtime Transport Protocol (RTP)
@@ -1058,14 +1062,14 @@ instead relying on out-of-band techniques or associated control protocols to
 setup, negotiate parameters or tear down a session.
 
 An RTP sender encapsulates audio/video data into RTP packets to transport
-media streams. The RFC-series specifies RTP payload formats allow packets to
+media streams. The RFC-series specifies RTP payload formats that allow packets to
 carry a wide range of media, and specifies a wide range of multiplexing, error
 control and other support mechanisms.
 
 If a frame of media data is large, it will be fragmented into several RTP
 packets. Likewise, several small frames may be bundled into a single RTP packet.
 
-An RTP receiver collects RTP packets from network, validates them for
+An RTP receiver collects RTP packets from the network, validates them for
 correctness, and sends them to the media decoder input-queue. Missing packet
 detection is performed by the channel decoder. The play-out buffer is ordered
 by time stamp and is used to reorder packets. Damaged frames may be repaired
@@ -1110,19 +1114,15 @@ of the protocol.
 
 The transport features provided by RTP are:
 
-- unicast transport.
-- multicast or IPv4 broadcast.
-- port multiplexing.
-- Uni-or bidirectional communication.
-- message-oriented delivery.
-- reliable delivery (when using erasure coding)
-- associated protocols for connection setup with feature negotiation and application-to-port mapping.
-- support for media types and other extensions.
-- a range of reliability functions, including the possibility of using packet erasure coding.
-- segmentation and aggregation.
-- performance reporting.
-- drop notification.
-- timestamps.
+- unicast, multicast or IPv4 broadcast (provided by lower layer protocol),
+- port multiplexing (provided by lower layer protocol),
+- uni- or bidirectional communication (provided by lower layer protocol),
+- message-oriented delivery with support for media types and other extensions,
+- reliable delivery when using erasure coding or unreliable delivery with drop notification (if supported by lower layer protocol),
+- connection setup with feature negotiation (using associated protocols) and application-to-port mapping (provided by lower layer protocol),
+- segmentation and aggregation,
+- performance reporting (using associated protocols).<!-- editors note: is this an own feature or is this part of something else? If it is an own feature, is this the right name?-->
+<!-- - timestamps. --><!-- editors note: is this a feature?-->
 
 
 ## File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)
@@ -1147,26 +1147,28 @@ supports point-to-point unicast transmissions.
 
 FLUTE/ALC bulk data
 dissemination has been designed for discrete file or memory-based "objects".
-Transmissions happen either in push mode, where content is sent once, or in
+<!--Transmissions happen either in push mode, where content is sent once, or in
 on-demand mode, where content is continuously sent during periods of time that
 can largely exceed the average time required to download the session objects
-(see {{RFC5651}}, section 4.2).
+(see {{RFC5651}}, section 4.2).-->
 
 Although FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
 HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6).
-In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
-object in push mode. FLUTE/ALC uses packet erasure coding (also
+<!--In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
+object in push mode.-->
+
+<!--FLUTE/ALC uses packet erasure coding (also
 known as Application-Level Forward Erasure Correction, or AL-FEC) in a
 proactive way. The goal of using AL-FEC is both to increase the robustness in
 front of packet erasures and to improve the efficiency of the on-demand
 service. FLUTE/ALC transmissions can be governed by a congestion control
 mechanism such as the "Wave and Equation Based Rate Control" (WEBRC) {{RFC3738}}
 when FLUTE/ALC is used in a layered transmission manner, with several session
-channels over which ALC packets are sent. However many FLUTE/ALC deployments
+channels over which ALC packets are sent. However, many FLUTE/ALC deployments
 target pre-provisioned networks and
 involve only Constant Bit Rate (CBR) channels with no competing flows, for
-which a sender-based rate control mechanism is sufficient. In any case,
+which a sender-based rate control mechanism is sufficient. In any case,-->
 FLUTE/ALC's reliability, delivery mode, congestion control, and flow/rate
 control mechanisms can be separately controlled
 to meet different application needs. Section 4.1 of {{I-D.ietf-tsvwg-rfc5405bis}}
@@ -1185,7 +1187,7 @@ FLUTE/ALC supports the transfer of bulk objects such as file or in-memory
 content, using either a push or an on-demand mode. in push mode, content is
 sent once to the receivers, while in on-demand mode, content is sent
 continuously during periods of time that can greatly exceed the average time
-required to download the session objects.
+required to download the session objects (see {{RFC5651}}, section 4.2).
 
 This enables receivers to join a session asynchronously, at their own
 discretion, receive the content and leave the session.  In this case, data
@@ -1209,7 +1211,7 @@ added and old ones removed, several instances of the FDT can be sent and a
 mechanism is provided to identify a new FDT Instance.
 
 Error detection and verification of the protocol
-control information relies on the on the underlying transport(e.g., UDP checksum).
+control information relies on the on the underlying transport (e.g., UDP checksum).
 
 To provide robustness against packet loss and improve the
 efficiency of the on-demand mode, FLUTE/ALC relies on packet erasure
@@ -1250,7 +1252,8 @@ NORM header extension mechanisms.
 ### Interface Description
 
 The FLUTE/ALC specification does not describe a specific application
-programming interface (API) to control protocol operation.  
+programming interface (API) to control protocol operation.
+
 Open source reference implementations of FLUTE/ALC are available at
 http://planete-bcast.inrialpes.fr/ (no longer maintained) and
 http://mad.cs.tut.fi/ (no longer maintained), and these implementations
@@ -1261,28 +1264,28 @@ some derived from the above implementations, with their own API.
 
 The transport features provided by FLUTE/ALC are:
 
-- unicast
-- multicast, anycast or IPv4 broadcast.
-- object-oriented delivery of discrete data or files.
-- per-object dynamic meta-data delivery.
-- push delivery or on-demand delivery service.
-- fully reliable or partially reliable delivery (of file or in-memory objects).
-- ordered or unordered delivery (of file or in-memory objects).
-- per-packet authentication, integrity, and anti-replay services.
-- proactive packet erasure coding (AL-FEC) to recover from packet erasures and improve the on-demand delivery service,
-- error detection (relies on UDP checksum).
+- unicast, multicast, anycast or IPv4 broadcast,
+- object-oriented delivery of discrete data or files,
+- per-object dynamic meta-data delivery, <!-- editors note: is this similar to performance reporting in RTP...?-->
+- push delivery or on-demand delivery service,
+- fully reliable or partially reliable delivery (of file or in-memory objects),
+- ordered or unordered delivery (of file or in-memory objects),
+- per-packet authentication, integrity, and anti-replay services, <!-- editors note: are these 3 features?-->
+- proactive packet erasure coding (AL-FEC) to recover from packet erasures and improve the on-demand delivery service, <!--editors note: how is this related to reliability as listed above?-->
+- error detection (relies on UDP checksum), <!-- editors note: What the difference to 'integrity' listed above?-->
 - congestion control for layered flows (e.g., with WEBRC).
 
 ## NACK-Oriented Reliable Multicast (NORM)
 
 NORM is an IETF standards track protocol specified in {{RFC5740}}. 
 It provides object-oriented delivery of discrete data or files.
-The
-protocol was designed to support reliable bulk data dissemination to receiver
+
+The protocol was designed to support reliable bulk data dissemination to receiver
 groups using IP Multicast but also provides for point-to-point unicast
 operation.  Support for bulk data dissemination includes discrete file or
-computer memory-based "objects" as well as byte- and message-streaming. NORM
-can incorporate packet erasure coding as a part of its
+computer memory-based "objects" as well as byte- and message-streaming. 
+
+NORM can incorporate packet erasure coding as a part of its
 selective ARQ in response to negative acknowledgments from the receiver. The packet
 erasure coding can also be proactively applied for forward protection from
 packet loss. NORM transmissions are governed by the TCP-friendly congestion
@@ -1305,13 +1308,13 @@ NORM supports bulk "objects" such as file or in-memory content but also can
 treat a stream of data as a logical bulk object for purposes of packet erasure
 coding. In the case of stream transport, NORM can support either byte streams
 or message streams where application-defined message boundary information is
-carried in the NORM protocol messages. This allows the receiver(s) to join/re-
-join and recover message boundaries mid-stream as needed. Application content
-is carried and identified by the NORM protocol with encoding symbol
+carried in the NORM protocol messages. This allows the receiver(s) to 
+join/re-join and recover message boundaries mid-stream as needed. Application 
+content is carried and identified by the NORM protocol with encoding symbol
 identifiers depending upon the Forward Error Correction (FEC) Scheme
 {{RFC3452}} configured. NORM uses NACK-based selective ARQ to reliably deliver
-the application content to the receiver(s). NORM proactively measures round-
-trip timing information to scale ARQ timers appropriately and to support
+the application content to the receiver(s). NORM proactively measures round-trip 
+timing information to scale ARQ timers appropriately and to support
 congestion control. For multicast operation, timer-based feedback suppression
 is uses to achieve group size scaling with low feedback traffic levels. The
 feedback suppression is not applied for unicast operation.
@@ -1359,17 +1362,16 @@ implemented.
 
 The transport features provided by NORM are:
 
-- unicast or multicast transport.
-- stream-oriented delivery in a single stream.
-- object-oriented delivery of discrete data or files.
-- fully or partially reliable delivery (using erasure coding).
-- unordered unidirectional delivery (of in-memory data or file bulk content objects).
-- error detection (relies on UDP checksum).
-- segmentation.
-- data bundling (Nagle's algorithm).
-- flow control (timer-based and/or ack-based).
-- congestion control.
-- packet erasure coding (both proactively and as part of ARQ).
+- unicast or multicast transport,
+- unidirectional communication,
+- stream-oriented delivery in a single stream or object-oriented delivery of in-memory data or file bulk content objects, <!-- editors note: combine to bullet in the list here, because only one of them can be used at the same time...?-->
+- fully reliable (NACK-based) or partially reliable (using erasure coding both proactively and as part of ARQ) delivery, <!-- editors note: combined these point to one feature. Is this correct?-->
+- unordered delivery,
+- error detection (relies on UDP checksum), <!-- editors note: call this integrity detection?-->
+- segmentation and aggregation,
+- data bundling (using Nagle's algorithm),
+- flow control (timer-based and/or ack-based),
+- congestion control (also supporting fixed rate reliable or unreliable delivery).
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
@@ -1407,9 +1409,11 @@ authenticated. It is important to note that TLS itself does not specify how a
 peering entity's identity should be interpreted.  For example, in the common
 use case of authentication by means of an X.509 certificate, it is the
 application's decision whether the certificate of the peering entity is
-acceptable for authorization decisions. Perfect forward secrecy, if enabled
+acceptable for authorization decisions. 
+
+Perfect forward secrecy, if enabled
 and supported by the selected algorithms, ensures that traffic encrypted and
-captured during a session at time t0 cannot be later decrypted at time t1 (t1
+captured during a session at time t0 cannot be later decrypted at time t1 (t1 
 > t0), even if the long-term secrets of the communicating peers are later
 compromised.
 
@@ -1490,20 +1494,25 @@ The data protocol, when used with an appropriate cipher, provides:
 ## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
 
 The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely
-used on the Internet. it provides object-oriented delivery of discrete data or files.
+used on the Internet. It provides object-oriented delivery of discrete data or files.
 Version 1.1 of the protocol is specified in {{RFC7230}}
 {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in
 {{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443,
 although it can be used with other transports. When used over TCP it inherits
 its properties.
 
-HTTP is used as a substrate for other application-layer protocols. There are
+<!--HTTP is used as a substrate for other application-layer protocols.-->
+Application layer protocols may use HTTP as a substrate with an existing method
+and data formats, or specify new methods and data formats. There are
 various reasons for this practice listed in {{RFC3205}}; these include being a
 well-known and well-understood protocol, reusability of existing servers and
 client libraries, easy use of existing security mechanisms such as HTTP digest
 authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to
 traverse firewalls makes it work over many types of infrastructure, and in
 cases where an application server often needs to support HTTP anyway.
+<!--Some protocols may not fit a request/response paradigm and instead rely on HTTP to
+send messages (e.g., {{RFC6546}}). Because HTTP works in many restricted
+infrastructures, it can also be used to tunnel other application-layer protocols.-->
 
 Depending on application need, the use of HTTP as a substrate protocol may add
 complexity and overhead in comparison to a special-purpose protocol (e.g.,
@@ -1513,6 +1522,10 @@ concerns about the use
 of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction
 with existing firewalls, proxies and NATs.
 
+Representational State Transfer (REST) {{REST}} is another example of how
+applications can use HTTP as transport protocol. REST is an architecture style
+that may be used to build applications using HTTP as a communication
+protocol.
 
 ### Protocol Description
 
@@ -1556,12 +1569,6 @@ exchanges.
 Arbitrary cookie strings, included as part of the MIME headers, are often used
 as bearer tokens in HTTP.
 
-Application layer protocols may use HTTP as a substrate with an existing method
-and data formats, or specify new methods and data formats. Some
-protocols may not fit a request/response paradigm and instead rely on HTTP to
-send messages (e.g., {{RFC6546}}). Because HTTP works in many restricted
-infrastructures, it can also be used to tunnel other application-layer protocols.
-
 ### Interface Description
 
 There are many HTTP libraries available exposing different APIs. The APIs
@@ -1578,28 +1585,22 @@ be JSON, HTML, and plain text. JavaScript and XMLHttpRequest are
 ubiquitous programming models for websites, and more general applications,
 where native code is less attractive.
 
-Representational State Transfer (REST) {{REST}} is another example of how
-applications can use HTTP as transport protocol. REST is an architecture style
-that may be used to build applications using HTTP as a communication
-protocol.
-
 ### Transport features
 
 The transport features provided by HTTP, when used as a pseudo-transport, are:
 
-- unicast.
-- message and stream-oriented transfer.
-- bi- or unidirectional transmission.
-- ordered delivery.
-- fully reliable delivery.
-- object range request.
-- message content type negotiation.
-- flow control.
+- unicast transport (provided by the lower layer protocol, usually TCP),
+- bi- or unidirectional communication,
+- stream-oriented transfer or message transfer with message content type negotiation, <!--editors note: added the nego bit here instead of having a separate feature...? Was this correct?-->
+- object range request, <!-- editor note: Is this a feature? Is this the right name?-->
+- ordered delivery (provided by the lower layer protocol, usually TCP),
+- fully reliable delivery (provided by the lower layer protocol, usually TCP),
+- flow control (provided by the lower layer protocol, usually TCP).
 
-HTTPS (HTTP over TLS) additionally provides the following features:
+HTTPS (HTTP over TLS) additionally provides the following features (as provided by TLS):
 
-- authentication (of one or both ends of a connection).
-- confidentiality.
+- authentication (of one or both ends of a connection),
+- confidentiality,
 - integrity protection.
 
 # Congestion Control
@@ -1641,10 +1642,15 @@ applications.
 
 Another class of applications prefer a transport service that
 yields to other (higher-priority) traffic, such as interactive transmissions.
-While most traffic in the Internet uses loss-based congestion control and therefore need to fill the network buffers (to a certain level if Active Queue Management (AQM) is used), low-priority congestion control methods often react to changes in delay as an earlier indication of congestion. This approach tends to  induce less loss than a
+While most traffic in the Internet uses loss-based congestion control and 
+therefore need to fill the network buffers (to a certain level if 
+Active Queue Management (AQM) is used), low-priority congestion control 
+methods often react to changes in delay as an earlier indication of congestion. 
+This approach tends to  induce less loss than a
 loss-based method but does generally not compete well with loss-based traffic
 across shared bottleneck links. Therefore, methods such as LEDBAT {{RFC6824}},
-are deployed in the Internet for scavenger traffic that aim to only utilize otherwise unused capacity.
+are deployed in the Internet for scavenger traffic that aim to only utilize 
+otherwise unused capacity.
 
 # Transport Features
 
@@ -1711,7 +1717,7 @@ The transport protocol features described in this document could be used as a ba
   - Addressing
     - unicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, ICMP, RTP, TLS, HTTP)
     - multicast (UDP, UDP-Lite, DCCP, ICMP, RTP, FLUTE/ALC, NORM)
-    - IPv4 broadcast (UDP, UDP-Lite, ICMP, RTP)
+    - IPv4 broadcast (UDP, UDP-Lite, ICMP)
     - anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP, and DCCP can be used with anycast, with the risk that routing changes may cause connection failure.
   - Multihoming support
     - multihoming for resilience (MPTCP, SCTP)
@@ -1750,6 +1756,8 @@ The transport protocol features described in this document could be used as a ba
   - authentication of both ends of a connection (TLS, DTLS)
   - confidentiality (TLS, DTLS)
   - cryptographic integrity protection (TLS, DTLS)
+
+- Uni- and bidirectional communication <!-- editors note: Where does this belong? Or remove here and in feature lists above!-->
 
 
 # IANA Considerations
