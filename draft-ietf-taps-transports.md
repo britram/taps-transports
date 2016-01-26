@@ -1737,17 +1737,17 @@ The transport protocol features described in this document could be used as a ba
       - checksum optional (UDP). Possible with IPv4 and in certain cases with IPv6.
   - ordering
     - ordered delivery (TCP, MPTCP, SCTP, RTP, FLUTE, TLS, HTTP)
-    - unordered delivery permitted (SCTP, UDP, UDP-Lite, DCCP, RTP, NORM)
+    - unordered delivery permitted (SCTP, UDP, UDP-Lite, DCCP, RTP (includes timing information), NORM)
   - type/framing
     - stream-oriented delivery (TCP, MPTCP, SCTP, TLS)
       - with multiple streams per association (SCTP, HTTP 2.0)
-    - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, DTLS)
+    - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, RTP, DTLS)
     - object-oriented delivery of discrete data or files (FLUTE/ALC, NORM, HTTP)
 
 - Transmission control
   - flow control (TCP, MPTCP, SCTP, DCCP, RTP, TLS, HTTP)
   - congestion control (TCP, MPTCP, SCTP, DCCP, RTP, FLUTE/ALC, NORM). Congestion control can also provided by the transport supporting an upper later transport (e.g., RTP,HTTP, TLS).
-  - segmentation (TCP, MPTCP, SCTP, FLUTE/ALC, NORM, TLS, HTTP)
+  - segmentation (TCP, MPTCP, SCTP, RTP, FLUTE/ALC, NORM, TLS, HTTP)
   - data/message bundling (TCP, MPTCP, SCTP, TLS, HTTP)
   - stream scheduling prioritization (SCTP, HTTP 2.0)
 
