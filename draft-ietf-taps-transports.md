@@ -729,7 +729,7 @@ is generally discouraged {{RFC1122}} {{I-D.ietf-tsvwg-rfc5405bis}}, certain
 special cases permit this use. These datagrams rely on the IPv4 header checksum
 to protect from misdelivery to an unintended endpoint. IPv6 does not permit UDP
 datagrams with no checksum, although in certain cases this rule may be relaxed
-{{RFC6935}}. <!--The checksum support considerations for omitting the checksum are
+{{RFC6935}}. <!-- The checksum support considerations for omitting the checksum are
 defined in {{RFC6936}}. -->
 
 UDP does not provide reliability and does not provide retransmission. This
@@ -749,6 +749,8 @@ a single IP packet or several IP packet fragments. This
 allows a datagram to be larger than the effective path MTU.
 Fragments are reassembled before delivery to the UDP receiver,
 making this transparent to the user of the transport service.
+When the jumbograms are supported, larger messages may be sent without 
+performing fragmentation.
 
 Applications that need to provide
 fragmentation or that have other requirements such as receiver flow
@@ -789,7 +791,6 @@ The transport features provided by UDP are:
 - non-reliable delivery,
 - unordered delivery,
 - error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data; optional for IPv4 and optional under specific conditions for IPv6 where all or none of the payload data is protected),
-- support of IPv6 jumbograms. <!-- editors note: not mentioned in the protocol description. Is this a feature? Does the application care about this?-->
 
 
 ## Lightweight User Datagram Protocol (UDP-Lite)
@@ -847,7 +848,7 @@ The transport features provided by UDP-Lite are:
 - Uui-or bidirectional communication where the transmissions in each direction are independent (as for UDP),
 - non-reliable delivery (as for UDP),
 - non-ordered delivery (as for UDP),
-- mis-delivery detection (the checksum always provides protection from mis-delivery), <!-- editors note: is this an own feature? If yes, change everywhere incl. section 5-->
+<!-- - mis-delivery detection (the checksum always provides protection from mis-delivery),  editors note: is this an own feature? If yes, change everywhere incl. section 5 -->
 - partial or full payload protection (where the checksum coverage field indicates the size of the payload data covered by the checksum).
 
 ## Datagram Congestion Control Protocol (DCCP)
@@ -921,7 +922,7 @@ enable endpoints to detect application data corruption.
 Receiver flow control is supported, which limits the amount of unacknowledged
 data that can be outstanding at a given time.
 
-DCCP supports negotiation of the congestion control profile, 
+DCCP supports negotiation of the congestion control profile between endpoints, 
 <!-- editors note: with other endpoint?-->
 to provide plug-and-play congestion control mechanisms. 
 Examples of specified profiles include
@@ -965,14 +966,14 @@ The transport features provided by DCCP are:
 - unreliable delivery with drop notification, <!--Allows a receiver to notify which datagrams were not delivered to the peer upper layer protocol.-->
    <!-- editors note: drop notification is not an own feature, is it?-->
 <!-- - timestamps. --><!-- editors note: is this a feature?-->
-- ordered and unordered delivery, <!-- editors note: unorder added as described in the text. Is that correct?-->
+- unordered delivery,
 - flow control (implemented using the slow receiver function)
 - partial and full payload protection (with optional strong integrity check).
 
 ## Internet Control Message Protocol (ICMP)
 
 The Internet Control Message Protocol (ICMP) [RFC0792] for IPv4 and
-ICMP for IPv6 [RFC4433] are IETF standards track protocols.
+ICMP for IPv6 [RFC4433] are IETF standardss track protocols.
 It is a connection-less unidirectional protocol that delivers individual
 messages, without error correction, congestion control, or flow control. 
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
@@ -1147,7 +1148,7 @@ supports point-to-point unicast transmissions.
 
 FLUTE/ALC bulk data
 dissemination has been designed for discrete file or memory-based "objects".
-<!--Transmissions happen either in push mode, where content is sent once, or in
+<!-- Transmissions happen either in push mode, where content is sent once, or in
 on-demand mode, where content is continuously sent during periods of time that
 can largely exceed the average time required to download the session objects
 (see {{RFC5651}}, section 4.2).-->
@@ -1155,10 +1156,10 @@ can largely exceed the average time required to download the session objects
 Although FLUTE/ALC is not well adapted to byte- and message-streaming, there is
 an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over
 HTTP (DASH) when scalability is a requirement (see {{MBMS}}, section 5.6).
-<!--In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
+<!-- In that case, each Audio/Video segment is transmitted as a distinct FLUTE/ALC
 object in push mode.-->
 
-<!--FLUTE/ALC uses packet erasure coding (also
+<!-- FLUTE/ALC uses packet erasure coding (also
 known as Application-Level Forward Erasure Correction, or AL-FEC) in a
 proactive way. The goal of using AL-FEC is both to increase the robustness in
 front of packet erasures and to improve the efficiency of the on-demand
