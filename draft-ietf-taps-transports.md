@@ -2,7 +2,7 @@
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
 docname: draft-ietf-taps-transports-09
-date: 2016-1-22
+date: 2016-1-28
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -211,58 +211,56 @@ Transport Services beyond those provided to applications by TCP and UDP.
 
 ## Overview of Transport Features
 
-Transport protocols can be differentiated by the features of the services they provide.
+Transport protocols can be differentiated by the features of the services they
+provide.
 
-Some of these provided feature are closely related to basic control function 
-that a protocol needs to work over a network path, such as addressing.
-<!---There are different ways that a transport protocol may use the addressing capabilities
- of the under-lying network service.--->
-Further transport services must be<!-- unidirectional or bidirectional,---> either to a single
-endpoint, to one of multiple endpoints, or multicast simultaneously to multiple endpoints.
-<!-- Editors note: uni-/bi-directional not mentioned on section 5-->
+Some of these provided features are closely related to basic control function
+that a protocol needs to work over a network path, such as addressing. The
+number of participants in a given association also determines its
+applicability: if a connection is between endpoints (unicast), to one of
+multiple endpoints (anycast), and/or simultaneously to multiple endpoints
+(multicast). Unicast protocols usually support bidirectional communication,
+while multicast is generally unidirectional. Another feature is whether a
+transport requires a control exchange across the network at setup (e.g., TCP),
+or whether it connection-less (e.g., UDP).
 
-<!---Another fundamental feature is whether a transport requires a control exchange
-across the network at setup (e.g., TCP), or whether it connection-less (e.g., UDP).--->
-<!--- Editor note: connection setup is not metioned in section 5.--->
-
-For the delivery of the packets itself, reliability (incl. integrety protection), ordering, 
-as well as the used frameing have been identified as basic features. However, these features are 
-implement in different protocols supporting different levels of assurance.
-As an example, a transport service may provide full reliability, providing detection
+For the delivery of the packets itself, reliability and integrity protection,
+ordering, and framing are basic features. However, these features are
+implemented with different levels of assurance in different protocols. As an
+example, a transport service may provide full reliability, providing detection
 of loss and retransmission (e.g., TCP). SCTP offers a message-based service
-that can provide full or partial reliability and allows the protocol to minimize the head of line
-blocking due to the support of ordered and unordered message delivery within
-multiple streams. UDP-Lite and DCCP can provide partial integrity protection to enable 
-corruption tolerance of the transport service.
+that can provide full or partial reliability, and allows the protocol to
+minimize the head of line blocking due to the support of ordered and unordered
+message delivery within multiple streams. UDP-Lite and DCCP can provide
+partial integrity protection to enable corruption tolerance.
 
-Usually a protocol has been designed to support one spcific type of delivery/framing where
-either data needs to be devided into transmission units based on network packets (known as a
-Datagram service), a data stream is segmented and re-combined across multiple
-packets (e.g., the Stream service provided by TCP), or whole objects such as files are handled accordingly.
-This descision influences strongly the interface that is provided to the upper layer.
+Usually a protocol has been designed to support one specific type of
+delivery/framing: data either needs to be divided into transmission units
+based on network packets (datagram service), a data stream is segmented and
+re-combined across multiple packets (stream service), or whole objects such as
+files are handled accordingly. This decision strongly influences the interface
+that is provided to the upper layer.
 
-In addition transport protocols offer a certain support on transmission control.
-E.g., a transport service can provide flow control to allow a receiver to regulate
-the transmission rate of a sender. Further a transport service can provide congestion control 
-(see {{congestion-control}}). As an example TCP and SCTP provide 
-congestion control for use in the Internet, whereas UDP leaves this function
-to the upper layer protocol that uses UDP. <!---DCCP offers a range of congestion
-control approaches and LEDBAT can support low-priority "scavenger" communication,
-intending to defer use of capacity to other Internet flows sharing a congested
-bottleneck.-->
-<!-- Editors note: Name segmentation, message bundling and stream scheduling here...? -->
+In addition, transport protocols offer a certain support on transmission
+control. For example, a transport service can provide flow control to allow a
+receiver to regulate the transmission rate of a sender. Further a transport
+service can provide congestion control  (see {{congestion-control}}). As an
+example TCP and SCTP provide  congestion control for use in the Internet,
+whereas UDP leaves this function to the upper layer protocol that uses UDP.
 
-
-<!--- Editors note: Add one sentence/paragraph on security? Multi-homing is also not mentioned, but I think that's okay--->
-
-The service(s) offered by transport protocols and frameworks can also be 
-differentiated in many other ways. 
+Security features are often provided independent of the transport protocol,
+via Transport Layer Security (TLS, see {{transport-layer-security-tls-and-
+datagram-tls-dtls-as-a-pseudotransport}}) or by the application layer protocol
+itself. The security properties TLS provides to the application (such as
+confidentiality, integrity, and authenticity) are also features of the
+transport layer, even though they are often presently implemented in a
+separate protocol.
 
 
 # Terminology
 
-The following terms are defined throughout this document, and in
-subsequent documents produced by TAPS describing the composition and
+The following terms are used throughout this document, and in
+subsequent documents produced by TAPS that describe the composition and
 decomposition of transport services.
 
 Transport Service Feature:
@@ -403,14 +401,14 @@ There are currently no documents in the RFC Series that describe this interface.
 
 The transport features provided by TCP are:
 
-- unicast transport,
-- connection setup with feature negotiation and application-to-port mapping (implemented using SYN segments and the TCP option field to negotiate features),
-- port multiplexing, <!--each TCP session is uniquely identified by a combination of the ports and IP address fields,-->
+- connection-oriented transport with feature negotiation and application-to-port mapping (implemented using SYN segments and the TCP option field to negotiate features),
+- unicast transport (though anycast TCP is implemented, at risk of instability due to rerouting),
+- port multiplexing,
 - uni-or bidirectional communication,
 - stream-oriented delivery in a single stream,
 - fully reliable delivery (implemented using ACKs sent from the receiver to confirm delivery),
-- error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data and options), <!-- editors note: stream integrity protection-->
-- segmentation and aggregation,
+- error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data and options), 
+- segmentation,
 - data bundling (optional; uses Nagle's algorithm to coalesce data sent within the same RTT into full-sized segments),
 - flow control (implemented using a window-based mechanism where the receiver advertises the window that it is willing to buffer),
 - congestion control (usually implemented using a window-based mechanism and four algorithm for different phases of the transmission: slow start, congestion avoidance, fast retransmit, and fast recovery {{RFC5681}}).
@@ -433,12 +431,12 @@ capabilities, as well as to negotiate data sequence numbers, and advertise other
 available IP addresses and establish new sessions between pairs of endpoints.
 
 By multiplexing one byte stream over separate paths, MPTCP can achieve a
-higher throughput than TCP in certain situations. Note, however, that coupled
-congestion control {{RFC6356}} might limit this benefit to maintain fairness to
-other flows at the bottleneck. When aggregating capacity over multiple paths,
-and depending on the way packets are scheduled on each TCP subflow,
-additional delay and higher jitter might be observed observed before in-order
-delivery of data to the applications.
+higher throughput than TCP in certain situations. However, if coupled
+congestion control {{RFC6356}} is used, it might limit this benefit to
+maintain fairness to other flows at the bottleneck. When aggregating capacity
+over multiple paths, and depending on the way packets are scheduled on each
+TCP subflow, additional delay and higher jitter might be observed observed
+before in-order delivery of data to the applications.
 
 ### Interface Description
 
@@ -463,8 +461,7 @@ provide soft failover solutions should one of the paths become unusable.
 
 The transport features provided by MPTCP in addition to TCP therefore are:
 
-- congestion control with load balancing over multiple connections,
-- endpoint multiplexing of a single byte stream (higher throughput),
+- multihoming for load-balancing, with endpoint multiplexing of a single byte stream, using either coupled congestion control or for throughput maximization,
 - address family multiplexing (using IPv4 and IPv6 for the same session),
 - resilience to network failure and/or handover.
 
@@ -685,22 +682,20 @@ corresponding supported protocol extensions.
 
 The transport features provided by SCTP are:
 
+- connection-oriented transport with feature negotiation and application-to-port mapping,
 - unicast transport,
-- connection setup with feature negotiation and application-to-port mapping,
 - port multiplexing,
 - uni-or bidirectional communication,
-- message-oriented delivery supporting multiple concurrent streams,
-- fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification, <!-- Editors note: is this a separate feature?-->
+- message-oriented delivery with durable message framing supporting multiple concurrent streams,
+- fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification,
 - ordered and unordered delivery within a stream,
-- user message fragmentation and reassembly, <!-- Editors note: Do we call this segementation and aggregation?-->
 - support for stream scheduling prioritization,
+- segmentation,
 - user message bundling,
 - flow control using a window-based mechanism,
 - congestion control using methods similar to TCP,
-- strong error/misdelivery detection (CRC32c),
-- transport layer multihoming for resilience and mobility, <!-- Editors note: is this a separate feature?-->
-- transport layer mobility,
-- resilience to network failure and/or handover.
+- strong error detection (CRC32c),
+- transport layer multihoming for resilience and mobility.
 
 
 ## User Datagram Protocol (UDP)
@@ -784,7 +779,7 @@ and to filter the traffic for the specified addresses and ports
 
 The transport features provided by UDP are:
 
-- unicast, multicast, anycast, or IPv4 broadcast,
+- unicast, multicast, anycast, or IPv4 broadcast transport,
 - port multiplexing (where a receiving port can be configured to receive datagrams from multiple senders),
 - message-oriented delivery,
 - uni- or bidirectional communication where the transmissions in each direction are independent,
@@ -842,14 +837,13 @@ via the UDP-Lite MIB module {{RFC5097}}.
 
 The transport features provided by UDP-Lite are:
 
-- unicast, multicast, anycast, or IPv4 broadcast (as for UDP),
+- unicast, multicast, anycast, or IPv4 broadcast transport (as for UDP),
 - port multiplexing (as for UDP),
 - message-oriented delivery (as for UDP),
-- Uui-or bidirectional communication where the transmissions in each direction are independent (as for UDP),
+- Uni- or bidirectional communication where the transmissions in each direction are independent (as for UDP),
 - non-reliable delivery (as for UDP),
 - non-ordered delivery (as for UDP),
-<!-- - mis-delivery detection (the checksum always provides protection from mis-delivery),  editors note: is this an own feature? If yes, change everywhere incl. section 5 -->
-- partial or full payload protection (where the checksum coverage field indicates the size of the payload data covered by the checksum).
+- partial or full payload error detection (where the checksum coverage field indicates the size of the payload data covered by the checksum).
 
 ## Datagram Congestion Control Protocol (DCCP)
 
@@ -1720,45 +1714,50 @@ The transport protocol features described in this document could be used as a ba
     - multicast (UDP, UDP-Lite, DCCP, ICMP, RTP, FLUTE/ALC, NORM)
     - IPv4 broadcast (UDP, UDP-Lite, ICMP)
     - anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP, and DCCP can be used with anycast, with the risk that routing changes may cause connection failure.
+  - Association type
+    - connection-oriented (TCP, MPTCP, SCTP, RTP, NORM, TLS, HTTP)
+    - connectionless (UDP, UDP-Lite, DCCP, FLUTE/ALC)
   - Multihoming support
-    - multihoming for resilience (MPTCP, SCTP)
-    - multihoming for mobility (MPTCP, SCTP)
-    - multihoming for load-balancing (MPTCP)
+    - resilience and mobility (MPTCP, SCTP)
+    - load-balancing (MPTCP)
+    - address family multiplexing (MPTCP, SCTP)
 
 - Delivery
-  - reliability
+  - Reliability
     - fully reliable delivery (TCP, MPTCP, SCTP, FLUTE/ALC, NORM, TLS, HTTP)
     - partially reliable delivery (SCTP, NORM)
       - using packet erasure coding (FLUTE, NORM, RTP)
     - unreliable delivery (SCTP, UDP, UDP-Lite, DCCP, RTP)
       - with drop notification to sender (RTP, SCTP, DCCP)
-    - Integrity protection 
+    - error detection
       - checksum for error detection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, ICMP, FLUTE/ALC, NORM, TLS, DTLS)
       - partial payload checksum protection (UDP-Lite, DCCP). Some uses of RTP can exploit partial payload checksum protection feature to provide a corruption tolerant transport service.
       - checksum optional (UDP). Possible with IPv4 and in certain cases with IPv6.
-  - ordering
+  - Ordering
     - ordered delivery (TCP, MPTCP, SCTP, RTP, FLUTE, TLS, HTTP)
     - unordered delivery permitted (SCTP, UDP, UDP-Lite, DCCP, RTP (includes timing information), NORM)
-  - type/framing
-    - stream-oriented delivery (TCP, MPTCP, SCTP, TLS)
-      - with multiple streams per association (SCTP, HTTP 2.0)
+  - Type/framing
+    - stream-oriented delivery (TCP, MPTCP, SCTP, TLS, HTTP)
+      - with multiple streams per association (SCTP, HTTP2)
     - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, RTP, DTLS)
     - object-oriented delivery of discrete data or files (FLUTE/ALC, NORM, HTTP)
+  - Directionality
+    - unidirectional (TCP, SCTP, UDP, UDP-Lite DCCP, RTP, FLUTE/ALC, NORM)
+    - bidirectional (TCP, MPTCP, SCTP, HTTP, TLS)
 
 - Transmission control
   - flow control (TCP, MPTCP, SCTP, DCCP, RTP, TLS, HTTP)
   - congestion control (TCP, MPTCP, SCTP, DCCP, RTP, FLUTE/ALC, NORM). Congestion control can also provided by the transport supporting an upper later transport (e.g., RTP,HTTP, TLS).
   - segmentation (TCP, MPTCP, SCTP, RTP, FLUTE/ALC, NORM, TLS, HTTP)
   - data/message bundling (TCP, MPTCP, SCTP, TLS, HTTP)
-  - stream scheduling prioritization (SCTP, HTTP 2.0)
+  - stream scheduling prioritization (SCTP, HTTP2)
+  - endpoint multiplexing (MPTCP)
 
-- Security (may be used in combination with other transports)
+- Security
   - authentication of one end of a connection (TLS, DTLS)
   - authentication of both ends of a connection (TLS, DTLS)
   - confidentiality (TLS, DTLS)
   - cryptographic integrity protection (TLS, DTLS)
-
-- Uni- and bidirectional communication <!-- editors note: Where does this belong? Or remove here and in feature lists above!-->
 
 
 # IANA Considerations
