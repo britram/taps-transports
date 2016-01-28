@@ -457,7 +457,8 @@ The document also recommends the use of extensions defined for SCTP {{RFC6458}}
 
 As an extension to TCP, MPTCP provides mostly the same features. By
 establishing multiple sessions between available endpoints, it can additionally
-provide soft failover solutions should one of the paths become unusable. 
+provide soft failover solutions in the case that one of the paths 
+become unusable. 
 
 The transport features provided by MPTCP in addition to TCP therefore are:
 
@@ -941,7 +942,7 @@ The transport features provided by DCCP are:
 
 - unicast transport,
 - connection-oriented communication with feature negotiation and application-to-port mapping,
-- signaling of application class for middlebox support (implemented using Service Codes), <!-- editor note: is this a feature?-->
+- signaling of application class for middlebox support (implemented using Service Codes), 
 - port multiplexing,
 - uni-or bidirectional communication,
 - message-oriented delivery,
@@ -1627,7 +1628,7 @@ it is possible for the transport service to offer this feature.
 +---------------+------+------+------+------+------+------+------+
 | Cong.Control  | Yes  | Yes  | Yes  | No   | No   | Yes  | No   |
 +---------------+------+------+------+------+------+------+------+
-| Endpoint      |  1   | >=1  | >=1  |  1   |  1   |  1   |  1   |
+| Endpoint      |  1   | >=1  | >=1  | >=1  | >=1  |  1   |  1   |
 +---------------+------+------+------+------+------+------+------+
 | Multicast Cap.| No   | No   | No   | Yes  | Yes  | No   | No   |
 +---------------+------+------+------+------+------+------+------+
