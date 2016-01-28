@@ -941,15 +941,18 @@ read and interpret DCCP packets (e.g., Wireshark).-->
 
 ### Interface Description
 
-API characteristics include:
 
-- datagram transmission,
-- notification of the current maximum packet size,
-- send and reception of zero-length payloads,
-- slow receiver flow control at a receiver,
-- ability to detect a slow receiver at the sender.
-
-<!-- editors note: what about the cc nego and the service code?-->
+Functions expected for a DCCP API include: Open, Close and Management of
+the progress a DCCP connection. The Open function provides feature
+negotiation, selection of an appropriate CCID for congestion control and
+other parameters associated with the DCCP connection. A function allows an
+application to send DCCP datagrams, including setting the required
+checksum coverage, and any required options. (DCCP permits sending
+datagrams with a zero-length payload.) A function allows reception of
+data, including indicating if the data was used or dropped. Functions can
+also make the status of a connection visible to an application, including
+detection of the maximum packet size and the ability to perform flow control by
+detecting a slow receiver at the sender.
 
 There is no API currently specified in the RFC Series.
 
@@ -973,7 +976,7 @@ The transport features provided by DCCP are:
 ## Internet Control Message Protocol (ICMP)
 
 The Internet Control Message Protocol (ICMP) [RFC0792] for IPv4 and
-ICMP for IPv6 [RFC4433] are IETF standardss track protocols.
+ICMP for IPv6 [RFC4433] are IETF standards track protocols.
 It is a connection-less unidirectional protocol that delivers individual
 messages, without error correction, congestion control, or flow control. 
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
