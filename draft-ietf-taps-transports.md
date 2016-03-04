@@ -241,7 +241,7 @@ re-combined across multiple packets (stream service), or whole objects such as
 files are handled accordingly. This decision strongly influences the interface
 that is provided to the upper layer.
 
-In addition, transport protocols offer a certain support on transmission
+In addition, transport protocols offer a certain support for transmission
 control. For example, a transport service can provide flow control to allow a
 receiver to regulate the transmission rate of a sender. Further a transport
 service can provide congestion control  (see {{congestion-control}}). As an
@@ -249,8 +249,9 @@ example TCP and SCTP provide  congestion control for use in the Internet,
 whereas UDP leaves this function to the upper layer protocol that uses UDP.
 
 Security features are often provided independent of the transport protocol,
-via Transport Layer Security (TLS, see {{transport-layer-security-tls-and-
-datagram-tls-dtls-as-a-pseudotransport}}) or by the application layer protocol
+via Transport Layer Security (TLS, see 
+{{transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport}}) 
+or by the application layer protocol
 itself. The security properties TLS provides to the application (such as
 confidentiality, integrity, and authenticity) are also features of the
 transport layer, even though they are often presently implemented in a
@@ -319,7 +320,8 @@ connection setup is often used to indicate the requested service.
 
 TCP partitions a continuous stream of bytes into segments, sized to fit in IP
 packets based on a negotiated maximum segment size and further constrained by 
-the effective MTU from PMTUD. ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}} as well as
+the effective Maximum Transmission Unit (MTU) from Path MTU Discovery (PMTUD). 
+ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}} as well as
 Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}} have been
 defined by the IETF.
 
@@ -337,9 +339,10 @@ unacknowledged data that can be outstanding at a given time. The window scale
 option {{RFC7323}} allows a receiver to use windows greater than 64KB.
 
 All TCP senders provide congestion control, such as described in {{RFC5681}}.
-TCP's congestion control mechanism is tied to a sliding window as well
-{{RFC5681}}. Examples for different kind of congestion control schemes are
-given in {{congestion-control}}. The sending window at a given point in time
+TCP uses a sequence number with a sliding receiver window for flow
+control. The TCP congestion control mechanism also utilises this TCP
+sequence number to manage a separate congestion window {{RFC5681}}.
+The sending window at a given point in time 
 is the minimum of the receiver window and the congestion window. The
 congestion window is increased in the absence of congestion and, respectively,
 decreased if congestion is detected. Often loss is implicitly handled as a
@@ -352,6 +355,8 @@ both endpoints, that allows a network node to signal congestion without
 inducing loss. Alternatively, a delay-based congestion control scheme can be
 used in TCP that reacts to changes in delay as an early indication of
 congestion as also further described in {{congestion-control}}.
+Examples for different kind of congestion control schemes are
+given in {{congestion-control}}.
 
 TCP protocol instances can be extended {{RFC7414}} and tuned. Some features
 are sender-side only, requiring no negotiation with the receiver; some are
@@ -882,7 +887,7 @@ presence of middleboxes. The Connect packet includes a Service Code
 protocol using DCCP, providing middleboxes with information about the
 intended use of a connection.
 
-DCCP service is unicast-only.
+The DCCP service is unicast-only.
 
 It provides multiplexing to multiple sockets at each endpoint using
 port numbers. An active DCCP session is identified by its four-tuple
@@ -1570,8 +1575,8 @@ mechanism will increase the congestion window if feedback is received that
 indicates that the currently used network path is not congested, and will
 reduce the window otherwise. Window-based mechanisms often increase their
 window slowing over multiple RTTs, while decreasing strongly when the first
-indication of congestion is received. One example are Additive Increase
-Multiplicative Decrease (AIMD) schemes, where the window is increased by a
+indication of congestion is received. One example is an Additive Increase
+Multiplicative Decrease (AIMD) scheme, where the window is increased by a
 certain number of packets/bytes for each data segment that has been
 successfully transmitted, while the window is multiplicatively decrease on the
 occurrence of a congestion event. This can lead to a rather unstable,
@@ -1666,7 +1671,7 @@ The transport protocol features described in this document could be used as a ba
 - Control Functions
   - Addressing
     - unicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, ICMP, RTP, TLS, HTTP)
-    - multicast (UDP, UDP-Lite, DCCP, ICMP, RTP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.
+    - multicast (UDP, UDP-Lite, RTP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.
     - IPv4 broadcast (UDP, UDP-Lite, ICMP)
     - anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP and DCCP have also been deployed using anycast addressing, with the risk that routing changes may cause connection failure.
   - Association type
@@ -1681,7 +1686,7 @@ The transport protocol features described in this document could be used as a ba
     - error condition signaling from middleboxes and routers to endpoints (ICMP)
   - Signaling
     - control information and error signaling (ICMP)
-    - performance metric reporting (RTP)
+    - application performance reporting (RTP)
 
 - Delivery
   - Reliability
