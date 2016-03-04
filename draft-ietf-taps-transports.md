@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-09
-date: 2016-1-28
+docname: draft-ietf-taps-transports-10
+date: 2016-3-4
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -95,7 +95,6 @@ informative:
   RFC6083:
   RFC6093:
   RFC6525:
-  RFC6546:
   RFC6347:
   RFC6356:
   RFC6363:
@@ -123,11 +122,9 @@ informative:
   RFC7496:
   RFC7525:
   RFC7540:
-  I-D.ietf-aqm-ecn-benefits:
   I-D.ietf-tsvwg-rfc5405bis:
   I-D.ietf-tsvwg-sctp-dtls-encaps:
   I-D.ietf-tsvwg-sctp-ndata:
-  I-D.ietf-tsvwg-sctp-failover:
   I-D.ietf-tsvwg-natsupp:
   I-D.ietf-tcpm-cubic:
 
@@ -471,232 +468,6 @@ The transport features provided by MPTCP in addition to TCP therefore are:
 - address family multiplexing (using IPv4 and IPv6 for the same session),
 - resilience to network failure and/or handover.
 
-## Stream Control Transmission Protocol (SCTP)
-
-SCTP is a message-oriented IETF standards track transport protocol. The base
-protocol is specified in {{RFC4960}}. It supports multi-homing and path
-failover to provide resilience to path failures. An SCTP association has
-multiple streams in each direction, providing in-sequence delivery of user
-messages within each stream. This allows it to minimize head of line blocking.
-SCTP supports multiple stream scheduling schemes controlling stream
-multiplexing, including priority and fair weighting schemes.
-
-SCTP was originally developed for transporting telephony signaling messages
-and is deployed in telephony signaling networks, especially in mobile
-telephony networks. It can also be used for other services, for example, in the
-WebRTC framework for data channels. 
-
-### Protocol Description
-
-SCTP is a connection-oriented protocol using a four way handshake to establish
-an SCTP association, and a three way message exchange to gracefully shut it
-down. It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite.
-SCTP only supports unicast.
-
-SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors and
-misdelivery of packets to an unintended endpoint. This is stronger than the 16-bit
-checksums used by TCP or UDP. However, partial payload checksum coverage as
-provided by DCCP or UDP-Lite is not supported.
-
-SCTP has been designed with extensibility in mind. A common header is followed
-by a sequence of chunks. {{RFC4960}} defines how a receiver processes chunks
-with an unknown chunk type. The support of extensions can be negotiated during
-the SCTP handshake. Currently defined extensions include mechanisms for
-dynamic re-configuration of streams {{RFC6525}} and IP addresses {{RFC5061}}.
-Furthermore, the extension specified in {{RFC3758}} introduces the concept of
-partial reliability for user messages.
-
-SCTP provides a message-oriented service. Multiple small user messages can be
-bundled into a single SCTP packet to improve efficiency. For example, this
-bundling may be done by delaying user messages at the sender, similar to
-Nagle's algorithm used by TCP. User messages which would result in IP packets
-larger than the MTU will be fragmented at the sender and reassembled at the
-receiver. There is no protocol limit on the user message size. 
-For MTU discovery the same mechanism than for TCP can be used {{RFC1981}}{{RFC4821}},
-as well as utilizing probe packets with padding chunks, as defined in {{RFC4820}}.
-
-{{RFC4960}} specifies TCP-friendly congestion control to protect the network
-against overload. SCTP also uses sliding
-window flow control to protect receivers against overflow. Similar to TCP,
-SCTP also supports delaying acknowledgments. {{RFC7053}} provides a way for
-the sender of user messages to request the immediate sending of the
-corresponding acknowledgments.
-
-Each SCTP association has between 1 and 65536 uni-directional streams in each
-direction. The number of streams can be different in each direction. Every
-user message is sent on a particular stream. User messages can be sent un-ordered, 
-or ordered upon request by the upper layer. Un-ordered messages can be
-delivered as soon as they are completely received. Ordered messages sent on
-the same stream are delivered at the receiver in the same order as sent by the
-sender. For user messages not requiring fragmentation, this minimizes head of
-line blocking.
-
-The base protocol defined in {{RFC4960}} does not allow interleaving of user-
-messages. Large messages on one stream can therefore block the sending of user
-messages on other streams. {{I-D.ietf-tsvwg-sctp-ndata}} overcomes this
-limitation. This draft also specifies multiple algorithms for the sender side
-selection of which streams to send data from, supporting a variety of
-scheduling algorithms including priority based methods. The stream re-
-configuration extension defined in {{RFC6525}} allows streams to be reset
-during the lifetime of an association and to increase the number of streams,
-if the number of streams negotiated in the SCTP handshake becomes
-insufficient.
-
-Each user message sent is either delivered to
-the receiver or, in case of excessive retransmissions, the association is
-terminated in a non-graceful way {{RFC4960}}, similar to TCP behavior.
-In addition to this reliable transfer, the partial reliability extension
-{{RFC3758}} allows a sender to abandon user messages.
-The application can specify the policy for abandoning user messages.
-
-SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses and
-a single port number. These addresses can be any mixture of IPv4 and IPv6
-addresses. These addresses are negotiated during the handshake and the address
-re-configuration extension specified in {{RFC5061}} in combination with
-{{RFC4895}} can be used to change these addresses in an authenticated way
-during the lifetime of an SCTP association. This allows for transport layer
-mobility. Multiple addresses are used for improved resilience. If a remote
-address becomes unreachable, the traffic is switched over to a reachable one,
-if one exists. 
-
-For securing user messages, the use of TLS over SCTP has been specified in
-{{RFC3436}}. However, this solution does not support all services provided
-by SCTP, such as un-ordered delivery or partial reliability. Therefore,
-the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
-limitations. When using DTLS over SCTP, the application can use almost all
-services provided by SCTP.
-
-{{I-D.ietf-tsvwg-natsupp}} defines methods for endpoints and
-middleboxes to provide NAT traversal for SCTP over IPv4.
-For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
-SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
-as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
-is used within the WebRTC context.
-
-SCTP has a well-defined API, described in the next subsection.
-
-### Interface Description
-
-{{RFC4960}} defines an abstract API for the base protocol.
-This API describes the following functions callable by the upper layer of SCTP:
-Initialize, Associate, Send, Receive, Receive Unsent Message,
-Receive Unacknowledged Message, Shutdown, Abort, SetPrimary, Status,
-Change Heartbeat, Request Heartbeat, Get SRTT Report, Set Failure Threshold,
-Set Protocol Parameters, and Destroy.
-The following notifications are provided by the SCTP stack to the upper layer:
-COMMUNICATION UP, DATA ARRIVE, SHUTDOWN COMPLETE, COMMUNICATION LOST,
-COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.
-
-An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
-
-- the base protocol defined in {{RFC4960}}. The API allows control over
-  local addresses and port numbers and the primary path. Furthermore
-  the application has fine control about parameters like retransmission
-  thresholds, the path supervision parameters, the delayed acknowledgment
-  timeout, and the fragmentation point. The API provides a mechanism
-  to allow the SCTP stack to notify the application about events if the
-  application has requested them. These notifications provide information
-  about status changes of the association and each of the peer addresses.
-  In case of send failures, including drop of messages sent unreliably, 
-  the application can also be notified and user
-  messages can be returned to the application. When sending user messages,
-  the stream id, a payload protocol identifier, an indication whether ordered
-  delivery is requested or not. These parameters can also be provided on
-  message reception. Additionally a context can be provided when sending,
-  which can be use in case of send failures. The sending of arbitrary large
-  user messages is supported.
-
-- the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
-  for a user message the PR-SCTP policy and the policy specific parameter.
-  Examples of these policies defined in {{RFC3758}} and {{RFC7496}} are:
-  - Limiting the time a user message is dealt with by the sender.
-  - Limiting the number of retransmissions for each fragment of a user message.
-    If the number of retransmissions is limited to 0, one gets a service similar
-    to UDP.
-  - Abandoning messages of lower priority in case of a send buffer shortage.
-
-- the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
-  the shared keys, the HMAC to use, set the chunk types which are only accepted
-  in an authenticated way, and get the list of chunks which are accepted by the
-  local and remote end point in an authenticated way.
-
-- the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
-  It allows to manually add and delete local addresses for SCTP associations
-  and the enabling of automatic address addition and deletion. Furthermore
-  the peer can be given a hint for choosing its primary path.
-
-
-For the following SCTP protocol extensions the BSD Sockets API extension is
-defined in the document specifying the protocol extensions:
-
-- the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
-  The API allows to trigger the reset operation for incoming and
-  outgoing streams and the whole association. It provides also a way
-  to notify the association about the corresponding events. Furthermore
-  the application can increase the number of streams.
-- the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
-  The API allows the management of the remote UDP encapsulation port.
-- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
-  The API allows the sender of a user message to request the receiver to
-  send the corresponding acknowledgment immediately.
-- the additional PR-SCTP policies defined in {{RFC7496}}.
-  The API allows to enable/disable the PR-SCTP extension,
-  choose the PR-SCTP policies defined in the document and provide statistical
-  information about abandoned messages.
-
-Future documents describing SCTP protocol extensions are expected to describe
-the corresponding BSD Sockets API extension in a `Socket API Considerations`
-section.
-
-The SCTP socket API supports two kinds of sockets:
-
-- one-to-one style sockets (by using the socket type `SOCK_STREAM`).
-- one-to-many style socket (by using the socket type `SOCK_SEQPACKET`).
-
-One-to-one style sockets are similar to TCP sockets, there is a 1:1 relationship
-between the sockets and the SCTP associations (except for listening sockets).
-One-to-many style SCTP sockets are similar to unconnected UDP sockets, where there
-is a 1:n relationship between the sockets and the SCTP associations.
-
-The SCTP stack can provide information to the applications about state
-changes of the individual paths and the association whenever they occur.
-These events are delivered similar to user messages but are specifically
-marked as notifications.
-
-New functions have been introduced to support the use of
-multiple local and remote addresses.
-Additional SCTP-specific send and receive calls have been defined to permit
-SCTP-specific information to be sent without using ancillary data
-in the form of additional cmsgs.
-These functions provide support for detecting partial delivery of
-user messages and notifications.
-
-The SCTP socket API allows a fine-grained control of the protocol behavior
-through an extensive set of socket options.
-
-The SCTP kernel implementations of FreeBSD, Linux and Solaris follow mostly
-the specified extension to the BSD Sockets API for the base protocol and the
-corresponding supported protocol extensions.
-
-### Transport Features
-
-The transport features provided by SCTP are:
-
-- connection-oriented transport with feature negotiation and application-to-port mapping,
-- unicast transport,
-- port multiplexing,
-- uni- or bidirectional communication,
-- message-oriented delivery with durable message framing supporting multiple concurrent streams,
-- fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification,
-- ordered and unordered delivery within a stream,
-- support for stream scheduling prioritization,
-- segmentation,
-- user message bundling,
-- flow control using a window-based mechanism,
-- congestion control using methods similar to TCP,
-- strong error detection (CRC32c),
-- transport layer multihoming for resilience and mobility.
-
 
 ## User Datagram Protocol (UDP)
 
@@ -842,6 +613,234 @@ The transport features provided by UDP-Lite are:
 - non-ordered delivery (as for UDP),
 - partial or full payload error detection (where the checksum coverage field indicates the size of the payload data covered by the checksum).
 
+
+## Stream Control Transmission Protocol (SCTP)
+
+SCTP is a message-oriented IETF standards track transport protocol. The base
+protocol is specified in {{RFC4960}}. It supports multi-homing and path
+failover to provide resilience to path failures. An SCTP association has
+multiple streams in each direction, providing in-sequence delivery of user
+messages within each stream. This allows it to minimize head of line blocking.
+SCTP supports multiple stream scheduling schemes controlling stream
+multiplexing, including priority and fair weighting schemes.
+
+SCTP was originally developed for transporting telephony signaling messages
+and is deployed in telephony signaling networks, especially in mobile
+telephony networks. It can also be used for other services, for example, in the
+WebRTC framework for data channels. 
+
+### Protocol Description
+
+SCTP is a connection-oriented protocol using a four way handshake to establish
+an SCTP association, and a three way message exchange to gracefully shut it
+down. It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite.
+SCTP only supports unicast.
+
+SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors and
+misdelivery of packets to an unintended endpoint. This is stronger than the 16-bit
+checksums used by TCP or UDP. However, partial payload checksum coverage as
+provided by DCCP or UDP-Lite is not supported.
+
+SCTP has been designed with extensibility in mind. A common header is followed
+by a sequence of chunks. {{RFC4960}} defines how a receiver processes chunks
+with an unknown chunk type. The support of extensions can be negotiated during
+the SCTP handshake. Currently defined extensions include mechanisms for
+dynamic re-configuration of streams {{RFC6525}} and IP addresses {{RFC5061}}.
+Furthermore, the extension specified in {{RFC3758}} introduces the concept of
+partial reliability for user messages.
+
+SCTP provides a message-oriented service. Multiple small user messages can be
+bundled into a single SCTP packet to improve efficiency. For example, this
+bundling may be done by delaying user messages at the sender, similar to
+Nagle's algorithm used by TCP. User messages which would result in IP packets
+larger than the MTU will be fragmented at the sender and reassembled at the
+receiver. There is no protocol limit on the user message size. 
+For MTU discovery the same mechanism than for TCP can be used {{RFC1981}}{{RFC4821}},
+as well as utilizing probe packets with padding chunks, as defined in {{RFC4820}}.
+
+{{RFC4960}} specifies TCP-friendly congestion control to protect the network
+against overload. SCTP also uses sliding
+window flow control to protect receivers against overflow. Similar to TCP,
+SCTP also supports delaying acknowledgments. {{RFC7053}} provides a way for
+the sender of user messages to request the immediate sending of the
+corresponding acknowledgments.
+
+Each SCTP association has between 1 and 65536 uni-directional streams in each
+direction. The number of streams can be different in each direction. Every
+user message is sent on a particular stream. User messages can be sent un-ordered, 
+or ordered upon request by the upper layer. Un-ordered messages can be
+delivered as soon as they are completely received. Ordered messages sent on
+the same stream are delivered at the receiver in the same order as sent by the
+sender. For user messages not requiring fragmentation, this minimizes head of
+line blocking.
+
+The base protocol defined in {{RFC4960}} does not allow interleaving of user-
+messages. Large messages on one stream can therefore block the sending of user
+messages on other streams. {{I-D.ietf-tsvwg-sctp-ndata}} overcomes this
+limitation. This draft also specifies multiple algorithms for the sender side
+selection of which streams to send data from, supporting a variety of
+scheduling algorithms including priority based methods. The stream re-
+configuration extension defined in {{RFC6525}} allows streams to be reset
+during the lifetime of an association and to increase the number of streams,
+if the number of streams negotiated in the SCTP handshake becomes
+insufficient.
+
+Each user message sent is either delivered to
+the receiver or, in case of excessive retransmissions, the association is
+terminated in a non-graceful way {{RFC4960}}, similar to TCP behavior.
+In addition to this reliable transfer, the partial reliability extension
+{{RFC3758}} allows a sender to abandon user messages.
+The application can specify the policy for abandoning user messages.
+
+SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses and
+a single port number. These addresses can be any mixture of IPv4 and IPv6
+addresses. These addresses are negotiated during the handshake and the address
+re-configuration extension specified in {{RFC5061}} in combination with
+{{RFC4895}} can be used to change these addresses in an authenticated way
+during the lifetime of an SCTP association. This allows for transport layer
+mobility. Multiple addresses are used for improved resilience. If a remote
+address becomes unreachable, the traffic is switched over to a reachable one,
+if one exists. 
+
+For securing user messages, the use of TLS over SCTP has been specified in
+{{RFC3436}}. However, this solution does not support all services provided
+by SCTP, such as un-ordered delivery or partial reliability. Therefore,
+the use of DTLS over SCTP has been specified in {{RFC6083}} to overcome these
+limitations. When using DTLS over SCTP, the application can use almost all
+services provided by SCTP.
+
+{{I-D.ietf-tsvwg-natsupp}} defines methods for endpoints and
+middleboxes to provide NAT traversal for SCTP over IPv4.
+For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
+SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
+as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
+is used within the WebRTC context.
+
+SCTP has a well-defined API, described in the next subsection.
+
+### Interface Description
+
+{{RFC4960}} defines an abstract API for the base protocol.
+This API describes the following functions callable by the upper layer of SCTP:
+Initialize, Associate, Send, Receive, Receive Unsent Message,
+Receive Unacknowledged Message, Shutdown, Abort, SetPrimary, Status,
+Change Heartbeat, Request Heartbeat, Get SRTT Report, Set Failure Threshold,
+Set Protocol Parameters, and Destroy.
+The following notifications are provided by the SCTP stack to the upper layer:
+COMMUNICATION UP, DATA ARRIVE, SHUTDOWN COMPLETE, COMMUNICATION LOST,
+COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.
+
+An extension to the BSD Sockets API is defined in {{RFC6458}} and covers:
+
+- the base protocol defined in {{RFC4960}}. The API allows control over
+local addresses and port numbers and the primary path. Furthermore
+the application has fine control about parameters like retransmission
+thresholds, the path supervision parameters, the delayed acknowledgment
+timeout, and the fragmentation point. The API provides a mechanism
+to allow the SCTP stack to notify the application about events if the
+application has requested them. These notifications provide information
+about status changes of the association and each of the peer addresses.
+In case of send failures, including drop of messages sent unreliably, 
+the application can also be notified and user
+messages can be returned to the application. When sending user messages,
+the stream id, a payload protocol identifier, an indication whether ordered
+delivery is requested or not. These parameters can also be provided on
+message reception. Additionally a context can be provided when sending,
+which can be use in case of send failures. The sending of arbitrary large
+user messages is supported.
+
+- the SCTP Partial Reliability extension defined in {{RFC3758}} to specify
+for a user message the PR-SCTP policy and the policy specific parameter.
+Examples of these policies defined in {{RFC3758}} and {{RFC7496}} are:
+- Limiting the time a user message is dealt with by the sender.
+- Limiting the number of retransmissions for each fragment of a user message.
+If the number of retransmissions is limited to 0, one gets a service similar
+to UDP.
+- Abandoning messages of lower priority in case of a send buffer shortage.
+
+- the SCTP Authentication extension defined in {{RFC4895}} allowing to manage
+the shared keys, the HMAC to use, set the chunk types which are only accepted
+in an authenticated way, and get the list of chunks which are accepted by the
+local and remote end point in an authenticated way.
+
+- the SCTP Dynamic Address Reconfiguration extension defined in {{RFC5061}}.
+It allows to manually add and delete local addresses for SCTP associations
+and the enabling of automatic address addition and deletion. Furthermore
+the peer can be given a hint for choosing its primary path.
+
+
+For the following SCTP protocol extensions the BSD Sockets API extension is
+defined in the document specifying the protocol extensions:
+
+- the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
+The API allows to trigger the reset operation for incoming and
+outgoing streams and the whole association. It provides also a way
+to notify the association about the corresponding events. Furthermore
+the application can increase the number of streams.
+- the UDP Encapsulation of SCTP packets extension defined in {{RFC6951}}.
+The API allows the management of the remote UDP encapsulation port.
+- the SCTP SACK-IMMEDIATELY extension defined in {{RFC7053}}.
+The API allows the sender of a user message to request the receiver to
+send the corresponding acknowledgment immediately.
+- the additional PR-SCTP policies defined in {{RFC7496}}.
+The API allows to enable/disable the PR-SCTP extension,
+choose the PR-SCTP policies defined in the document and provide statistical
+information about abandoned messages.
+
+Future documents describing SCTP protocol extensions are expected to describe
+the corresponding BSD Sockets API extension in a `Socket API Considerations`
+section.
+
+The SCTP socket API supports two kinds of sockets:
+
+- one-to-one style sockets (by using the socket type `SOCK_STREAM`).
+- one-to-many style socket (by using the socket type `SOCK_SEQPACKET`).
+
+One-to-one style sockets are similar to TCP sockets, there is a 1:1 relationship
+between the sockets and the SCTP associations (except for listening sockets).
+One-to-many style SCTP sockets are similar to unconnected UDP sockets, where there
+is a 1:n relationship between the sockets and the SCTP associations.
+
+The SCTP stack can provide information to the applications about state
+changes of the individual paths and the association whenever they occur.
+These events are delivered similar to user messages but are specifically
+marked as notifications.
+
+New functions have been introduced to support the use of
+multiple local and remote addresses.
+Additional SCTP-specific send and receive calls have been defined to permit
+SCTP-specific information to be sent without using ancillary data
+in the form of additional cmsgs.
+These functions provide support for detecting partial delivery of
+user messages and notifications.
+
+The SCTP socket API allows a fine-grained control of the protocol behavior
+through an extensive set of socket options.
+
+The SCTP kernel implementations of FreeBSD, Linux and Solaris follow mostly
+the specified extension to the BSD Sockets API for the base protocol and the
+corresponding supported protocol extensions.
+
+### Transport Features
+
+The transport features provided by SCTP are:
+
+- connection-oriented transport with feature negotiation and application-to-port mapping,
+- unicast transport,
+- port multiplexing,
+- uni- or bidirectional communication,
+- message-oriented delivery with durable message framing supporting multiple concurrent streams,
+- fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification,
+- ordered and unordered delivery within a stream,
+- support for stream scheduling prioritization,
+- segmentation,
+- user message bundling,
+- flow control using a window-based mechanism,
+- congestion control using methods similar to TCP,
+- strong error detection (CRC32c),
+- transport layer multihoming for resilience and mobility.
+
+
 ## Datagram Congestion Control Protocol (DCCP)
 
 Datagram Congestion Control Protocol (DCCP) {{RFC4340}} is an
@@ -956,75 +955,126 @@ The transport features provided by DCCP are:
 - flow control (implemented using the slow receiver function)
 - partial and full payload error detection (with optional strong integrity check).
 
-## Internet Control Message Protocol (ICMP)
+## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-The Internet Control Message Protocol (ICMP) [RFC0792] for IPv4 and
-ICMP for IPv6 [RFC4433] are IETF standards track protocols.
-It is a connection-less unidirectional protocol that delivers individual
-messages, without error correction, congestion control, or flow control. 
-Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
-(IPv4 and IPv6), in addition to anycast datagrams.
+Transport Layer Security (TLS) {{RFC5246}}}
+and Datagram TLS (DTLS) {{RFC6347}}} are IETF protocols that
+provide several security-related features to applications. TLS is designed to
+run on top of a reliable streaming transport protocol (usually TCP), while
+DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP
+{{RFC5238}}). At the time of writing, the current version of TLS is 1.2; which is
+defined in {{RFC5246}}. DTLS provides nearly identical functionality to
+applications; it is defined in {{RFC6347}} and its current version is also
+1.2.  The TLS protocol evolved from the Secure Sockets Layer (SSL) protocols
+developed in the mid-1990s to support protection of HTTP traffic.
 
-Transport Protocols and upper layer protocols can use received ICMP messages to help
-them take appropriate decisions when network or endpoint errors are reported.
-For example, to implement, ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}}
-or assist in Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}}. Such
-reactions to received messages need to protect from off-path data injection
-{{I-D.ietf-tsvwg-rfc5405bis}}, to avoid an application receiving packets created 
-by an unauthorized third party. An application therefore needs to
-ensure that all messages are appropriately validated, by checking the payload
-of the messages to ensure these are received in response to actually
-transmitted traffic (e.g., a reported error condition that corresponds to a
-UDP datagram or TCP segment was actually sent by the application). This
-requires context {{RFC6056}}, such as local state about communication
-instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).
-This state is not always maintained by UDP-based applications {{I-D.ietf-tsvwg-rfc5405bis}}.
+While older versions of TLS and DTLS are still in use, they provide weaker
+security guarantees. {{RFC7457}} outlines important attacks on TLS and DTLS.
+{{RFC7525}} is a Best Current Practices (BCP) document that describes secure
+configurations for TLS and DTLS to counter these attacks. The recommendations
+are applicable for the vast majority of use cases.
 
 ### Protocol Description
 
-ICMP is a connection-less unidirectional protocol, It delivers independent messages, 
-called datagrams.
-Each message is required to carry a checksum as an integrity check and to
-protect from mis-delivery to an unintended endpoint.
+Both TLS and DTLS provide the same security features and can thus be discussed
+together. The features they provide are:
 
-ICMP messages typically relay diagnostic information from an endpoint
-{{RFC1122}} or network device {{RFC1716}} addressed to the sender of a flow.
-This usually contains the network protocol header of a packet that encountered
-a reported issue. Some formats of messages can also carry other payload
-data. Each message carries an integrity check calculated in the same way as
-for UDP, this checksum is not optional.
+- Confidentiality
+- Data integrity
+- Peer authentication (optional)
+- Perfect forward secrecy (optional)
 
-The RFC series defines additional IPv6 message formats to support a range of uses.
-In the case of IPv6 the protocol incorporates neighbor discovery {{RFC2461}} {{RFC3971}}}
-(provided by ARP for IPv4) and the Multicast Listener
-Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
+The authentication of the peer entity can be omitted; a common web use case is
+where the server is authenticated and the client is not. TLS also provides a
+completely anonymous operation mode in which neither peer's identity is
+authenticated. It is important to note that TLS itself does not specify how a
+peering entity's identity should be interpreted.  For example, in the common
+use case of authentication by means of an X.509 certificate, it is the
+application's decision whether the certificate of the peering entity is
+acceptable for authorization decisions. 
 
-Reliable transmission can not be assumed. A receiving application that is
-unable to run sufficiently fast, or frequently, may miss messages since there
-is no flow or congestion control. In addition some network devices rate-limit
-ICMP messages.
+Perfect forward secrecy, if enabled
+and supported by the selected algorithms, ensures that traffic encrypted and
+captured during a session at time t0 cannot be later decrypted at time t1 (t1 
+> t0), even if the long-term secrets of the communicating peers are later
+compromised.
+
+As DTLS is generally used over an unreliable datagram transport such as UDP,
+applications will need to tolerate lost, re-ordered, or duplicated datagrams.
+Like TLS, DTLS conveys application data in a sequence of independent records.
+However, because records are mapped to unreliable datagrams, there are several
+features unique to DTLS that are not applicable to TLS:
+
+- Record replay detection (optional).
+- Record size negotiation (estimates of PMTU and record size expansion factor).
+- Coveyance of IP don't fragment (DF) bit settings by application.
+- An anti-DoS stateless cookie mechanism (optional).
+
+Generally, DTLS follows the TLS design as closely as possible.
+To operate over datagrams, DTLS includes a sequence number and limited forms
+of retransmission and fragmentation for its internal operations.
+The sequence number may be used for detecting replayed information, according
+to the windowing procedure described in Section 4.1.2.6 of {{RFC6347}}.
+DTLS forbids the use of stream ciphers, which are essentially incompatible
+when operating on independent encrypted records.
 
 ### Interface Description
 
-ICMP processing is integrated in many connection-oriented transports,
-but like other functions needs to be provided by an upper-layer protocol
-when using UDP and UDP-Lite.
+TLS is commonly invoked using an API provided by packages such as OpenSSL,
+wolfSSL, or GnuTLS. Using such APIs entails the manipulation of several
+important abstractions, which fall into the following categories: long-term
+keys and algorithms, session state, and communications/connections. There may
+also be special APIs required to deal with time and/or random numbers, both of
+which are needed by a variety of encryption algorithms and protocols.
 
-On some stacks, a bound socket also allows a UDP application to be notified
-when ICMP error messages are received for its transmissions
-{{I-D.ietf-tsvwg-rfc5405bis}}.
+Considerable care is required in the use of TLS APIs to ensure creation of a secure
+application.  The programmer should have at least a basic understanding of encryption
+and digital signature algorithms and their strengths, public key infrastructure (including
+X.509 certificates and certificate revocation), and the sockets API.
+See {{RFC7525}} and {{RFC7457}}, as mentioned above.
 
-Any response to ICMP error messages ought to be robust to temporary
-routing failures (sometimes called "soft errors"), e.g., transient ICMP
-"unreachable" messages ought to not normally cause a communication abort
-{{RFC5461}} {{I-D.ietf-tsvwg-rfc5405bis}}.
+As an example, in the case of OpenSSL, the primary abstractions are the
+library itself and method (protocol), session, context, cipher and connection.
+After initializing the library and setting the method, a cipher suite is
+chosen and used to configure a context object. Session objects may then be
+minted according to the parameters present in a context object and associated
+with individual connections. Depending on how precisely the programmer wishes
+to select different algorithmic or protocol options, various levels of details
+may be required.
 
 ### Transport Features
 
-ICMP does not provide any transport service directly to applications. Used
-together with other transport protocols, it provides transmission of control,
-error, and measurement data between endpoints, or from devices along the path
-to one endpoint.
+Both TLS and DTLS employ a layered architecture. The lower layer is commonly
+called the record protocol. It is responsible for:
+
+- message fragmentation,
+- authentication and integrity via message authentication codes (MAC),
+- data encryption,
+- scheduling transmission using the underlying transport protocol.
+
+DTLS augments the TLS record protocol with:
+
+- ordering and replay protection, implemented using sequence numbers.
+
+Several protocols are layered on top of the record protocol.  These include
+the handshake, alert, and change cipher spec protocols.  There is also the
+data protocol, used to carry application traffic. The handshake protocol is
+used to establish cryptographic  and compression parameters when a connection
+is first set up.  In DTLS, this protocol also has a basic fragmentation and
+retransmission capability and a cookie-like mechanism to resist DoS attacks.
+(TLS compression is not recommended at present). The alert protocol is used to
+inform the peer of various conditions, most of which are terminal for the
+connection. The change cipher spec protocol is used to synchronize changes in
+cryptographic parameters for each peer.
+
+The data protocol, when used with an appropriate cipher, provides:
+
+- authentication of one end or both ends of a connection,
+- confidentiality,
+- cryptographic integrity protection.
+
+Both TLS and DTLS are unicast-only.
+
 
 ## Realtime Transport Protocol (RTP)
 
@@ -1101,6 +1151,113 @@ The transport features provided by RTP are:
 - connection setup with feature negotiation (using associated protocols) and application-to-port mapping (provided by lower layer protocol),
 - segmentation,
 - performance metric reporting (using associated protocols).
+
+
+## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
+
+The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely
+used on the Internet. It provides object-oriented delivery of discrete data or files.
+Version 1.1 of the protocol is specified in {{RFC7230}}
+{{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in
+{{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443,
+although it can be used with other transports. When used over TCP it inherits
+its properties.
+
+Application layer protocols may use HTTP as a substrate with an existing method
+and data formats, or specify new methods and data formats. There are
+various reasons for this practice listed in {{RFC3205}}; these include being a
+well-known and well-understood protocol, reusability of existing servers and
+client libraries, easy use of existing security mechanisms such as HTTP digest
+authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to
+traverse firewalls makes it work over many types of infrastructure, and in
+cases where an application server often needs to support HTTP anyway.
+
+Depending on application need, the use of HTTP as a substrate protocol may add
+complexity and overhead in comparison to a special-purpose protocol (e.g.,
+HTTP headers, suitability of the HTTP security model, etc.). {{RFC3205}}
+addresses this issue and provides some guidelines and identifies
+concerns about the use
+of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction
+with existing firewalls, proxies and NATs.
+
+Representational State Transfer (REST) {{REST}} is another example of how
+applications can use HTTP as transport protocol. REST is an architecture style
+that may be used to build applications using HTTP as a communication
+protocol.
+
+### Protocol Description
+
+Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client
+sends a request containing a request method, URI and protocol version followed
+by a MIME-like message (see {{RFC7231}} for the differences between an HTTP
+object and a MIME message), containing information about the client and
+request modifiers. The message can also contain a message body carrying application
+data. 
+The server responds with a status or error code followed by a
+MIME-like message containing information about the server and information
+about the data. This may include a message body. It is possible to
+specify a data format for the message body using MIME media types {{RFC2045}}.
+The protocol has additional features, some relevant
+to pseudo-transport are described below.
+
+Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP
+to allow selection of a representation for a requested resource. The client and server
+negotiate acceptable data formats, character sets, data encoding (e.g., data can be
+transferred compressed using gzip). HTTP can accommodate exchange of
+messages as well as data streaming (using chunked transfer encoding
+{{RFC7230}}). It is also possible to request a part of a resource using an
+object range request {{RFC7233}}. The protocol provides powerful cache
+control signaling defined in {{RFC7234}}.
+
+The persistent connections of HTTP 1.1 and HTTP 2.0 allow multiple request-
+response transactions (streams) during the life-time of a single HTTP
+connection. HTTP 2.0 connections can multiplex many request/response pairs in
+parallel on a single transport connection. This reduces overhead during
+connection establishment and mitigates transport layer slow-start that would
+have otherwise been incurred for each transaction. Both are important to
+reduce latency for HTTP's primary use case.
+
+HTTP can be combined with security mechanisms, such as TLS (denoted by HTTPS).
+This adds protocol properties provided by such a mechanism (e.g.,
+authentication, encryption). The TLS Application-Layer Protocol Negotiation
+(ALPN) extension {{RFC7301}} can be used to negotiate the HTTP version within
+the TLS handshake, eliminating the latency incurred by additional round-trip
+exchanges. Arbitrary cookie strings, included as part of the MIME headers, are
+often used as bearer tokens in HTTP.
+
+### Interface Description
+
+There are many HTTP libraries available exposing different APIs. The APIs
+provide a way to specify a request by providing a URI, a method, request
+modifiers and optionally a request body. For the response, callbacks can be
+registered that will be invoked when the response is received. If TLS is used,
+the API exposes a registration of callbacks for a server that requests client
+authentication and when certificate verification is needed.
+
+The World Wide Web Consortium (W3C) has standardized the XMLHttpRequest API {{XHR}}.
+This API can be used for sending HTTP/HTTPS requests and receiving server
+responses. Besides the XML data format, the request and response data format can also
+be JSON, HTML, and plain text. JavaScript and XMLHttpRequest are
+ubiquitous programming models for websites, and more general applications,
+where native code is less attractive.
+
+### Transport features
+
+The transport features provided by HTTP, when used as a pseudo-transport, are:
+
+- unicast transport (provided by the lower layer protocol, usually TCP),
+- uni- or bidirectional communication,
+- transfer of objects in multiple streams with object content type negotiation, supporting partial transmission of object ranges,
+- ordered delivery (provided by the lower layer protocol, usually TCP),
+- fully reliable delivery (provided by the lower layer protocol, usually TCP),
+- flow control (provided by the lower layer protocol, usually TCP).
+- congestion control (provided by the lower layer protocol, usually TCP).
+
+HTTPS (HTTP over TLS) additionally provides the following features (as provided by TLS):
+
+- authentication (of one or both ends of a connection),
+- confidentiality,
+- integrity protection.
 
 
 ## File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)
@@ -1332,231 +1489,77 @@ The transport features provided by NORM are:
 - flow control (timer-based and/or ack-based),
 - congestion control (also supporting fixed rate reliable or unreliable delivery).
 
-## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-Transport Layer Security (TLS) {{RFC5246}}}
-and Datagram TLS (DTLS) {{RFC6347}}} are IETF protocols that
-provide several security-related features to applications. TLS is designed to
-run on top of a reliable streaming transport protocol (usually TCP), while
-DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP
-{{RFC5238}}). At the time of writing, the current version of TLS is 1.2; which is
-defined in {{RFC5246}}. DTLS provides nearly identical functionality to
-applications; it is defined in {{RFC6347}} and its current version is also
-1.2.  The TLS protocol evolved from the Secure Sockets Layer (SSL) protocols
-developed in the mid-1990s to support protection of HTTP traffic.
+## Internet Control Message Protocol (ICMP)
 
-While older versions of TLS and DTLS are still in use, they provide weaker
-security guarantees. {{RFC7457}} outlines important attacks on TLS and DTLS.
-{{RFC7525}} is a Best Current Practices (BCP) document that describes secure
-configurations for TLS and DTLS to counter these attacks. The recommendations
-are applicable for the vast majority of use cases.
+The Internet Control Message Protocol (ICMP) [RFC0792] for IPv4 and
+ICMP for IPv6 [RFC4433] are IETF standards track protocols.
+It is a connection-less unidirectional protocol that delivers individual
+messages, without error correction, congestion control, or flow control. 
+Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
+(IPv4 and IPv6), in addition to anycast datagrams.
+
+Transport Protocols and upper layer protocols can use received ICMP messages to help
+them take appropriate decisions when network or endpoint errors are reported.
+For example, to implement, ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}}
+or assist in Packetization Layer Path MTU Discovery (PMTUD) {{RFC4821}}. Such
+reactions to received messages need to protect from off-path data injection
+{{I-D.ietf-tsvwg-rfc5405bis}}, to avoid an application receiving packets created 
+by an unauthorized third party. An application therefore needs to
+ensure that all messages are appropriately validated, by checking the payload
+of the messages to ensure these are received in response to actually
+transmitted traffic (e.g., a reported error condition that corresponds to a
+UDP datagram or TCP segment was actually sent by the application). This
+requires context {{RFC6056}}, such as local state about communication
+instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).
+This state is not always maintained by UDP-based applications {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Protocol Description
 
-Both TLS and DTLS provide the same security features and can thus be discussed
-together. The features they provide are:
+ICMP is a connection-less unidirectional protocol, It delivers independent messages, 
+called datagrams.
+Each message is required to carry a checksum as an integrity check and to
+protect from mis-delivery to an unintended endpoint.
 
-- Confidentiality
-- Data integrity
-- Peer authentication (optional)
-- Perfect forward secrecy (optional)
+ICMP messages typically relay diagnostic information from an endpoint
+{{RFC1122}} or network device {{RFC1716}} addressed to the sender of a flow.
+This usually contains the network protocol header of a packet that encountered
+a reported issue. Some formats of messages can also carry other payload
+data. Each message carries an integrity check calculated in the same way as
+for UDP, this checksum is not optional.
 
-The authentication of the peer entity can be omitted; a common web use case is
-where the server is authenticated and the client is not. TLS also provides a
-completely anonymous operation mode in which neither peer's identity is
-authenticated. It is important to note that TLS itself does not specify how a
-peering entity's identity should be interpreted.  For example, in the common
-use case of authentication by means of an X.509 certificate, it is the
-application's decision whether the certificate of the peering entity is
-acceptable for authorization decisions. 
+The RFC series defines additional IPv6 message formats to support a range of uses.
+In the case of IPv6 the protocol incorporates neighbor discovery {{RFC2461}} {{RFC3971}}}
+(provided by ARP for IPv4) and the Multicast Listener
+Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
 
-Perfect forward secrecy, if enabled
-and supported by the selected algorithms, ensures that traffic encrypted and
-captured during a session at time t0 cannot be later decrypted at time t1 (t1 
-> t0), even if the long-term secrets of the communicating peers are later
-compromised.
-
-As DTLS is generally used over an unreliable datagram transport such as UDP,
-applications will need to tolerate lost, re-ordered, or duplicated datagrams.
-Like TLS, DTLS conveys application data in a sequence of independent records.
-However, because records are mapped to unreliable datagrams, there are several
-features unique to DTLS that are not applicable to TLS:
-
-- Record replay detection (optional).
-- Record size negotiation (estimates of PMTU and record size expansion factor).
-- Coveyance of IP don't fragment (DF) bit settings by application.
-- An anti-DoS stateless cookie mechanism (optional).
-
-Generally, DTLS follows the TLS design as closely as possible.
-To operate over datagrams, DTLS includes a sequence number and limited forms
-of retransmission and fragmentation for its internal operations.
-The sequence number may be used for detecting replayed information, according
-to the windowing procedure described in Section 4.1.2.6 of {{RFC6347}}.
-DTLS forbids the use of stream ciphers, which are essentially incompatible
-when operating on independent encrypted records.
+Reliable transmission can not be assumed. A receiving application that is
+unable to run sufficiently fast, or frequently, may miss messages since there
+is no flow or congestion control. In addition some network devices rate-limit
+ICMP messages.
 
 ### Interface Description
 
-TLS is commonly invoked using an API provided by packages such as OpenSSL,
-wolfSSL, or GnuTLS. Using such APIs entails the manipulation of several
-important abstractions, which fall into the following categories: long-term
-keys and algorithms, session state, and communications/connections. There may
-also be special APIs required to deal with time and/or random numbers, both of
-which are needed by a variety of encryption algorithms and protocols.
+ICMP processing is integrated in many connection-oriented transports,
+but like other functions needs to be provided by an upper-layer protocol
+when using UDP and UDP-Lite.
 
-Considerable care is required in the use of TLS APIs to ensure creation of a secure
-application.  The programmer should have at least a basic understanding of encryption
-and digital signature algorithms and their strengths, public key infrastructure (including
-X.509 certificates and certificate revocation), and the sockets API.
-See {{RFC7525}} and {{RFC7457}}, as mentioned above.
+On some stacks, a bound socket also allows a UDP application to be notified
+when ICMP error messages are received for its transmissions
+{{I-D.ietf-tsvwg-rfc5405bis}}.
 
-As an example, in the case of OpenSSL, the primary abstractions are the
-library itself and method (protocol), session, context, cipher and connection.
-After initializing the library and setting the method, a cipher suite is
-chosen and used to configure a context object. Session objects may then be
-minted according to the parameters present in a context object and associated
-with individual connections. Depending on how precisely the programmer wishes
-to select different algorithmic or protocol options, various levels of details
-may be required.
+Any response to ICMP error messages ought to be robust to temporary
+routing failures (sometimes called "soft errors"), e.g., transient ICMP
+"unreachable" messages ought to not normally cause a communication abort
+{{RFC5461}} {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Transport Features
 
-Both TLS and DTLS employ a layered architecture. The lower layer is commonly
-called the record protocol. It is responsible for:
+ICMP does not provide any transport service directly to applications. Used
+together with other transport protocols, it provides transmission of control,
+error, and measurement data between endpoints, or from devices along the path
+to one endpoint.
 
-- message fragmentation,
-- authentication and integrity via message authentication codes (MAC),
-- data encryption,
-- scheduling transmission using the underlying transport protocol.
-
-DTLS augments the TLS record protocol with:
-
-- ordering and replay protection, implemented using sequence numbers.
-
-Several protocols are layered on top of the record protocol.  These include
-the handshake, alert, and change cipher spec protocols.  There is also the
-data protocol, used to carry application traffic. The handshake protocol is
-used to establish cryptographic  and compression parameters when a connection
-is first set up.  In DTLS, this protocol also has a basic fragmentation and
-retransmission capability and a cookie-like mechanism to resist DoS attacks.
-(TLS compression is not recommended at present). The alert protocol is used to
-inform the peer of various conditions, most of which are terminal for the
-connection. The change cipher spec protocol is used to synchronize changes in
-cryptographic parameters for each peer.
-
-The data protocol, when used with an appropriate cipher, provides:
-
-- authentication of one end or both ends of a connection,
-- confidentiality,
-- cryptographic integrity protection.
-
-Both TLS and DTLS are unicast-only.
-
-## Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport
-
-The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely
-used on the Internet. It provides object-oriented delivery of discrete data or files.
-Version 1.1 of the protocol is specified in {{RFC7230}}
-{{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in
-{{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443,
-although it can be used with other transports. When used over TCP it inherits
-its properties.
-
-Application layer protocols may use HTTP as a substrate with an existing method
-and data formats, or specify new methods and data formats. There are
-various reasons for this practice listed in {{RFC3205}}; these include being a
-well-known and well-understood protocol, reusability of existing servers and
-client libraries, easy use of existing security mechanisms such as HTTP digest
-authentication {{RFC2617}} and TLS {{RFC5246}}, the ability of HTTP to
-traverse firewalls makes it work over many types of infrastructure, and in
-cases where an application server often needs to support HTTP anyway.
-
-Depending on application need, the use of HTTP as a substrate protocol may add
-complexity and overhead in comparison to a special-purpose protocol (e.g.,
-HTTP headers, suitability of the HTTP security model, etc.). {{RFC3205}}
-addresses this issue and provides some guidelines and identifies
-concerns about the use
-of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction
-with existing firewalls, proxies and NATs.
-
-Representational State Transfer (REST) {{REST}} is another example of how
-applications can use HTTP as transport protocol. REST is an architecture style
-that may be used to build applications using HTTP as a communication
-protocol.
-
-### Protocol Description
-
-Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client
-sends a request containing a request method, URI and protocol version followed
-by a MIME-like message (see {{RFC7231}} for the differences between an HTTP
-object and a MIME message), containing information about the client and
-request modifiers. The message can also contain a message body carrying application
-data. 
-The server responds with a status or error code followed by a
-MIME-like message containing information about the server and information
-about the data. This may include a message body. It is possible to
-specify a data format for the message body using MIME media types {{RFC2045}}.
-The protocol has additional features, some relevant
-to pseudo-transport are described below.
-
-Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP
-to allow selection of a representation for a requested resource. The client and server
-negotiate acceptable data formats, character sets, data encoding (e.g., data can be
-transferred compressed using gzip). HTTP can accommodate exchange of
-messages as well as data streaming (using chunked transfer encoding
-{{RFC7230}}). It is also possible to request a part of a resource using an
-object range request {{RFC7233}}. The protocol provides powerful cache
-control signaling defined in {{RFC7234}}.
-
-The persistent connections of HTTP 1.1 and HTTP 2.0 allow multiple request-
-response transactions (streams) during the life-time of a single HTTP
-connection. HTTP 2.0 connections can multiplex many request/response pairs in
-parallel on a single transport connection. This reduces overhead during
-connection establishment and mitigates transport layer slow-start that would
-have otherwise been incurred for each transaction. Both are important to
-reduce latency for HTTP's primary use case.
-
-HTTP can be combined with security mechanisms, such as TLS (denoted by HTTPS).
-This adds protocol properties provided by such a mechanism (e.g.,
-authentication, encryption). The TLS Application-Layer Protocol Negotiation
-(ALPN) extension {{RFC7301}} can be used to negotiate the HTTP version within
-the TLS handshake, eliminating the latency incurred by additional round-trip
-exchanges. Arbitrary cookie strings, included as part of the MIME headers, are
-often used as bearer tokens in HTTP.
-
-### Interface Description
-
-There are many HTTP libraries available exposing different APIs. The APIs
-provide a way to specify a request by providing a URI, a method, request
-modifiers and optionally a request body. For the response, callbacks can be
-registered that will be invoked when the response is received. If TLS is used,
-the API exposes a registration of callbacks for a server that requests client
-authentication and when certificate verification is needed.
-
-The World Wide Web Consortium (W3C) has standardized the XMLHttpRequest API {{XHR}}.
-This API can be used for sending HTTP/HTTPS requests and receiving server
-responses. Besides the XML data format, the request and response data format can also
-be JSON, HTML, and plain text. JavaScript and XMLHttpRequest are
-ubiquitous programming models for websites, and more general applications,
-where native code is less attractive.
-
-### Transport features
-
-The transport features provided by HTTP, when used as a pseudo-transport, are:
-
-- unicast transport (provided by the lower layer protocol, usually TCP),
-- uni- or bidirectional communication,
-- transfer of objects in multiple streams with object content type negotiation, supporting partial transmission of object ranges,
-- ordered delivery (provided by the lower layer protocol, usually TCP),
-- fully reliable delivery (provided by the lower layer protocol, usually TCP),
-- flow control (provided by the lower layer protocol, usually TCP).
-- congestion control (provided by the lower layer protocol, usually TCP).
-
-HTTPS (HTTP over TLS) additionally provides the following features (as provided by TLS):
-
-- authentication (of one or both ends of a connection),
-- confidentiality,
-- integrity protection.
 
 # Congestion Control
 
@@ -1619,23 +1622,23 @@ it is possible for the transport service to offer this feature.
 ~~~~~~~~~~
 
 +---------------+------+------+------+------+------+------+------+
-| Feature       | TCP  | MPTCP| SCTP | UDP  | UDP-L|DCCP  |ICMP  |
+| Feature       | TCP  | MPTCP| UDP  | UDP  | SCTP |DCCP  |ICMP  |
 +---------------+------+------+------+------+------+------+------+
 | Datagram      | No   | No   | Yes  | Yes  | Yes  | Yes  | Yes  |
 +---------------+------+------+------+------+------+------+------+
-| Conn. Oriented| Yes  | Yes  | Yes  | No   | No   | Yes  | No   |
+| Conn. Oriented| Yes  | Yes  | No   | No   | Yes  | Yes  | No   |
 +---------------+------+------+------+------+------+------+------+
-| Reliability   | Yes  | Yes  | Yes  | No   | No   | No   | No   |
+| Reliability   | Yes  | Yes  | No   | No   | Yes  | No   | No   |
 +---------------+------+------+------+------+------+------+------+
-| Partial Rel.  | No   | No   | Poss | N/A  | N/A  | Yes  | N/A  |
+| Partial Rel.  | No   | No   | N/A  | N/A  | Poss | Yes  | N/A  |
 +---------------+------+------+------+------+------+------+------+
-| Corupt. Tol   | No   | No   | No   | No   | Yes  | Yes  | No   |
+| Corupt. Tol   | No   | No   | No   | Yes  | No   | Yes  | No   |
 +---------------+------+------+------+------+------+------+------+
-| Cong.Control  | Yes  | Yes  | Yes  | No   | No   | Yes  | No   |
+| Cong.Control  | Yes  | Yes  | No   | No   | Yes  | Yes  | No   |
 +---------------+------+------+------+------+------+------+------+
 | Endpoint      |  1   | >=1  | >=1  | >=1  | >=1  |  1   |  1   |
 +---------------+------+------+------+------+------+------+------+
-| Multicast Cap.| No   | No   | No   | Yes  | Yes  | No   | No   |
+| Multicast Cap.| No   | No   | Yes  | Yes  | No   | No   | No   |
 +---------------+------+------+------+------+------+------+------+
 
 ~~~~~~~~~~
@@ -1644,23 +1647,23 @@ it is possible for the transport service to offer this feature.
 ~~~~~~~~~~
 
 +---------------+------+------+------+------+------+
-| Feature       | RTP  | FLUTE| NORM |(D)TLS| HTTP |
+| Feature       |(D)TLS| RTP  | HTTP | FLUTE| NORM |
 +---------------+------+------+------+------+------+
-| Datagram      | Yes  | No   | Both | Both | No   |
+| Datagram      | Both | Yes  | No   | No   | Both |
 +---------------+------+------+------+------+------+
-| Conn. Oriented| No   | Yes  | Yes  | Yes  | Yes  |
+| Conn. Oriented| Yes  | No   | Yes  | Yes  | Yes  |
 +---------------+------+------+------+------+------+
-| Reliability   | No   | Yes  | Poss | Poss | Yes  |
+| Reliability   | Poss | No   | Yes  | Yes  | Poss |
 +---------------+------+------+------+------+------+
-| Partial R     | Poss | No   | Poss | No   | No   |
+| Partial R     | No   | Poss | No   | No   | Poss |
 +---------------+------+------+------+------+------+
-| Corupt. Tol   | Poss | No   | No   | No   | No   |
+| Corupt. Tol   | No   | Poss | No   | No   | No   |
 +---------------+------+------+------+------+------+
-| Cong.Control  | Poss | Poss | Poss | N/A  | N/A  |
+| Cong.Control  | N/A  | Poss | N/A  | Poss | Poss |
 +---------------+------+------+------+------+------+
-| Endpoint      | >=1  | >=1  | >=1  |  1   |  1   |
+| Endpoint      |  1   | >=1  |  1   | >=1  | >=1  |
 +---------------+------+------+------+------+------+
-| Multicast Cap.| Yes  | Yes  | Yes  | No   | No   |
+| Multicast Cap.| No   | Yes  | No   | Yes  | Yes  |
 +---------------+------+------+------+------+------+
 
 ~~~~~~~~~~
@@ -1670,12 +1673,12 @@ The transport protocol features described in this document could be used as a ba
 
 - Control Functions
   - Addressing
-    - unicast (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, ICMP, RTP, TLS, HTTP)
+    - unicast (TCP, MPTCP, UDP, UDP-Lite, SCTP, DCCP, TLS, RTP, HTTP, ICMP)
     - multicast (UDP, UDP-Lite, RTP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.
     - IPv4 broadcast (UDP, UDP-Lite, ICMP)
     - anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP and DCCP have also been deployed using anycast addressing, with the risk that routing changes may cause connection failure.
   - Association type
-    - connection-oriented (TCP, MPTCP, SCTP, DCCP, RTP, NORM, TLS, HTTP)
+    - connection-oriented (TCP, MPTCP, DCCP, SCTP, TLS, RTP, HTTP, NORM)
     - connectionless (UDP, UDP-Lite, FLUTE/ALC)
   - Multihoming support
     - resilience and mobility (MPTCP, SCTP)
@@ -1690,39 +1693,39 @@ The transport protocol features described in this document could be used as a ba
 
 - Delivery
   - Reliability
-    - fully reliable delivery (TCP, MPTCP, SCTP, FLUTE/ALC, NORM, TLS, HTTP)
+    - fully reliable delivery (TCP, MPTCP, SCTP, TLS, HTTP, FLUTE/ALC, NORM)
     - partially reliable delivery (SCTP, NORM)
-      - using packet erasure coding (FLUTE/ALC, NORM, RTP)
+      - using packet erasure coding (RTP, FLUTE/ALC, NORM)
       - with specified policy for dropped messages (SCTP)
     - unreliable delivery (SCTP, UDP, UDP-Lite, DCCP, RTP)
-      - with drop notification to sender (RTP, SCTP, DCCP)
+      - with drop notification to sender (SCTP, DCCP, RTP)
     - error detection
-      - checksum for error detection (TCP, MPTCP, SCTP, UDP, UDP-Lite, DCCP, ICMP, FLUTE/ALC, NORM, TLS, DTLS)
+      - checksum for error detection (TCP, MPTCP, UDP, UDP-Lite, SCTP, DCCP, TLS, DTLS, FLUTE/ALC, NORM, ICMP)
       - partial payload checksum protection (UDP-Lite, DCCP). Some uses of RTP can exploit partial payload checksum protection feature to provide a corruption tolerant transport service.
       - checksum optional (UDP). Possible with IPv4 and in certain cases with IPv6.
   - Ordering
-    - ordered delivery (TCP, MPTCP, SCTP, RTP, FLUTE, TLS, HTTP)
-    - unordered delivery permitted (SCTP, UDP, UDP-Lite, DCCP, RTP, NORM)
+    - ordered delivery (TCP, MPTCP, SCTP, TLS, RTP, HTTP, FLUTE)
+    - unordered delivery permitted (UDP, UDP-Lite, SCTP, DCCP, RTP, NORM)
   - Type/framing
     - stream-oriented delivery (TCP, MPTCP, SCTP, TLS, HTTP)
       - with multiple streams per association (SCTP, HTTP2)
-    - message-oriented delivery (SCTP, UDP, UDP-Lite, DCCP, RTP, DTLS)
-    - object-oriented delivery of discrete data or files and associated metadata (FLUTE/ALC, NORM, HTTP)
+    - message-oriented delivery (UDP, UDP-Lite, SCTP, DCCP, DTLS, RTP)
+    - object-oriented delivery of discrete data or files and associated metadata (HTTP, FLUTE/ALC, NORM)
       - with partial delivery of object ranges (HTTP)
   - Directionality
-    - unidirectional (TCP, SCTP, UDP, UDP-Lite DCCP, RTP, FLUTE/ALC, NORM)
-    - bidirectional (TCP, MPTCP, SCTP, HTTP, TLS)
+    - unidirectional (TCP, UDP, UDP-Lite, SCTP, DCCP, RTP, FLUTE/ALC, NORM)
+    - bidirectional (TCP, MPTCP, SCTP, TLS, HTTP)
 
 - Transmission control
-  - flow control (TCP, MPTCP, SCTP, DCCP, RTP, TLS, HTTP)
-  - congestion control (TCP, MPTCP, SCTP, DCCP, RTP, FLUTE/ALC, NORM). Congestion control can also provided by the transport supporting an upper later transport (e.g., RTP,HTTP, TLS).
-  - segmentation (TCP, MPTCP, SCTP, RTP, FLUTE/ALC, NORM, TLS, HTTP)
+  - flow control (TCP, MPTCP, SCTP, DCCP, TLS, RTP, HTTP)
+  - congestion control (TCP, MPTCP, SCTP, DCCP, RTP, FLUTE/ALC, NORM). Congestion control can also provided by the transport supporting an upper later transport (e.g., TLS, RTP, HTTP).
+  - segmentation (TCP, MPTCP, SCTP, TLS, RTP, HTTP, FLUTE/ALC, NORM)
   - data/message bundling (TCP, MPTCP, SCTP, TLS, HTTP)
   - stream scheduling prioritization (SCTP, HTTP2)
   - endpoint multiplexing (MPTCP)
 
 - Security
-  - authentication of one end of a connection (FLUTE/ALC, TLS, DTLS)
+  - authentication of one end of a connection (TLS, DTLS, FLUTE/ALC)
   - authentication of both ends of a connection (TLS, DTLS)
   - confidentiality (TLS, DTLS)
   - cryptographic integrity protection (TLS, DTLS)
