@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-10
-date: 2016-3-4
+docname: draft-ietf-taps-transports-11
+date: 2016-7-7
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -176,8 +176,8 @@ Control Protocol (DCCP), the Internet Control Message Protocol (ICMP), the
 Realtime Transport Protocol (RTP), File Delivery over Unidirectional
 Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and
 NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS),
-Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP) when used as
-a pseudotransport.
+Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP), when HTTP is
+used as a pseudotransport.
 
 --- middle
 
@@ -215,13 +215,13 @@ Some of these provided features are closely related to basic control function
 that a protocol needs to work over a network path, such as addressing. The
 number of participants in a given association also determines its
 applicability: if a connection is between endpoints (unicast), to one of
-multiple endpoints (anycast), and/or simultaneously to multiple endpoints
+multiple endpoints (anycast), or simultaneously to multiple endpoints
 (multicast). Unicast protocols usually support bidirectional communication,
 while multicast is generally unidirectional. Another feature is whether a
 transport requires a control exchange across the network at setup (e.g., TCP),
-or whether it connection-less (e.g., UDP).
+or whether it is connection-less (e.g., UDP).
 
-For the delivery of the packets itself, reliability and integrity protection,
+For packet delivery itself, reliability and integrity protection,
 ordering, and framing are basic features. However, these features are
 implemented with different levels of assurance in different protocols. As an
 example, a transport service may provide full reliability, providing detection
@@ -325,11 +325,11 @@ defined by the IETF.
 Each byte in the stream is identified by a sequence number. The sequence
 number is used to order segments on receipt, to identify segments in
 acknowledgments, and to detect unacknowledged segments for retransmission.
-This is the basis of the reliable, ordered delivery of data in a TCP stream. TCP
-Selective Acknowledgment (SACK) {{RFC2018}} extends this mechanism by making it
-possible to provide earlier identification of which segments are missing, 
-allowing faster retransmission. SACK-based methods (e.g. DSACK) can also result 
-in less spurious retransmission.
+This is the basis of the reliable, ordered delivery of data in a TCP stream.
+TCP Selective Acknowledgment (SACK) {{RFC2018}} extends this mechanism by
+making it possible to provide earlier identification of which segments are
+missing, allowing faster retransmission. SACK-based methods (e.g. Duplicate
+Selective ACK) can also result in less spurious retransmission.
 
 Receiver flow control is provided by a sliding window: limiting the amount of
 unacknowledged data that can be outstanding at a given time. The window scale
@@ -413,18 +413,17 @@ The transport features provided by TCP are:
 - segmentation,
 - data bundling (optional; uses Nagle's algorithm to coalesce data sent within the same RTT into full-sized segments),
 - flow control (implemented using a window-based mechanism where the receiver advertises the window that it is willing to buffer),
-- congestion control (usually implemented using a window-based mechanism and four algorithm for different phases of the transmission: slow start, congestion avoidance, fast retransmit, and fast recovery {{RFC5681}}).
+- congestion control (usually implemented using a window-based mechanism and four algorithms for different phases of the transmission: slow start, congestion avoidance, fast retransmit, and fast recovery {{RFC5681}}).
 
 
 ## Multipath TCP (MPTCP)
 
 Multipath TCP {{RFC6824}} is an extension for TCP to support multi-homing for
-resilience, mobility and load-balancing. It is
-designed to be as transparent as possible to middleboxes. It does so by
-establishing regular TCP flows between a pair of source/destination endpoints,
-and multiplexing the application's stream over these flows. 
-Sub-flows can be started over IPv4 or IPv6 for
-the same session.
+resilience, mobility and load-balancing. It is designed to be as
+indistinguishable to middleboxes from non-multipath TCP as possible. It does
+so by establishing regular TCP flows between a pair of source/destination
+endpoints, and multiplexing the application's stream over these flows.  Sub-
+flows can be started over IPv4 or IPv6 for the same session.
 
 ### Protocol Description
 
@@ -495,11 +494,11 @@ to protect from misdelivery to an unintended endpoint. IPv6 does not permit UDP
 datagrams with no checksum, although in certain cases this rule may be relaxed
 {{RFC6935}}. 
 
-UDP does not provide reliability and does not provide retransmission. This
-implies messages may be re-ordered, lost, or duplicated in transit.
-Note that due to the relatively weak form of checksum
-used by UDP, applications that require end to end integrity of data are
-recommended to include a stronger integrity check of their payload data.
+UDP does not provide reliability and does not provide retransmission. Messages
+may be re-ordered, lost, or duplicated in transit. Note that due to the
+relatively weak form of checksum used by UDP, applications that require end to
+end integrity of data are recommended to include a stronger integrity check of
+their payload data.
 
 Because UDP provides no flow control, a receiving application that is unable
 to run sufficiently fast, or frequently, may miss messages. The lack of
@@ -567,10 +566,9 @@ unicast, and IPv6 multicast, anycast and unicast.
 
 Examples of use include a class of applications that can derive benefit from
 having partially-damaged payloads delivered, rather than discarded. One use is
-to support error tolerate payload corruption when used over paths that include
-error-prone links, another application is when header integrity checks are
-required, but payload integrity is provided by some other mechanism (e.g.,
-{{RFC6936}}).
+to provider header integrity checks but allow delivery of corrupted payloads
+to error-tolerant applications, or when payload integrity is provided by some
+other mechanism (see {{RFC6936}}).
 
 ### Protocol Description
 
@@ -667,12 +665,12 @@ corresponding acknowledgments.
 
 Each SCTP association has between 1 and 65536 uni-directional streams in each
 direction. The number of streams can be different in each direction. Every
-user message is sent on a particular stream. User messages can be sent un-ordered, 
-or ordered upon request by the upper layer. Un-ordered messages can be
-delivered as soon as they are completely received. Ordered messages sent on
-the same stream are delivered at the receiver in the same order as sent by the
-sender. For user messages not requiring fragmentation, this minimizes head of
-line blocking.
+user message is sent on a particular stream. User messages can be sent un-
+ordered,  or ordered upon request by the upper layer. Un-ordered messages can
+be delivered as soon as they are completely received. For user messages not
+requiring fragmentation, this minimizes head of line blocking. On the other
+hand, ordered messages sent on the same stream are delivered at the receiver
+in the same order as sent by the sender.
 
 The base protocol defined in {{RFC4960}} does not allow interleaving of user-
 messages. Large messages on one stream can therefore block the sending of user
@@ -1007,7 +1005,7 @@ features unique to DTLS that are not applicable to TLS:
 
 - Record replay detection (optional).
 - Record size negotiation (estimates of PMTU and record size expansion factor).
-- Coveyance of IP don't fragment (DF) bit settings by application.
+- Conveyance of IP don't fragment (DF) bit settings by application.
 - An anti-DoS stateless cookie mechanism (optional).
 
 Generally, DTLS follows the TLS design as closely as possible.
@@ -1161,7 +1159,7 @@ Version 1.1 of the protocol is specified in {{RFC7230}}
 {{RFC7231}} {{RFC7232}} {{RFC7233}} {{RFC7234}} {{RFC7235}}, and version 2 in
 {{RFC7540}}.  HTTP is usually transported over TCP using port 80 and 443,
 although it can be used with other transports. When used over TCP it inherits
-its properties.
+TCP's properties.
 
 Application layer protocols may use HTTP as a substrate with an existing method
 and data formats, or specify new methods and data formats. There are
@@ -1211,10 +1209,10 @@ control signaling defined in {{RFC7234}}.
 
 The persistent connections of HTTP 1.1 and HTTP 2.0 allow multiple request-
 response transactions (streams) during the life-time of a single HTTP
-connection. HTTP 2.0 connections can multiplex many request/response pairs in
-parallel on a single transport connection. This reduces overhead during
-connection establishment and mitigates transport layer slow-start that would
-have otherwise been incurred for each transaction. Both are important to
+connection. This reduces overhead during connection establishment and
+mitigates transport layer slow-start that would have otherwise been incurred
+for each transaction. HTTP 2.0 connections can multiplex many request/response
+pairs in parallel on a single transport connection.  Both are important to
 reduce latency for HTTP's primary use case.
 
 HTTP can be combined with security mechanisms, such as TLS (denoted by HTTPS).
@@ -1230,7 +1228,7 @@ often used as bearer tokens in HTTP.
 There are many HTTP libraries available exposing different APIs. The APIs
 provide a way to specify a request by providing a URI, a method, request
 modifiers and optionally a request body. For the response, callbacks can be
-registered that will be invoked when the response is received. If TLS is used,
+registered that will be invoked when the response is received. If HTTPS is used,
 the API exposes a registration of callbacks for a server that requests client
 authentication and when certificate verification is needed.
 
@@ -1404,8 +1402,8 @@ computer memory-based "objects" as well as byte- and message-streaming.
 NORM can incorporate packet erasure coding as a part of its
 selective ARQ in response to negative acknowledgments from the receiver. The packet
 erasure coding can also be proactively applied for forward protection from
-packet loss. NORM transmissions are governed by the TCP-friendly congestion
-control. The reliability, congestion control and flow control mechanisms
+packet loss. NORM transmissions are governed by TCP-friendly multicast congestion
+control (TFMCC, {{RFC4654}}). The reliability, congestion control and flow control mechanisms
 can be separately controlled to meet different application needs.
 
 ### Protocol Description
@@ -1581,7 +1579,7 @@ window slowing over multiple RTTs, while decreasing strongly when the first
 indication of congestion is received. One example is an Additive Increase
 Multiplicative Decrease (AIMD) scheme, where the window is increased by a
 certain number of packets/bytes for each data segment that has been
-successfully transmitted, while the window is multiplicatively decrease on the
+successfully transmitted, while the window decreases multiplicatively on the
 occurrence of a congestion event. This can lead to a rather unstable,
 oscillating sending rate, but will resolve a congestion situation quickly. TCP
 New Reno {{RFC5681}} which is one of the initial proposed schemes for TCP as
@@ -1601,7 +1599,7 @@ applications.
 Another class of applications prefer a transport service that
 yields to other (higher-priority) traffic, such as interactive transmissions.
 While most traffic in the Internet uses loss-based congestion control and 
-therefore need to fill the network buffers (to a certain level if 
+therefore tends to fill the network buffers (to a certain level if 
 Active Queue Management (AQM) is used), low-priority congestion control 
 methods often react to changes in delay as an earlier indication of congestion. 
 This approach tends to  induce less loss than a
@@ -1622,7 +1620,7 @@ it is possible for the transport service to offer this feature.
 ~~~~~~~~~~
 
 +---------------+------+------+------+------+------+------+------+
-| Feature       | TCP  | MPTCP| UDP  | UDP  | SCTP |DCCP  |ICMP  |
+| Feature       | TCP  | MPTCP| UDP  | UDPL | SCTP | DCCP | ICMP |
 +---------------+------+------+------+------+------+------+------+
 | Datagram      | No   | No   | Yes  | Yes  | Yes  | Yes  | Yes  |
 +---------------+------+------+------+------+------+------+------+
@@ -1713,7 +1711,7 @@ The transport protocol features described in this document could be used as a ba
     - object-oriented delivery of discrete data or files and associated metadata (HTTP, FLUTE/ALC, NORM)
       - with partial delivery of object ranges (HTTP)
   - Directionality
-    - unidirectional (TCP, UDP, UDP-Lite, SCTP, DCCP, RTP, FLUTE/ALC, NORM)
+    - unidirectional (UDP, UDP-Lite, DCCP, RTP, FLUTE/ALC, NORM)
     - bidirectional (TCP, MPTCP, SCTP, TLS, HTTP)
 
 - Transmission control
@@ -1748,16 +1746,16 @@ Mehani, Karen Nielsen, Colin Perkins, Vincent Roca, and Michael Tuexen.
 - {{multipath-tcp-mptcp}} on MPTCP was contributed by Simone Ferlin-Oliviera (ferlin@simula.no) and Olivier Mehani (olivier.mehani@nicta.com.au)
 - {{user-datagram-protocol-udp}} on UDP was contributed by Kevin Fall (kfall@kfall.com)
 - {{stream-control-transmission-protocol-sctp}} on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de) and Karen Nielsen (karen.nielsen@tieto.com)
+- {{transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport}} on TLS and DTLS was contributed by Ralph Holz (ralph.holz@nicta.com.au) and Olivier Mehani (olivier.mehani@nicta.com.au)
 - {{realtime-transport-protocol-rtp}} on RTP contains contributions from Colin Perkins (csp@csperkins.org)
+- {{hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport}} on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)
 - {{file-delivery-over-unidirectional-transportasynchronous-layered-coding-reliable-multicast-flutealc}} on FLUTE/ALC was contributed by Vincent Roca (vincent.roca@inria.fr)
 - {{nack-oriented-reliable-multicast-norm}} on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)
-- {{transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport}} on TLS and DTLS was contributed by Ralph Holz (ralph.holz@nicta.com.au) and Olivier Mehani (olivier.mehani@nicta.com.au)
-- {{hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport}} on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)
 
 # Acknowledgments
 
-Thanks to Joe Touch, Michael Welzl, and the TAPS Working Group for the
-comments, feedback, and discussion. This work is supported by the European
-Commission under grant agreement No. 318627 mPlane and from the Horizon
-2020 research and innovation program under grant agreements No. 644334 (NEAT)
-and No. 688421 (MAMI). This support does not imply endorsement.
+Thanks to Joe Touch, Michael Welzl, Spencer Dawkins, and the TAPS Working
+Group for the comments, feedback, and discussion. This work is supported by
+the European Commission under grant agreement No. 318627 mPlane and from the
+Horizon 2020 research and innovation program under grant agreements No. 644334
+(NEAT) and No. 688421 (MAMI). This support does not imply endorsement.
