@@ -955,8 +955,8 @@ The transport features provided by DCCP are:
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-Transport Layer Security (TLS) {{RFC5246}}}
-and Datagram TLS (DTLS) {{RFC6347}}} are IETF protocols that
+Transport Layer Security (TLS) {{RFC5246}}
+and Datagram TLS (DTLS) {{RFC6347}} are IETF protocols that
 provide several security-related features to applications. TLS is designed to
 run on top of a reliable streaming transport protocol (usually TCP), while
 DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP
@@ -1527,7 +1527,7 @@ data. Each message carries an integrity check calculated in the same way as
 for UDP, this checksum is not optional.
 
 The RFC series defines additional IPv6 message formats to support a range of uses.
-In the case of IPv6 the protocol incorporates neighbor discovery {{RFC2461}} {{RFC3971}}}
+In the case of IPv6 the protocol incorporates neighbor discovery {{RFC2461}} {{RFC3971}}
 (provided by ARP for IPv4) and the Multicast Listener
 Discovery (MLD) {{RFC2710}} group management functions (provided by IGMP for IPv4).
 

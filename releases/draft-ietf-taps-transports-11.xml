@@ -974,8 +974,8 @@ detecting a slow receiver at the sender.</t>
 </section>
 <section anchor="transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport" title="Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport">
 
-<t>Transport Layer Security (TLS) <xref target="RFC5246"/>}
-and Datagram TLS (DTLS) <xref target="RFC6347"/>} are IETF protocols that
+<t>Transport Layer Security (TLS) <xref target="RFC5246"/>
+and Datagram TLS (DTLS) <xref target="RFC6347"/> are IETF protocols that
 provide several security-related features to applications. TLS is designed to
 run on top of a reliable streaming transport protocol (usually TCP), while
 DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP
@@ -1582,7 +1582,7 @@ data. Each message carries an integrity check calculated in the same way as
 for UDP, this checksum is not optional.</t>
 
 <t>The RFC series defines additional IPv6 message formats to support a range of uses.
-In the case of IPv6 the protocol incorporates neighbor discovery <xref target="RFC2461"/> <xref target="RFC3971"/>}
+In the case of IPv6 the protocol incorporates neighbor discovery <xref target="RFC2461"/> <xref target="RFC3971"/>
 (provided by ARP for IPv4) and the Multicast Listener
 Discovery (MLD) <xref target="RFC2710"/> group management functions (provided by IGMP for IPv4).</t>
 
@@ -1851,11 +1851,11 @@ Mehani, Karen Nielsen, Colin Perkins, Vincent Roca, and Michael Tuexen.</t>
 </section>
 <section anchor="acknowledgments" title="Acknowledgments">
 
-<t>Thanks to Joe Touch, Michael Welzl, and the TAPS Working Group for the
-comments, feedback, and discussion. This work is supported by the European
-Commission under grant agreement No. 318627 mPlane and from the Horizon
-2020 research and innovation program under grant agreements No. 644334 (NEAT)
-and No. 688421 (MAMI). This support does not imply endorsement.</t>
+<t>Thanks to Joe Touch, Michael Welzl, Spencer Dawkins, and the TAPS Working
+Group for the comments, feedback, and discussion. This work is supported by
+the European Commission under grant agreement No. 318627 mPlane and from the
+Horizon 2020 research and innovation program under grant agreements No. 644334
+(NEAT) and No. 688421 (MAMI). This support does not imply endorsement.</t>
 
 </section>
 

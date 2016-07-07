@@ -1196,8 +1196,8 @@ Internet-Draft               TAPS Transports                   July 2016
 3.7.  Transport Layer Security (TLS) and Datagram TLS (DTLS) as a
       pseudotransport
 
-   Transport Layer Security (TLS) [RFC5246]} and Datagram TLS (DTLS)
-   [RFC6347]} are IETF protocols that provide several security-related
+   Transport Layer Security (TLS) [RFC5246] and Datagram TLS (DTLS)
+   [RFC6347] are IETF protocols that provide several security-related
    features to applications.  TLS is designed to run on top of a
    reliable streaming transport protocol (usually TCP), while DTLS is
    designed to run on top of a best-effort datagram protocol (UDP or
@@ -1985,8 +1985,8 @@ Internet-Draft               TAPS Transports                   July 2016
 
    The RFC series defines additional IPv6 message formats to support a
    range of uses.  In the case of IPv6 the protocol incorporates
-   neighbor discovery [RFC2461] [RFC3971]} (provided by ARP for IPv4)
-   and the Multicast Listener Discovery (MLD) [RFC2710] group management
+   neighbor discovery [RFC2461] [RFC3971] (provided by ARP for IPv4) and
+   the Multicast Listener Discovery (MLD) [RFC2710] group management
    functions (provided by IGMP for IPv4).
 
    Reliable transmission can not be assumed.  A receiving application
@@ -2372,12 +2372,12 @@ Internet-Draft               TAPS Transports                   July 2016
 
 9.  Acknowledgments
 
-   Thanks to Joe Touch, Michael Welzl, and the TAPS Working Group for
-   the comments, feedback, and discussion.  This work is supported by
-   the European Commission under grant agreement No. 318627 mPlane and
-   from the Horizon 2020 research and innovation program under grant
-   agreements No. 644334 (NEAT) and No. 688421 (MAMI).  This support
-   does not imply endorsement.
+   Thanks to Joe Touch, Michael Welzl, Spencer Dawkins, and the TAPS
+   Working Group for the comments, feedback, and discussion.  This work
+   is supported by the European Commission under grant agreement No.
+   318627 mPlane and from the Horizon 2020 research and innovation
+   program under grant agreements No. 644334 (NEAT) and No. 688421
+   (MAMI).  This support does not imply endorsement.
 
 10.  Informative References
 
