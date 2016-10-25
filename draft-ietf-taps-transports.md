@@ -1505,6 +1505,10 @@ messages, without error correction, congestion control, or flow control.
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
 (IPv4 and IPv6), in addition to anycast datagrams.
 
+While ICMP is not typically described as a transport protocol, it does
+position itself over the network layer, and the operation of other transport
+protocols can be closely linked to the functions provided by ICMP.
+
 Transport Protocols and upper layer protocols can use received ICMP messages to help
 them take appropriate decisions when network or endpoint errors are reported.
 For example, to implement, ICMP-based Path MTU discovery {{RFC1191}}{{RFC1981}}
