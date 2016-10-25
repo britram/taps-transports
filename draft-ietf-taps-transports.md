@@ -1,8 +1,8 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-11
-date: 2016-7-7
+docname: draft-ietf-taps-transports-12
+date: 
 category: info
 ipr: trust200902
 coding: us-ascii
@@ -177,7 +177,7 @@ Realtime Transport Protocol (RTP), File Delivery over Unidirectional
 Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and
 NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS),
 Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP), when HTTP is
-used as a pseudotransport.
+used as a pseudotransport. This survey provides background for the definition of transport services within the TAPS working group.
 
 --- middle
 
@@ -205,6 +205,12 @@ over UDP or TCP). Services built on top of UDP or UDP-Lite typically also
 need to specify additional mechanisms, including a congestion control
 mechanism (such as NewReno, TFRC or LEDBAT).  This extends the set of available
 Transport Services beyond those provided to applications by TCP and UDP.
+
+The transport protocols described in this document provide a basis for the
+definition of transport services provided by common protocols, as background
+for the TAPS working group. The protocols listed here were chosen to help
+expose as many potential transport services as possible, and are not meant to
+be a comprehensive survey or classification of all transport protocols.
 
 ## Overview of Transport Features
 
@@ -345,7 +351,7 @@ congestion window is increased in the absence of congestion and, respectively,
 decreased if congestion is detected. Often loss is implicitly handled as a
 congestion indication which is detected in TCP (also as input for
 retransmission handling) based on two mechanisms: A retransmission timer with
-exponential back-up or the reception of three acknowledgment for the same
+exponential back-off or the reception of three acknowledgment for the same
 segment, so called duplicated ACKs (Fast retransmit). In addition, Explicit
 Congestion Notification (ECN) {{RFC3168}} can be used in TCP, if supported by
 both endpoints, that allows a network node to signal congestion without
@@ -515,10 +521,12 @@ When the jumbograms are supported, larger messages may be sent without
 performing fragmentation.
 
 Applications that need to provide
-fragmentation or that have other requirements such as receiver flow
-control, congestion control, PathMTU discovery/PLPMTUD, support for
-ECN, etc. need these to be provided by protocols operating over UDP 
-{{I-D.ietf-tsvwg-rfc5405bis}}.
+fragmentation 
+
+UDP on its own does not provide support for segmentation, receiver flow
+control, congestion control, PathMTU discovery/PLPMTUD, or ECN. Applications
+that require these features need to provide them on their own, or by using a
+protocol over UDP that provides them {{I-D.ietf-tsvwg-rfc5405bis}}.
 
 ### Interface Description
 
@@ -955,13 +963,13 @@ The transport features provided by DCCP are:
 
 ## Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport
 
-Transport Layer Security (TLS) {{RFC5246}}
-and Datagram TLS (DTLS) {{RFC6347}} are IETF protocols that
-provide several security-related features to applications. TLS is designed to
-run on top of a reliable streaming transport protocol (usually TCP), while
-DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP
-{{RFC5238}}). At the time of writing, the current version of TLS is 1.2; which is
-defined in {{RFC5246}}. DTLS provides nearly identical functionality to
+Transport Layer Security (TLS) {{RFC5246}} and Datagram TLS (DTLS) {{RFC6347}}
+are IETF protocols that provide several security-related features to
+applications. TLS is designed to run on top of a reliable streaming transport
+protocol (usually TCP), while DTLS is designed to run on top of a best-effort
+datagram protocol (UDP or DCCP {{RFC5238}}). At the time of writing, the
+current version of TLS is 1.2,  defined in {{RFC5246}}; work on TLS version
+1.3 is nearing completion. DTLS provides nearly identical functionality to
 applications; it is defined in {{RFC6347}} and its current version is also
 1.2.  The TLS protocol evolved from the Secure Sockets Layer (SSL) protocols
 developed in the mid-1990s to support protection of HTTP traffic.
@@ -1610,64 +1618,9 @@ otherwise unused capacity.
 
 # Transport Features
 
-The tables below summarize some key features to illustrate the range of
-functions provided across the IETF-specified transports. {{tabtp}} considers
-transports that may be directly layered over the network, and
-{{tabult}} considers transports layered over another transport service.
-Features that are permitted, but not required, are marked as "Poss" indicating that
-it is possible for the transport service to offer this feature.
-
-~~~~~~~~~~
-
-+---------------+------+------+------+------+------+------+------+
-| Feature       | TCP  | MPTCP| UDP  | UDPL | SCTP | DCCP | ICMP |
-+---------------+------+------+------+------+------+------+------+
-| Datagram      | No   | No   | Yes  | Yes  | Yes  | Yes  | Yes  |
-+---------------+------+------+------+------+------+------+------+
-| Conn. Oriented| Yes  | Yes  | No   | No   | Yes  | Yes  | No   |
-+---------------+------+------+------+------+------+------+------+
-| Reliability   | Yes  | Yes  | No   | No   | Yes  | No   | No   |
-+---------------+------+------+------+------+------+------+------+
-| Partial Rel.  | No   | No   | N/A  | N/A  | Poss | Yes  | N/A  |
-+---------------+------+------+------+------+------+------+------+
-| Corupt. Tol   | No   | No   | No   | Yes  | No   | Yes  | No   |
-+---------------+------+------+------+------+------+------+------+
-| Cong.Control  | Yes  | Yes  | No   | No   | Yes  | Yes  | No   |
-+---------------+------+------+------+------+------+------+------+
-| Endpoint      |  1   | >=1  | >=1  | >=1  | >=1  |  1   |  1   |
-+---------------+------+------+------+------+------+------+------+
-| Multicast Cap.| No   | No   | Yes  | Yes  | No   | No   | No   |
-+---------------+------+------+------+------+------+------+------+
-
-~~~~~~~~~~
-{: #tabtp title="Summary comparison: Transport protocols"}
-
-~~~~~~~~~~
-
-+---------------+------+------+------+------+------+
-| Feature       |(D)TLS| RTP  | HTTP | FLUTE| NORM |
-+---------------+------+------+------+------+------+
-| Datagram      | Both | Yes  | No   | No   | Both |
-+---------------+------+------+------+------+------+
-| Conn. Oriented| Yes  | No   | Yes  | Yes  | Yes  |
-+---------------+------+------+------+------+------+
-| Reliability   | Poss | No   | Yes  | Yes  | Poss |
-+---------------+------+------+------+------+------+
-| Partial R     | No   | Poss | No   | No   | Poss |
-+---------------+------+------+------+------+------+
-| Corupt. Tol   | No   | Poss | No   | No   | No   |
-+---------------+------+------+------+------+------+
-| Cong.Control  | N/A  | Poss | N/A  | Poss | Poss |
-+---------------+------+------+------+------+------+
-| Endpoint      |  1   | >=1  |  1   | >=1  | >=1  |
-+---------------+------+------+------+------+------+
-| Multicast Cap.| No   | Yes  | No   | Yes  | Yes  |
-+---------------+------+------+------+------+------+
-
-~~~~~~~~~~
-{: #tabult title="Upper layer transports and frameworks"}
-
-The transport protocol features described in this document could be used as a basis for defining common transport features:
+The transport protocol features described in this document can be used as a
+basis for defining common transport features, listed below with the protocols
+supporting them:
 
 - Control Functions
   - Addressing
@@ -1727,7 +1680,7 @@ The transport protocol features described in this document could be used as a ba
   - authentication of both ends of a connection (TLS, DTLS)
   - confidentiality (TLS, DTLS)
   - cryptographic integrity protection (TLS, DTLS)
-  - replay protection (FLUTE/ALC, DTLS)
+  - replay protection (TLS, DTLS, FLUTE/ALC)
 
 # IANA Considerations
 
