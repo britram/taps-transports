@@ -1,0 +1,1770 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Services provided by IETF transport protocols and congestion control mechanisms</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+<style type="text/css">
+@viewport {
+  zoom: 1.0;
+  width: extend-to-zoom;
+}
+
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+
+body {
+  font: 11pt cambria, helvetica, arial, sans-serif;
+  font-size-adjust: 0.5;
+  line-height: 130%;
+  margin: 1em auto;
+  max-width: 700px;
+}
+
+.title, .filename, h1, h2, h3, h4 {
+  font-family: candara, helvetica, arial, sans-serif;
+  font-size-adjust: 0.5;
+}
+.title { font-size: 150%; }
+h1 { font-size: 130%; }
+h2 { font-size: 120%; }
+h3, h4 { font-size: 110%; }
+
+table {
+  margin-left: 0em;
+}
+table.header {
+  width: 100%;
+}
+
+table.header td {
+  background-color: inherit;
+  color: black;
+}
+
+samp, tt, code, pre {
+  font: 11pt consolas, monospace;
+  font-size-adjust: none;
+}
+
+pre.text, pre.text2 {
+  width: 90%;
+}
+
+dt {
+  float: left; clear: left;
+  margin: 0.5em 0.5em 0 0;
+}
+dt:first-child {
+  margin-top: 0;
+}
+dd {
+  margin: 0.5em 0 0 2em;
+}
+dd p, dd ul {
+  margin-top: 0; margin-bottom: 0;
+}
+dd *+p {
+  margin-top: 0.5em;
+}
+
+ol, ul {
+  padding: 0;
+  margin: 0.5em 0 0.5em 2em;
+}
+ul.toc, ul.toc ul {
+  margin: 0 0 0 1.5em;
+}
+ul.toc a:first-child {
+  display: inline-block;
+  min-width: 1.2em;
+}
+</style>
+
+  <link href="#rfc.toc" rel="Contents"/>
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
+<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Overview of Transport Features"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 Terminology"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Existing Transport Protocols"/>
+<link href="#rfc.section.3.1" rel="Chapter" title="3.1 Transport Control Protocol (TCP)"/>
+<link href="#rfc.section.3.1.1" rel="Chapter" title="3.1.1 Protocol Description"/>
+<link href="#rfc.section.3.1.2" rel="Chapter" title="3.1.2 Interface description"/>
+<link href="#rfc.section.3.1.3" rel="Chapter" title="3.1.3 Transport Features"/>
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Multipath TCP (MPTCP)"/>
+<link href="#rfc.section.3.2.1" rel="Chapter" title="3.2.1 Protocol Description"/>
+<link href="#rfc.section.3.2.2" rel="Chapter" title="3.2.2 Interface Description"/>
+<link href="#rfc.section.3.2.3" rel="Chapter" title="3.2.3 Transport features"/>
+<link href="#rfc.section.3.3" rel="Chapter" title="3.3 User Datagram Protocol (UDP)"/>
+<link href="#rfc.section.3.3.1" rel="Chapter" title="3.3.1 Protocol Description"/>
+<link href="#rfc.section.3.3.2" rel="Chapter" title="3.3.2 Interface Description"/>
+<link href="#rfc.section.3.3.3" rel="Chapter" title="3.3.3 Transport Features"/>
+<link href="#rfc.section.3.4" rel="Chapter" title="3.4 Lightweight User Datagram Protocol (UDP-Lite)"/>
+<link href="#rfc.section.3.4.1" rel="Chapter" title="3.4.1 Protocol Description"/>
+<link href="#rfc.section.3.4.2" rel="Chapter" title="3.4.2 Interface Description"/>
+<link href="#rfc.section.3.4.3" rel="Chapter" title="3.4.3 Transport Features"/>
+<link href="#rfc.section.3.5" rel="Chapter" title="3.5 Stream Control Transmission Protocol (SCTP)"/>
+<link href="#rfc.section.3.5.1" rel="Chapter" title="3.5.1 Protocol Description"/>
+<link href="#rfc.section.3.5.2" rel="Chapter" title="3.5.2 Interface Description"/>
+<link href="#rfc.section.3.5.3" rel="Chapter" title="3.5.3 Transport Features"/>
+<link href="#rfc.section.3.6" rel="Chapter" title="3.6 Datagram Congestion Control Protocol (DCCP)"/>
+<link href="#rfc.section.3.6.1" rel="Chapter" title="3.6.1 Protocol Description"/>
+<link href="#rfc.section.3.6.2" rel="Chapter" title="3.6.2 Interface Description"/>
+<link href="#rfc.section.3.6.3" rel="Chapter" title="3.6.3 Transport Features"/>
+<link href="#rfc.section.3.7" rel="Chapter" title="3.7 Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport"/>
+<link href="#rfc.section.3.7.1" rel="Chapter" title="3.7.1 Protocol Description"/>
+<link href="#rfc.section.3.7.2" rel="Chapter" title="3.7.2 Interface Description"/>
+<link href="#rfc.section.3.7.3" rel="Chapter" title="3.7.3 Transport Features"/>
+<link href="#rfc.section.3.8" rel="Chapter" title="3.8 Realtime Transport Protocol (RTP)"/>
+<link href="#rfc.section.3.8.1" rel="Chapter" title="3.8.1 Protocol Description"/>
+<link href="#rfc.section.3.8.2" rel="Chapter" title="3.8.2 Interface Description"/>
+<link href="#rfc.section.3.8.3" rel="Chapter" title="3.8.3 Transport Features"/>
+<link href="#rfc.section.3.9" rel="Chapter" title="3.9 Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport"/>
+<link href="#rfc.section.3.9.1" rel="Chapter" title="3.9.1 Protocol Description"/>
+<link href="#rfc.section.3.9.2" rel="Chapter" title="3.9.2 Interface Description"/>
+<link href="#rfc.section.3.9.3" rel="Chapter" title="3.9.3 Transport features"/>
+<link href="#rfc.section.3.10" rel="Chapter" title="3.10 File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)"/>
+<link href="#rfc.section.3.10.1" rel="Chapter" title="3.10.1 Protocol Description"/>
+<link href="#rfc.section.3.10.2" rel="Chapter" title="3.10.2 Interface Description"/>
+<link href="#rfc.section.3.10.3" rel="Chapter" title="3.10.3 Transport Features"/>
+<link href="#rfc.section.3.11" rel="Chapter" title="3.11 NACK-Oriented Reliable Multicast (NORM)"/>
+<link href="#rfc.section.3.11.1" rel="Chapter" title="3.11.1 Protocol Description"/>
+<link href="#rfc.section.3.11.2" rel="Chapter" title="3.11.2 Interface Description"/>
+<link href="#rfc.section.3.11.3" rel="Chapter" title="3.11.3 Transport Features"/>
+<link href="#rfc.section.3.12" rel="Chapter" title="3.12 Internet Control Message Protocol (ICMP)"/>
+<link href="#rfc.section.3.12.1" rel="Chapter" title="3.12.1 Protocol Description"/>
+<link href="#rfc.section.3.12.2" rel="Chapter" title="3.12.2 Interface Description"/>
+<link href="#rfc.section.3.12.3" rel="Chapter" title="3.12.3 Transport Features"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Congestion Control"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Transport Features"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 Contributors"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Acknowledgments"/>
+<link href="#rfc.references" rel="Chapter" title="10 Informative References"/>
+<link href="#rfc.authors" rel="Chapter"/>
+
+
+  <meta name="generator" content="xml2rfc version 2.5.1 - http://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Fairhurst, G., Ed., Trammell, B., Ed., and M. Kuehlewind, Ed." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-taps-transports-12" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-10-25" />
+  <meta name="dct.abstract" content="This document describes, surveys, classifies and compares the protocol mechanisms provided by existing IETF protocols, as background for determining a common set of transport services. It examines the Transmission Control Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol (SCTP), the User Datagram Protocol (UDP), UDP-Lite, the Datagram Congestion Control Protocol (DCCP), the Internet Control Message Protocol (ICMP), the Realtime Transport Protocol (RTP), File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS), Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP), when HTTP is used as a pseudotransport. This survey is intended as background for the definition of a set of Transport Services within the TAPS working group." />
+  <meta name="description" content="This document describes, surveys, classifies and compares the protocol mechanisms provided by existing IETF protocols, as background for determining a common set of transport services. It examines the Transmission Control Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol (SCTP), the User Datagram Protocol (UDP), UDP-Lite, the Datagram Congestion Control Protocol (DCCP), the Internet Control Message Protocol (ICMP), the Realtime Transport Protocol (RTP), File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS), Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP), when HTTP is used as a pseudotransport. This survey is intended as background for the definition of a set of Transport Services within the TAPS working group." />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+  <td class="left">Network Working Group</td>
+  <td class="right">G. Fairhurst, Ed.</td>
+</tr>
+<tr>
+  <td class="left">Internet-Draft</td>
+  <td class="right">University of Aberdeen</td>
+</tr>
+<tr>
+  <td class="left">Intended status: Informational</td>
+  <td class="right">B. Trammell, Ed.</td>
+</tr>
+<tr>
+  <td class="left">Expires: April 28, 2017</td>
+  <td class="right">M. Kuehlewind, Ed.</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">ETH Zurich</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">October 25, 2016</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Services provided by IETF transport protocols and congestion control mechanisms<br />
+  <span class="filename">draft-ietf-taps-transports-12</span></p>
+  
+  <h1 id="rfc.abstract">
+  <a href="#rfc.abstract">Abstract</a>
+</h1>
+<p>This document describes, surveys, classifies and compares the protocol mechanisms provided by existing IETF protocols, as background for determining a common set of transport services. It examines the Transmission Control Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol (SCTP), the User Datagram Protocol (UDP), UDP-Lite, the Datagram Congestion Control Protocol (DCCP), the Internet Control Message Protocol (ICMP), the Realtime Transport Protocol (RTP), File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC), and NACK-Oriented Reliable Multicast (NORM), Transport Layer Security (TLS), Datagram TLS (DTLS), and the Hypertext Transport Protocol (HTTP), when HTTP is used as a pseudotransport. This survey is intended as background for the definition of a set of Transport Services within the TAPS working group.</p>
+<h1 id="rfc.status">
+  <a href="#rfc.status">Status of This Memo</a>
+</h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on April 28, 2017.</p>
+<h1 id="rfc.copyrightnotice">
+  <a href="#rfc.copyrightnotice">Copyright Notice</a>
+</h1>
+<p>Copyright (c) 2016 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
+<ul><li>1.1.   <a href="#rfc.section.1.1">Overview of Transport Features</a></li>
+</ul><li>2.   <a href="#rfc.section.2">Terminology</a></li>
+<li>3.   <a href="#rfc.section.3">Existing Transport Protocols</a></li>
+<ul><li>3.1.   <a href="#rfc.section.3.1">Transport Control Protocol (TCP)</a></li>
+<ul><li>3.1.1.   <a href="#rfc.section.3.1.1">Protocol Description</a></li>
+<li>3.1.2.   <a href="#rfc.section.3.1.2">Interface description</a></li>
+<li>3.1.3.   <a href="#rfc.section.3.1.3">Transport Features</a></li>
+</ul><li>3.2.   <a href="#rfc.section.3.2">Multipath TCP (MPTCP)</a></li>
+<ul><li>3.2.1.   <a href="#rfc.section.3.2.1">Protocol Description</a></li>
+<li>3.2.2.   <a href="#rfc.section.3.2.2">Interface Description</a></li>
+<li>3.2.3.   <a href="#rfc.section.3.2.3">Transport features</a></li>
+</ul><li>3.3.   <a href="#rfc.section.3.3">User Datagram Protocol (UDP)</a></li>
+<ul><li>3.3.1.   <a href="#rfc.section.3.3.1">Protocol Description</a></li>
+<li>3.3.2.   <a href="#rfc.section.3.3.2">Interface Description</a></li>
+<li>3.3.3.   <a href="#rfc.section.3.3.3">Transport Features</a></li>
+</ul><li>3.4.   <a href="#rfc.section.3.4">Lightweight User Datagram Protocol (UDP-Lite)</a></li>
+<ul><li>3.4.1.   <a href="#rfc.section.3.4.1">Protocol Description</a></li>
+<li>3.4.2.   <a href="#rfc.section.3.4.2">Interface Description</a></li>
+<li>3.4.3.   <a href="#rfc.section.3.4.3">Transport Features</a></li>
+</ul><li>3.5.   <a href="#rfc.section.3.5">Stream Control Transmission Protocol (SCTP)</a></li>
+<ul><li>3.5.1.   <a href="#rfc.section.3.5.1">Protocol Description</a></li>
+<li>3.5.2.   <a href="#rfc.section.3.5.2">Interface Description</a></li>
+<li>3.5.3.   <a href="#rfc.section.3.5.3">Transport Features</a></li>
+</ul><li>3.6.   <a href="#rfc.section.3.6">Datagram Congestion Control Protocol (DCCP)</a></li>
+<ul><li>3.6.1.   <a href="#rfc.section.3.6.1">Protocol Description</a></li>
+<li>3.6.2.   <a href="#rfc.section.3.6.2">Interface Description</a></li>
+<li>3.6.3.   <a href="#rfc.section.3.6.3">Transport Features</a></li>
+</ul><li>3.7.   <a href="#rfc.section.3.7">Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport</a></li>
+<ul><li>3.7.1.   <a href="#rfc.section.3.7.1">Protocol Description</a></li>
+<li>3.7.2.   <a href="#rfc.section.3.7.2">Interface Description</a></li>
+<li>3.7.3.   <a href="#rfc.section.3.7.3">Transport Features</a></li>
+</ul><li>3.8.   <a href="#rfc.section.3.8">Realtime Transport Protocol (RTP)</a></li>
+<ul><li>3.8.1.   <a href="#rfc.section.3.8.1">Protocol Description</a></li>
+<li>3.8.2.   <a href="#rfc.section.3.8.2">Interface Description</a></li>
+<li>3.8.3.   <a href="#rfc.section.3.8.3">Transport Features</a></li>
+</ul><li>3.9.   <a href="#rfc.section.3.9">Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport</a></li>
+<ul><li>3.9.1.   <a href="#rfc.section.3.9.1">Protocol Description</a></li>
+<li>3.9.2.   <a href="#rfc.section.3.9.2">Interface Description</a></li>
+<li>3.9.3.   <a href="#rfc.section.3.9.3">Transport features</a></li>
+</ul><li>3.10.   <a href="#rfc.section.3.10">File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)</a></li>
+<ul><li>3.10.1.   <a href="#rfc.section.3.10.1">Protocol Description</a></li>
+<li>3.10.2.   <a href="#rfc.section.3.10.2">Interface Description</a></li>
+<li>3.10.3.   <a href="#rfc.section.3.10.3">Transport Features</a></li>
+</ul><li>3.11.   <a href="#rfc.section.3.11">NACK-Oriented Reliable Multicast (NORM)</a></li>
+<ul><li>3.11.1.   <a href="#rfc.section.3.11.1">Protocol Description</a></li>
+<li>3.11.2.   <a href="#rfc.section.3.11.2">Interface Description</a></li>
+<li>3.11.3.   <a href="#rfc.section.3.11.3">Transport Features</a></li>
+</ul><li>3.12.   <a href="#rfc.section.3.12">Internet Control Message Protocol (ICMP)</a></li>
+<ul><li>3.12.1.   <a href="#rfc.section.3.12.1">Protocol Description</a></li>
+<li>3.12.2.   <a href="#rfc.section.3.12.2">Interface Description</a></li>
+<li>3.12.3.   <a href="#rfc.section.3.12.3">Transport Features</a></li>
+</ul></ul><li>4.   <a href="#rfc.section.4">Congestion Control</a></li>
+<li>5.   <a href="#rfc.section.5">Transport Features</a></li>
+<li>6.   <a href="#rfc.section.6">IANA Considerations</a></li>
+<li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
+<li>8.   <a href="#rfc.section.8">Contributors</a></li>
+<li>9.   <a href="#rfc.section.9">Acknowledgments</a></li>
+<li>10.   <a href="#rfc.references">Informative References</a></li>
+<li><a href="#rfc.authors">Authors' Addresses</a></li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
+<p id="rfc.section.1.p.1">Internet applications make use of the Services provided by a Transport protocol, such as TCP (a reliable, in-order stream protocol) or UDP (an unreliable datagram protocol). We use the term &#8220;Transport Service&#8221; to mean the end-to-end service provided to an application by the transport layer. That service can only be provided correctly if information about the intended usage is supplied from the application. The application may determine this information at design time, compile time, or run time, and may include guidance on whether a feature is required, a preference by the application, or something in between. Examples of features of Transport Services are reliable delivery, ordered delivery, content privacy to in-path devices, and integrity protection.</p>
+<p id="rfc.section.1.p.2">The IETF has defined a wide variety of transport protocols beyond TCP and UDP, including SCTP, DCCP, MPTCP, and UDP-Lite. Transport services may be provided directly by these transport protocols, or layered on top of them using protocols such as WebSockets (which runs over TCP), RTP (over TCP or UDP) or WebRTC data channels (which run over SCTP over DTLS over UDP or TCP). Services built on top of UDP or UDP-Lite typically also need to specify additional mechanisms, including a congestion control mechanism (such as NewReno, TFRC or LEDBAT).  This extends the set of available Transport Services beyond those provided to applications by TCP and UDP.</p>
+<p id="rfc.section.1.p.3">This review of the features of existing transport protocols provides a basis for the definition of a set of transport services from which an application can select, as background for the work of the TAPS working group. The protocols listed here were chosen to help expose as many potential transport services as possible, and are not meant to be a comprehensive survey or classification of all transport protocols.</p>
+<h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#overview-of-transport-features" id="overview-of-transport-features">Overview of Transport Features</a></h1>
+<p id="rfc.section.1.1.p.1">Transport protocols can be differentiated by the features of the services they provide.</p>
+<p id="rfc.section.1.1.p.2">Some of these provided features are closely related to basic control function that a protocol needs to work over a network path, such as addressing. The number of participants in a given association also determines its applicability: if a connection is between endpoints (unicast), to one of multiple endpoints (anycast), or simultaneously to multiple endpoints (multicast). Unicast protocols usually support bidirectional communication, while multicast is generally unidirectional. Another feature is whether a transport requires a control exchange across the network at setup (e.g., TCP), or whether it is connection-less (e.g., UDP).</p>
+<p id="rfc.section.1.1.p.3">For packet delivery itself, reliability and integrity protection, ordering, and framing are basic features. However, these features are implemented with different levels of assurance in different protocols. As an example, a transport service may provide full reliability, providing detection of loss and retransmission (e.g., TCP). SCTP offers a message-based service that can provide full or partial reliability, and allows the protocol to minimize the head of line blocking due to the support of ordered and unordered message delivery within multiple streams. UDP-Lite and DCCP can provide partial integrity protection to enable corruption tolerance.</p>
+<p id="rfc.section.1.1.p.4">Usually a protocol has been designed to support one specific type of delivery/framing: data either needs to be divided into transmission units based on network packets (datagram service), a data stream is segmented and re-combined across multiple packets (stream service), or whole objects such as files are handled accordingly. This decision strongly influences the interface that is provided to the upper layer.</p>
+<p id="rfc.section.1.1.p.5">In addition, transport protocols offer a certain support for transmission control. For example, a transport service can provide flow control to allow a receiver to regulate the transmission rate of a sender. Further a transport service can provide congestion control  (see <a href="#congestion-control">Section 4</a>). As an example TCP and SCTP provide  congestion control for use in the Internet, whereas UDP leaves this function to the upper layer protocol that uses UDP.</p>
+<p id="rfc.section.1.1.p.6">Security features are often provided independent of the transport protocol, via Transport Layer Security (TLS, see <a href="#transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport">Section 3.7</a>) or by the application layer protocol itself. The security properties TLS provides to the application (such as confidentiality, integrity, and authenticity) are also features of the transport layer, even though they are often presently implemented in a separate protocol.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#terminology" id="terminology">Terminology</a></h1>
+<p id="rfc.section.2.p.1">The following terms are used throughout this document, and in subsequent documents produced by TAPS that describe the composition and decomposition of transport services.</p>
+<p/>
+
+<dl>
+  <dt>Transport Service Feature:</dt>
+  <dd style="margin-left: 8">a specific end-to-end feature that the transport layer provides to an application. Examples include confidentiality, reliable delivery, ordered delivery, message-versus-stream orientation, etc.</dd>
+  <dt>Transport Service:</dt>
+  <dd style="margin-left: 8">a set of Transport Features, without an association to any given framing protocol, which provides a complete service to an application.</dd>
+  <dt>Transport Protocol:</dt>
+  <dd style="margin-left: 8">an implementation that provides one or more different transport services using a specific framing and header format on the wire.</dd>
+  <dt>Transport Service Instance:</dt>
+  <dd style="margin-left: 8">an arrangement of transport protocols with a selected set of features and configuration parameters that implements a single transport service, e.g., a protocol stack (RTP over UDP).</dd>
+  <dt>Application:</dt>
+  <dd style="margin-left: 8">an entity that uses the transport layer for end-to-end delivery data across the network (this may also be an upper layer protocol or tunnel encapsulation).</dd>
+</dl>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#existing-transport-protocols" id="existing-transport-protocols">Existing Transport Protocols</a></h1>
+<p id="rfc.section.3.p.1">This section provides a list of known IETF transport protocols and transport protocol frameworks.  It does not make an assessment about whether specific implementations of protocols are fully compliant to current IETF specifications.</p>
+<h1 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#transport-control-protocol-tcp" id="transport-control-protocol-tcp">Transport Control Protocol (TCP)</a></h1>
+<p id="rfc.section.3.1.p.1">TCP is an IETF standards track transport protocol. <a href="#RFC0793">[RFC0793]</a> introduces TCP as follows: &#8220;The Transmission Control Protocol (TCP) is intended for use as a highly reliable host-to-host protocol between hosts in packet-switched computer communication networks, and in interconnected systems of such networks.&#8221; Since its introduction, TCP has become the default connection- oriented, stream-based transport protocol in the Internet. It is widely implemented by endpoints and widely used by common applications.</p>
+<h1 id="rfc.section.3.1.1"><a href="#rfc.section.3.1.1">3.1.1.</a> <a href="#protocol-description" id="protocol-description">Protocol Description</a></h1>
+<p id="rfc.section.3.1.1.p.1">TCP is a connection-oriented protocol, providing a three way handshake to allow a client and server to set up a connection and negotiate features, and mechanisms for orderly completion and immediate teardown of a connection. TCP is defined by a family of RFCs <a href="#RFC7414">[RFC7414]</a>.</p>
+<p id="rfc.section.3.1.1.p.2">TCP provides multiplexing to multiple sockets on each host using port numbers.  A similar approach is adopted by other IETF-defined transports.  An active TCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers. The destination port during connection setup is often used to indicate the requested service.</p>
+<p id="rfc.section.3.1.1.p.3">TCP partitions a continuous stream of bytes into segments, sized to fit in IP packets based on a negotiated maximum segment size and further constrained by the effective Maximum Transmission Unit (MTU) from Path MTU Discovery (PMTUD).  ICMP-based Path MTU discovery <a href="#RFC1191">[RFC1191]</a><a href="#RFC1981">[RFC1981]</a> as well as Packetization Layer Path MTU Discovery (PMTUD) <a href="#RFC4821">[RFC4821]</a> have been defined by the IETF.</p>
+<p id="rfc.section.3.1.1.p.4">Each byte in the stream is identified by a sequence number. The sequence number is used to order segments on receipt, to identify segments in acknowledgments, and to detect unacknowledged segments for retransmission.  This is the basis of the reliable, ordered delivery of data in a TCP stream.  TCP Selective Acknowledgment (SACK) <a href="#RFC2018">[RFC2018]</a> extends this mechanism by making it possible to provide earlier identification of which segments are missing, allowing faster retransmission. SACK-based methods (e.g. Duplicate Selective ACK) can also result in less spurious retransmission.</p>
+<p id="rfc.section.3.1.1.p.5">Receiver flow control is provided by a sliding window: limiting the amount of unacknowledged data that can be outstanding at a given time. The window scale option <a href="#RFC7323">[RFC7323]</a> allows a receiver to use windows greater than 64KB.</p>
+<p id="rfc.section.3.1.1.p.6">All TCP senders provide congestion control, such as described in <a href="#RFC5681">[RFC5681]</a>.  TCP uses a sequence number with a sliding receiver window for flow control. The TCP congestion control mechanism also utilises this TCP sequence number to manage a separate congestion window <a href="#RFC5681">[RFC5681]</a>.  The sending window at a given point in time is the minimum of the receiver window and the congestion window. The congestion window is increased in the absence of congestion and, respectively, decreased if congestion is detected. Often loss is implicitly handled as a congestion indication which is detected in TCP (also as input for retransmission handling) based on two mechanisms: A retransmission timer with exponential back-up or the reception of three acknowledgment for the same segment, so called duplicated ACKs (Fast retransmit). In addition, Explicit Congestion Notification (ECN) <a href="#RFC3168">[RFC3168]</a> can be used in TCP, if supported by both endpoints, that allows a network node to signal congestion without inducing loss. Alternatively, a delay-based congestion control scheme can be used in TCP that reacts to changes in delay as an early indication of congestion as also further described in <a href="#congestion-control">Section 4</a>.  Examples for different kind of congestion control schemes are given in <a href="#congestion-control">Section 4</a>.</p>
+<p id="rfc.section.3.1.1.p.7">TCP protocol instances can be extended <a href="#RFC7414">[RFC7414]</a> and tuned. Some features are sender-side only, requiring no negotiation with the receiver; some are receiver-side only, some are explicitly negotiated during connection setup.</p>
+<p id="rfc.section.3.1.1.p.8">TCP may buffer data, e.g., to optimize processing or capacity usage. TCP can therefore provides mechanisms to control this, including an optional &#8220;PUSH&#8221; function <a href="#RFC0793">[RFC0793]</a> that explicitly requests the transport service not to  delay data.  By default, TCP segment partitioning uses Nagle&#8217;s algorithm <a href="#RFC0896">[RFC0896]</a> to buffer data at the sender into large segments, potentially incurring sender-side buffering delay; this algorithm can be disabled by the sender to transmit more immediately, e.g., to reduce latency for interactive sessions.</p>
+<p id="rfc.section.3.1.1.p.9">TCP provides an &#8220;urgent data&#8221; function for limited out-of-order delivery of the data. This function is deprecated <a href="#RFC6093">[RFC6093]</a>.</p>
+<p id="rfc.section.3.1.1.p.10">A mandatory checksum provides a basic integrity check against misdelivery and data corruption over the entire packet. Applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data. The TCP checksum does not support partial payload protection (as in DCCP/UDP-Lite).</p>
+<p id="rfc.section.3.1.1.p.11">TCP supports only unicast connections.</p>
+<h1 id="rfc.section.3.1.2"><a href="#rfc.section.3.1.2">3.1.2.</a> <a href="#interface-description" id="interface-description">Interface description</a></h1>
+<p id="rfc.section.3.1.2.p.1">A User/TCP Interface is defined in <a href="#RFC0793">[RFC0793]</a> providing six user commands: Open, Send, Receive, Close, Status. This interface does not describe configuration of TCP options or parameters beside use of the PUSH and URGENT flags.</p>
+<p><a href="#RFC1122">[RFC1122]</a> describes extensions of the TCP/application layer interface for:</p>
+<p/>
+
+<ul>
+  <li>reporting soft errors such as reception of ICMP error messages, extensive retransmission or urgent pointer advance,</li>
+  <li>providing a possibility to specify the Differentiated Services Code Point (DSCP) <a href="#RFC3260">[RFC3260]</a> (formerly, the Type-of-Service, TOS) for segments,</li>
+  <li>providing a flush call to empty the TCP send queue, and</li>
+  <li>multihoming support.</li>
+</ul>
+<p id="rfc.section.3.1.2.p.4">In API implementations derived from the BSD Sockets API, TCP sockets are created using the <samp>SOCK_STREAM</samp> socket type as described in the IEEE Portable Operating System Interface (POSIX) Base Specifications <a href="#POSIX">[POSIX]</a>.  The features used by a protocol instance may be set and tuned via this API.  There are currently no documents in the RFC Series that describe this interface.</p>
+<h1 id="rfc.section.3.1.3"><a href="#rfc.section.3.1.3">3.1.3.</a> <a href="#transport-features" id="transport-features">Transport Features</a></h1>
+<p id="rfc.section.3.1.3.p.1">The transport features provided by TCP are:</p>
+<p/>
+
+<ul>
+  <li>connection-oriented transport with feature negotiation and application-to-port mapping (implemented using SYN segments and the TCP option field to negotiate features),</li>
+  <li>unicast transport (though anycast TCP is implemented, at risk of instability due to rerouting),</li>
+  <li>port multiplexing,</li>
+  <li>uni- or bidirectional communication,</li>
+  <li>stream-oriented delivery in a single stream,</li>
+  <li>fully reliable delivery (implemented using ACKs sent from the receiver to confirm delivery),</li>
+  <li>error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data and options),</li>
+  <li>segmentation,</li>
+  <li>data bundling (optional; uses Nagle&#8217;s algorithm to coalesce data sent within the same RTT into full-sized segments),</li>
+  <li>flow control (implemented using a window-based mechanism where the receiver advertises the window that it is willing to buffer),</li>
+  <li>congestion control (usually implemented using a window-based mechanism and four algorithms for different phases of the transmission: slow start, congestion avoidance, fast retransmit, and fast recovery <a href="#RFC5681">[RFC5681]</a>).</li>
+</ul>
+<h1 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a> <a href="#multipath-tcp-mptcp" id="multipath-tcp-mptcp">Multipath TCP (MPTCP)</a></h1>
+<p id="rfc.section.3.2.p.1">Multipath TCP <a href="#RFC6824">[RFC6824]</a> is an extension for TCP to support multi-homing for resilience, mobility and load-balancing. It is designed to be as indistinguishable to middleboxes from non-multipath TCP as possible. It does so by establishing regular TCP flows between a pair of source/destination endpoints, and multiplexing the application&#8217;s stream over these flows.  Sub- flows can be started over IPv4 or IPv6 for the same session.</p>
+<h1 id="rfc.section.3.2.1"><a href="#rfc.section.3.2.1">3.2.1.</a> <a href="#protocol-description-1" id="protocol-description-1">Protocol Description</a></h1>
+<p id="rfc.section.3.2.1.p.1">MPTCP uses TCP options for its control plane. They are used to signal multipath capabilities, as well as to negotiate data sequence numbers, and advertise other available IP addresses and establish new sessions between pairs of endpoints.</p>
+<p id="rfc.section.3.2.1.p.2">By multiplexing one byte stream over separate paths, MPTCP can achieve a higher throughput than TCP in certain situations. However, if coupled congestion control <a href="#RFC6356">[RFC6356]</a> is used, it might limit this benefit to maintain fairness to other flows at the bottleneck. When aggregating capacity over multiple paths, and depending on the way packets are scheduled on each TCP subflow, additional delay and higher jitter might be observed observed before in-order delivery of data to the applications.</p>
+<h1 id="rfc.section.3.2.2"><a href="#rfc.section.3.2.2">3.2.2.</a> <a href="#interface-description-1" id="interface-description-1">Interface Description</a></h1>
+<p id="rfc.section.3.2.2.p.1">By default, MPTCP exposes the same interface as TCP to the application.  <a href="#RFC6897">[RFC6897]</a> however describes a richer API for MPTCP-aware applications.</p>
+<p id="rfc.section.3.2.2.p.2">This Basic API describes how an application can:</p>
+<p/>
+
+<ul>
+  <li>enable or disable MPTCP.</li>
+  <li>bind a socket to one or more selected local endpoints.</li>
+  <li>query local and remote endpoint addresses.</li>
+  <li>get a unique connection identifier (similar to an address&#8211;port pair for TCP).</li>
+</ul>
+<p id="rfc.section.3.2.2.p.4">The document also recommends the use of extensions defined for SCTP <a href="#RFC6458">[RFC6458]</a> (see next section) to support multihoming for resilience and mobility.</p>
+<h1 id="rfc.section.3.2.3"><a href="#rfc.section.3.2.3">3.2.3.</a> <a href="#transport-features-1" id="transport-features-1">Transport features</a></h1>
+<p id="rfc.section.3.2.3.p.1">As an extension to TCP, MPTCP provides mostly the same features. By establishing multiple sessions between available endpoints, it can additionally provide soft failover solutions in the case that one of the paths become unusable.</p>
+<p id="rfc.section.3.2.3.p.2">The transport features provided by MPTCP in addition to TCP therefore are:</p>
+<p/>
+
+<ul>
+  <li>multihoming for load-balancing, with endpoint multiplexing of a single byte stream, using either coupled congestion control or for throughput maximization,</li>
+  <li>address family multiplexing (using IPv4 and IPv6 for the same session),</li>
+  <li>resilience to network failure and/or handover.</li>
+</ul>
+<h1 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3.</a> <a href="#user-datagram-protocol-udp" id="user-datagram-protocol-udp">User Datagram Protocol (UDP)</a></h1>
+<p id="rfc.section.3.3.p.1">The User Datagram Protocol (UDP) <a href="#RFC0768">[RFC0768]</a> <a href="#RFC2460">[RFC2460]</a> is an IETF standards track transport protocol. It provides a unidirectional datagram protocol that preserves message boundaries. It provides  no error correction, congestion control, or flow control. It can be used to send  broadcast datagrams (IPv4) or multicast datagrams (IPv4 and IPv6), in addition to unicast and anycast datagrams. IETF guidance on the use of UDP is provided in <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>. UDP is widely implemented and widely used by common applications, including DNS.</p>
+<h1 id="rfc.section.3.3.1"><a href="#rfc.section.3.3.1">3.3.1.</a> <a href="#protocol-description-2" id="protocol-description-2">Protocol Description</a></h1>
+<p id="rfc.section.3.3.1.p.1">UDP is a connection-less protocol that maintains message boundaries, with no connection setup or feature negotiation. The protocol uses independent messages, ordinarily called datagrams. It provides detection of payload errors and misdelivery of packets to an unintended endpoint, either of which result in discard of received datagrams, with no indication to the user of the service.</p>
+<p id="rfc.section.3.3.1.p.2">It is possible to create IPv4 UDP datagrams with no checksum, and while this is generally discouraged <a href="#RFC1122">[RFC1122]</a> <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>, certain special cases permit this use. These datagrams rely on the IPv4 header checksum to protect from misdelivery to an unintended endpoint. IPv6 does not permit UDP datagrams with no checksum, although in certain cases this rule may be relaxed <a href="#RFC6935">[RFC6935]</a>.</p>
+<p id="rfc.section.3.3.1.p.3">UDP does not provide reliability and does not provide retransmission. Messages may be re-ordered, lost, or duplicated in transit. Note that due to the relatively weak form of checksum used by UDP, applications that require end to end integrity of data are recommended to include a stronger integrity check of their payload data.</p>
+<p id="rfc.section.3.3.1.p.4">Because UDP provides no flow control, a receiving application that is unable to run sufficiently fast, or frequently, may miss messages. The lack of congestion handling implies UDP traffic may experience loss when using an overloaded path, and may cause the loss of messages from other protocols (e.g., TCP) when sharing the same network path.</p>
+<p id="rfc.section.3.3.1.p.5">On transmission, UDP encapsulates each datagram into a single IP packet or several IP packet fragments. This allows a datagram to be larger than the effective path MTU.  Fragments are reassembled before delivery to the UDP receiver, making this transparent to the user of the transport service.  When the jumbograms are supported, larger messages may be sent without performing fragmentation.</p>
+<p id="rfc.section.3.3.1.p.6">Applications that need to provide fragmentation or that have other requirements such as receiver flow control, congestion control, PathMTU discovery/PLPMTUD, support for ECN, etc. need these to be provided by protocols operating over UDP <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<h1 id="rfc.section.3.3.2"><a href="#rfc.section.3.3.2">3.3.2.</a> <a href="#interface-description-2" id="interface-description-2">Interface Description</a></h1>
+<p><a href="#RFC0768">[RFC0768]</a> describes basic requirements for an API for UDP.  Guidance on use of common APIs is provided in <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<p id="rfc.section.3.3.2.p.2">A UDP endpoint consists of a tuple of (IP address, port number).  De-multiplexing using multiple abstract endpoints (sockets) on the same IP address is supported. The same socket may be used by a single server to interact with multiple clients (note: this behavior differs from TCP, which uses a pair of tuples to identify a connection). Multiple server instances (processes) that bind to the same socket can cooperate to service multiple clients. The socket implementation arranges to not duplicate the same received unicast message to multiple server processes.</p>
+<p id="rfc.section.3.3.2.p.3">Many operating systems also allow a UDP socket to be &#8220;connected&#8221;, i.e., to bind a UDP socket to a specific (remote) UDP endpoint.  Unlike TCP&#8217;s connect primitive, for UDP, this is only a local operation that serves to simplify the local send/receive functions and to filter the traffic for the specified addresses and ports <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<h1 id="rfc.section.3.3.3"><a href="#rfc.section.3.3.3">3.3.3.</a> <a href="#transport-features-2" id="transport-features-2">Transport Features</a></h1>
+<p id="rfc.section.3.3.3.p.1">The transport features provided by UDP are:</p>
+<p/>
+
+<ul>
+  <li>unicast, multicast, anycast, or IPv4 broadcast transport,</li>
+  <li>port multiplexing (where a receiving port can be configured to receive datagrams from multiple senders),</li>
+  <li>message-oriented delivery,</li>
+  <li>uni- or bidirectional communication where the transmissions in each direction are independent,</li>
+  <li>non-reliable delivery,</li>
+  <li>unordered delivery,</li>
+  <li>error detection (implemented using a segment checksum to verify delivery to the correct endpoint and integrity of the data; optional for IPv4 and optional under specific conditions for IPv6 where all or none of the payload data is protected),</li>
+</ul>
+<h1 id="rfc.section.3.4"><a href="#rfc.section.3.4">3.4.</a> <a href="#lightweight-user-datagram-protocol-udp-lite" id="lightweight-user-datagram-protocol-udp-lite">Lightweight User Datagram Protocol (UDP-Lite)</a></h1>
+<p id="rfc.section.3.4.p.1">The Lightweight User Datagram Protocol (UDP-Lite) <a href="#RFC3828">[RFC3828]</a> is an IETF standards track transport protocol. It provides a unidirectional, datagram protocol that preserves message boundaries. IETF guidance on the use of UDP- Lite is provided in <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>. A UDP-Lite service may support IPv4 broadcast, multicast, anycast and unicast, and IPv6 multicast, anycast and unicast.</p>
+<p id="rfc.section.3.4.p.2">Examples of use include a class of applications that can derive benefit from having partially-damaged payloads delivered, rather than discarded. One use is to provider header integrity checks but allow delivery of corrupted payloads to error-tolerant applications, or when payload integrity is provided by some other mechanism (see <a href="#RFC6936">[RFC6936]</a>).</p>
+<h1 id="rfc.section.3.4.1"><a href="#rfc.section.3.4.1">3.4.1.</a> <a href="#protocol-description-3" id="protocol-description-3">Protocol Description</a></h1>
+<p id="rfc.section.3.4.1.p.1">Like UDP, UDP-Lite is a connection-less datagram protocol, with no connection setup or feature negotiation. It changes the semantics of the UDP &#8220;payload length&#8221; field to that of a &#8220;checksum coverage length&#8221; field, and is identified by a different IP protocol/next-header value. The &#8220;checksum coverage length&#8221; field specifies the intended checksum coverage, with the remaining unprotected part of the payload called the &#8220;error-insensitive part&#8221;.  Applications using UDP-Lite therefore cannot make assumptions regarding the correctness of the data received in the insensitive part of the UDP-Lite payload.</p>
+<p id="rfc.section.3.4.1.p.2">Otherwise, UDP-Lite is semantically identical to UDP.  In the same way as for UDP, mechanisms for receiver flow control, congestion control, PMTU or PLPMTU discovery, support for ECN, etc. needs to be provided by upper layer protocols <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<h1 id="rfc.section.3.4.2"><a href="#rfc.section.3.4.2">3.4.2.</a> <a href="#interface-description-3" id="interface-description-3">Interface Description</a></h1>
+<p id="rfc.section.3.4.2.p.1">There is no API currently specified in the RFC Series, but guidance on use of common APIs is provided in <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<p id="rfc.section.3.4.2.p.2">The interface of UDP-Lite differs from that of UDP by the addition of a single (socket) option that communicates a checksum coverage length value.  The checksum coverage may also be made visible to the application via the UDP-Lite MIB module <a href="#RFC5097">[RFC5097]</a>.</p>
+<h1 id="rfc.section.3.4.3"><a href="#rfc.section.3.4.3">3.4.3.</a> <a href="#transport-features-3" id="transport-features-3">Transport Features</a></h1>
+<p id="rfc.section.3.4.3.p.1">The transport features provided by UDP-Lite are:</p>
+<p/>
+
+<ul>
+  <li>unicast, multicast, anycast, or IPv4 broadcast transport (as for UDP),</li>
+  <li>port multiplexing (as for UDP),</li>
+  <li>message-oriented delivery (as for UDP),</li>
+  <li>Uni- or bidirectional communication where the transmissions in each direction are independent (as for UDP),</li>
+  <li>non-reliable delivery (as for UDP),</li>
+  <li>non-ordered delivery (as for UDP),</li>
+  <li>partial or full payload error detection (where the checksum coverage field indicates the size of the payload data covered by the checksum).</li>
+</ul>
+<h1 id="rfc.section.3.5"><a href="#rfc.section.3.5">3.5.</a> <a href="#stream-control-transmission-protocol-sctp" id="stream-control-transmission-protocol-sctp">Stream Control Transmission Protocol (SCTP)</a></h1>
+<p id="rfc.section.3.5.p.1">SCTP is a message-oriented IETF standards track transport protocol. The base protocol is specified in <a href="#RFC4960">[RFC4960]</a>. It supports multi-homing and path failover to provide resilience to path failures. An SCTP association has multiple streams in each direction, providing in-sequence delivery of user messages within each stream. This allows it to minimize head of line blocking.  SCTP supports multiple stream scheduling schemes controlling stream multiplexing, including priority and fair weighting schemes.</p>
+<p id="rfc.section.3.5.p.2">SCTP was originally developed for transporting telephony signaling messages and is deployed in telephony signaling networks, especially in mobile telephony networks. It can also be used for other services, for example, in the WebRTC framework for data channels.</p>
+<h1 id="rfc.section.3.5.1"><a href="#rfc.section.3.5.1">3.5.1.</a> <a href="#protocol-description-4" id="protocol-description-4">Protocol Description</a></h1>
+<p id="rfc.section.3.5.1.p.1">SCTP is a connection-oriented protocol using a four way handshake to establish an SCTP association, and a three way message exchange to gracefully shut it down. It uses the same port number concept as DCCP, TCP, UDP, and UDP-Lite.  SCTP only supports unicast.</p>
+<p id="rfc.section.3.5.1.p.2">SCTP uses the 32-bit CRC32c for protecting SCTP packets against bit errors and misdelivery of packets to an unintended endpoint. This is stronger than the 16-bit checksums used by TCP or UDP. However, partial payload checksum coverage as provided by DCCP or UDP-Lite is not supported.</p>
+<p id="rfc.section.3.5.1.p.3">SCTP has been designed with extensibility in mind. A common header is followed by a sequence of chunks. <a href="#RFC4960">[RFC4960]</a> defines how a receiver processes chunks with an unknown chunk type. The support of extensions can be negotiated during the SCTP handshake. Currently defined extensions include mechanisms for dynamic re-configuration of streams <a href="#RFC6525">[RFC6525]</a> and IP addresses <a href="#RFC5061">[RFC5061]</a>.  Furthermore, the extension specified in <a href="#RFC3758">[RFC3758]</a> introduces the concept of partial reliability for user messages.</p>
+<p id="rfc.section.3.5.1.p.4">SCTP provides a message-oriented service. Multiple small user messages can be bundled into a single SCTP packet to improve efficiency. For example, this bundling may be done by delaying user messages at the sender, similar to Nagle&#8217;s algorithm used by TCP. User messages which would result in IP packets larger than the MTU will be fragmented at the sender and reassembled at the receiver. There is no protocol limit on the user message size.  For MTU discovery the same mechanism than for TCP can be used <a href="#RFC1981">[RFC1981]</a><a href="#RFC4821">[RFC4821]</a>, as well as utilizing probe packets with padding chunks, as defined in <a href="#RFC4820">[RFC4820]</a>.</p>
+<p><a href="#RFC4960">[RFC4960]</a> specifies TCP-friendly congestion control to protect the network against overload. SCTP also uses sliding window flow control to protect receivers against overflow. Similar to TCP, SCTP also supports delaying acknowledgments. <a href="#RFC7053">[RFC7053]</a> provides a way for the sender of user messages to request the immediate sending of the corresponding acknowledgments.</p>
+<p id="rfc.section.3.5.1.p.6">Each SCTP association has between 1 and 65536 uni-directional streams in each direction. The number of streams can be different in each direction. Every user message is sent on a particular stream. User messages can be sent un- ordered,  or ordered upon request by the upper layer. Un-ordered messages can be delivered as soon as they are completely received. For user messages not requiring fragmentation, this minimizes head of line blocking. On the other hand, ordered messages sent on the same stream are delivered at the receiver in the same order as sent by the sender.</p>
+<p id="rfc.section.3.5.1.p.7">The base protocol defined in <a href="#RFC4960">[RFC4960]</a> does not allow interleaving of user- messages. Large messages on one stream can therefore block the sending of user messages on other streams. <a href="#I-D.ietf-tsvwg-sctp-ndata">[I-D.ietf-tsvwg-sctp-ndata]</a> overcomes this limitation. This draft also specifies multiple algorithms for the sender side selection of which streams to send data from, supporting a variety of scheduling algorithms including priority based methods. The stream re- configuration extension defined in <a href="#RFC6525">[RFC6525]</a> allows streams to be reset during the lifetime of an association and to increase the number of streams, if the number of streams negotiated in the SCTP handshake becomes insufficient.</p>
+<p id="rfc.section.3.5.1.p.8">Each user message sent is either delivered to the receiver or, in case of excessive retransmissions, the association is terminated in a non-graceful way <a href="#RFC4960">[RFC4960]</a>, similar to TCP behavior.  In addition to this reliable transfer, the partial reliability extension <a href="#RFC3758">[RFC3758]</a> allows a sender to abandon user messages.  The application can specify the policy for abandoning user messages.</p>
+<p id="rfc.section.3.5.1.p.9">SCTP supports multi-homing. Each SCTP endpoint uses a list of IP-addresses and a single port number. These addresses can be any mixture of IPv4 and IPv6 addresses. These addresses are negotiated during the handshake and the address re-configuration extension specified in <a href="#RFC5061">[RFC5061]</a> in combination with <a href="#RFC4895">[RFC4895]</a> can be used to change these addresses in an authenticated way during the lifetime of an SCTP association. This allows for transport layer mobility. Multiple addresses are used for improved resilience. If a remote address becomes unreachable, the traffic is switched over to a reachable one, if one exists.</p>
+<p id="rfc.section.3.5.1.p.10">For securing user messages, the use of TLS over SCTP has been specified in <a href="#RFC3436">[RFC3436]</a>. However, this solution does not support all services provided by SCTP, such as un-ordered delivery or partial reliability. Therefore, the use of DTLS over SCTP has been specified in <a href="#RFC6083">[RFC6083]</a> to overcome these limitations. When using DTLS over SCTP, the application can use almost all services provided by SCTP.</p>
+<p><a href="#I-D.ietf-tsvwg-natsupp">[I-D.ietf-tsvwg-natsupp]</a> defines methods for endpoints and middleboxes to provide NAT traversal for SCTP over IPv4.  For legacy NAT traversal, <a href="#RFC6951">[RFC6951]</a> defines the UDP encapsulation of SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets as specified in <a href="#I-D.ietf-tsvwg-sctp-dtls-encaps">[I-D.ietf-tsvwg-sctp-dtls-encaps]</a>. The latter encapsulation is used within the WebRTC context.</p>
+<p id="rfc.section.3.5.1.p.12">SCTP has a well-defined API, described in the next subsection.</p>
+<h1 id="rfc.section.3.5.2"><a href="#rfc.section.3.5.2">3.5.2.</a> <a href="#interface-description-4" id="interface-description-4">Interface Description</a></h1>
+<p><a href="#RFC4960">[RFC4960]</a> defines an abstract API for the base protocol.  This API describes the following functions callable by the upper layer of SCTP: Initialize, Associate, Send, Receive, Receive Unsent Message, Receive Unacknowledged Message, Shutdown, Abort, SetPrimary, Status, Change Heartbeat, Request Heartbeat, Get SRTT Report, Set Failure Threshold, Set Protocol Parameters, and Destroy.  The following notifications are provided by the SCTP stack to the upper layer: COMMUNICATION UP, DATA ARRIVE, SHUTDOWN COMPLETE, COMMUNICATION LOST, COMMUNICATION ERROR, RESTART, SEND FAILURE, NETWORK STATUS CHANGE.</p>
+<p id="rfc.section.3.5.2.p.2">An extension to the BSD Sockets API is defined in <a href="#RFC6458">[RFC6458]</a> and covers:</p>
+<p/>
+
+<ul>
+  <li>the base protocol defined in <a href="#RFC4960">[RFC4960]</a>. The API allows control over local addresses and port numbers and the primary path. Furthermore the application has fine control about parameters like retransmission thresholds, the path supervision parameters, the delayed acknowledgment timeout, and the fragmentation point. The API provides a mechanism to allow the SCTP stack to notify the application about events if the application has requested them. These notifications provide information about status changes of the association and each of the peer addresses.  In case of send failures, including drop of messages sent unreliably, the application can also be notified and user messages can be returned to the application. When sending user messages, the stream id, a payload protocol identifier, an indication whether ordered delivery is requested or not. These parameters can also be provided on message reception. Additionally a context can be provided when sending, which can be use in case of send failures. The sending of arbitrary large user messages is supported.</li>
+  <li>the SCTP Partial Reliability extension defined in <a href="#RFC3758">[RFC3758]</a> to specify for a user message the PR-SCTP policy and the policy specific parameter.  Examples of these policies defined in <a href="#RFC3758">[RFC3758]</a> and <a href="#RFC7496">[RFC7496]</a> are:</li>
+  <li>Limiting the time a user message is dealt with by the sender.</li>
+  <li>Limiting the number of retransmissions for each fragment of a user message.  If the number of retransmissions is limited to 0, one gets a service similar to UDP.</li>
+  <li>Abandoning messages of lower priority in case of a send buffer shortage.</li>
+  <li>the SCTP Authentication extension defined in <a href="#RFC4895">[RFC4895]</a> allowing to manage the shared keys, the HMAC to use, set the chunk types which are only accepted in an authenticated way, and get the list of chunks which are accepted by the local and remote end point in an authenticated way.</li>
+  <li>the SCTP Dynamic Address Reconfiguration extension defined in <a href="#RFC5061">[RFC5061]</a>.  It allows to manually add and delete local addresses for SCTP associations and the enabling of automatic address addition and deletion. Furthermore the peer can be given a hint for choosing its primary path.</li>
+</ul>
+<p id="rfc.section.3.5.2.p.4">For the following SCTP protocol extensions the BSD Sockets API extension is defined in the document specifying the protocol extensions:</p>
+<p/>
+
+<ul>
+  <li>the SCTP Stream Reconfiguration extension defined in <a href="#RFC6525">[RFC6525]</a>.  The API allows to trigger the reset operation for incoming and outgoing streams and the whole association. It provides also a way to notify the association about the corresponding events. Furthermore the application can increase the number of streams.</li>
+  <li>the UDP Encapsulation of SCTP packets extension defined in <a href="#RFC6951">[RFC6951]</a>.  The API allows the management of the remote UDP encapsulation port.</li>
+  <li>the SCTP SACK-IMMEDIATELY extension defined in <a href="#RFC7053">[RFC7053]</a>.  The API allows the sender of a user message to request the receiver to send the corresponding acknowledgment immediately.</li>
+  <li>the additional PR-SCTP policies defined in <a href="#RFC7496">[RFC7496]</a>.  The API allows to enable/disable the PR-SCTP extension, choose the PR-SCTP policies defined in the document and provide statistical information about abandoned messages.</li>
+</ul>
+<p id="rfc.section.3.5.2.p.6">Future documents describing SCTP protocol extensions are expected to describe the corresponding BSD Sockets API extension in a <samp>Socket API Considerations</samp> section.</p>
+<p id="rfc.section.3.5.2.p.7">The SCTP socket API supports two kinds of sockets:</p>
+<p/>
+
+<ul>
+  <li>one-to-one style sockets (by using the socket type <samp>SOCK_STREAM</samp>).</li>
+  <li>one-to-many style socket (by using the socket type <samp>SOCK_SEQPACKET</samp>).</li>
+</ul>
+<p id="rfc.section.3.5.2.p.9">One-to-one style sockets are similar to TCP sockets, there is a 1:1 relationship between the sockets and the SCTP associations (except for listening sockets).  One-to-many style SCTP sockets are similar to unconnected UDP sockets, where there is a 1:n relationship between the sockets and the SCTP associations.</p>
+<p id="rfc.section.3.5.2.p.10">The SCTP stack can provide information to the applications about state changes of the individual paths and the association whenever they occur.  These events are delivered similar to user messages but are specifically marked as notifications.</p>
+<p id="rfc.section.3.5.2.p.11">New functions have been introduced to support the use of multiple local and remote addresses.  Additional SCTP-specific send and receive calls have been defined to permit SCTP-specific information to be sent without using ancillary data in the form of additional cmsgs.  These functions provide support for detecting partial delivery of user messages and notifications.</p>
+<p id="rfc.section.3.5.2.p.12">The SCTP socket API allows a fine-grained control of the protocol behavior through an extensive set of socket options.</p>
+<p id="rfc.section.3.5.2.p.13">The SCTP kernel implementations of FreeBSD, Linux and Solaris follow mostly the specified extension to the BSD Sockets API for the base protocol and the corresponding supported protocol extensions.</p>
+<h1 id="rfc.section.3.5.3"><a href="#rfc.section.3.5.3">3.5.3.</a> <a href="#transport-features-4" id="transport-features-4">Transport Features</a></h1>
+<p id="rfc.section.3.5.3.p.1">The transport features provided by SCTP are:</p>
+<p/>
+
+<ul>
+  <li>connection-oriented transport with feature negotiation and application-to-port mapping,</li>
+  <li>unicast transport,</li>
+  <li>port multiplexing,</li>
+  <li>uni- or bidirectional communication,</li>
+  <li>message-oriented delivery with durable message framing supporting multiple concurrent streams,</li>
+  <li>fully reliable, partially reliable, or unreliable delivery (based on user specified policy to handle abandoned user messages) with drop notification,</li>
+  <li>ordered and unordered delivery within a stream,</li>
+  <li>support for stream scheduling prioritization,</li>
+  <li>segmentation,</li>
+  <li>user message bundling,</li>
+  <li>flow control using a window-based mechanism,</li>
+  <li>congestion control using methods similar to TCP,</li>
+  <li>strong error detection (CRC32c),</li>
+  <li>transport layer multihoming for resilience and mobility.</li>
+</ul>
+<h1 id="rfc.section.3.6"><a href="#rfc.section.3.6">3.6.</a> <a href="#datagram-congestion-control-protocol-dccp" id="datagram-congestion-control-protocol-dccp">Datagram Congestion Control Protocol (DCCP)</a></h1>
+<p id="rfc.section.3.6.p.1">Datagram Congestion Control Protocol (DCCP) <a href="#RFC4340">[RFC4340]</a> is an IETF standards track bidirectional transport protocol that provides unicast connections of congestion-controlled messages without providing reliability.</p>
+<p id="rfc.section.3.6.p.2">The DCCP Problem Statement describes the goals that DCCP sought to address <a href="#RFC4336">[RFC4336]</a>: It is suitable for applications that transfer fairly large amounts of data and that can benefit from control over the trade off between timeliness and reliability <a href="#RFC4336">[RFC4336]</a>.</p>
+<p id="rfc.section.3.6.p.3">DCCP offers low overhead, and many characteristics common to UDP, but can avoid &#8220;re-inventing the wheel&#8221; each time a new multimedia application emerges.  Specifically it includes core transport functions (feature negotiation, path state management, RTT calculation, PMTUD, etc.): DCCP applications select how they send packets and, where suitable, choose common algorithms to manage their functions.  Examples of applications that can benefit from such transport services include interactive applications, streaming media, or on-line games <a href="#RFC4336">[RFC4336]</a>.</p>
+<h1 id="rfc.section.3.6.1"><a href="#rfc.section.3.6.1">3.6.1.</a> <a href="#protocol-description-5" id="protocol-description-5">Protocol Description</a></h1>
+<p id="rfc.section.3.6.1.p.1">DCCP is a connection-oriented datagram protocol, providing a three-way handshake to allow a client and server to set up a connection, and mechanisms for orderly completion and immediate teardown of a connection.</p>
+<p id="rfc.section.3.6.1.p.2">A DCCP protocol instance can be extended <a href="#RFC4340">[RFC4340]</a> and tuned using additional features. Some features are sender-side only, requiring no negotiation with the receiver; some are receiver-side only; and some are explicitly negotiated during connection setup.</p>
+<p id="rfc.section.3.6.1.p.3">DCCP uses a Connect packet to initiate a session, and permits each endpoint to choose the features it wishes to support.  Simultaneous open <a href="#RFC5596">[RFC5596]</a>, as in TCP, can enable interoperability in the presence of middleboxes. The Connect packet includes a Service Code <a href="#RFC5595">[RFC5595]</a> that identifies the application or protocol using DCCP, providing middleboxes with information about the intended use of a connection.</p>
+<p id="rfc.section.3.6.1.p.4">The DCCP service is unicast-only.</p>
+<p id="rfc.section.3.6.1.p.5">It provides multiplexing to multiple sockets at each endpoint using port numbers. An active DCCP session is identified by its four-tuple of local and remote IP addresses and local port and remote port numbers.</p>
+<p id="rfc.section.3.6.1.p.6">The protocol segments data into messages, typically sized to fit in IP packets, but which may be fragmented providing they are smaller than the maximum packet size.  A DCCP interface allows applications to request fragmentation for packets larger than PMTU, but not larger than the maximum packet size allowed by the current congestion control mechanism (CCMPS) <a href="#RFC4340">[RFC4340]</a>.</p>
+<p id="rfc.section.3.6.1.p.7">Each message is identified by a sequence number. The sequence number is used to identify segments in acknowledgments, to detect unacknowledged segments, to measure RTT, etc. The protocol may support unordered delivery of data, and does not itself provide retransmission. DCCP supports reduced checksum coverage, a partial payload protection mechanism similar to UDP-Lite. There is also a Data Checksum option, which when enabled, contains a strong CRC, to enable endpoints to detect application data corruption.</p>
+<p id="rfc.section.3.6.1.p.8">Receiver flow control is supported, which limits the amount of unacknowledged data that can be outstanding at a given time.</p>
+<p id="rfc.section.3.6.1.p.9">DCCP supports negotiation of the congestion control profile between endpoints, to provide plug-and-play congestion control mechanisms.  Examples of specified profiles include &#8220;TCP-like&#8221; <a href="#RFC4341">[RFC4341]</a>, &#8220;TCP-friendly&#8221; <a href="#RFC4342">[RFC4342]</a>, and &#8220;TCP-friendly for small packets&#8221; <a href="#RFC5622">[RFC5622]</a>. Additional mechanisms are recorded in an IANA registry.</p>
+<p id="rfc.section.3.6.1.p.10">A lightweight UDP-based encapsulation (DCCP-UDP) has been defined <a href="#RFC6773">[RFC6773]</a> that permits DCCP to be used over paths where DCCP is not natively supported.  Support for DCCP in NAPT/NATs is defined in <a href="#RFC4340">[RFC4340]</a> and <a href="#RFC5595">[RFC5595]</a>.  Upper layer protocols specified on top of DCCP include DTLS <a href="#RFC5595">[RFC5595]</a>, RTP <a href="#RFC5672">[RFC5672]</a>, ICE/SDP <a href="#RFC6773">[RFC6773]</a>.</p>
+<h1 id="rfc.section.3.6.2"><a href="#rfc.section.3.6.2">3.6.2.</a> <a href="#interface-description-5" id="interface-description-5">Interface Description</a></h1>
+<p id="rfc.section.3.6.2.p.1">Functions expected for a DCCP API include: Open, Close and Management of the progress a DCCP connection. The Open function provides feature negotiation, selection of an appropriate CCID for congestion control and other parameters associated with the DCCP connection. A function allows an application to send DCCP datagrams, including setting the required checksum coverage, and any required options. (DCCP permits sending datagrams with a zero-length payload.) A function allows reception of data, including indicating if the data was used or dropped. Functions can also make the status of a connection visible to an application, including detection of the maximum packet size and the ability to perform flow control by detecting a slow receiver at the sender.</p>
+<p id="rfc.section.3.6.2.p.2">There is no API currently specified in the RFC Series.</p>
+<h1 id="rfc.section.3.6.3"><a href="#rfc.section.3.6.3">3.6.3.</a> <a href="#transport-features-5" id="transport-features-5">Transport Features</a></h1>
+<p id="rfc.section.3.6.3.p.1">The transport features provided by DCCP are:</p>
+<p/>
+
+<ul>
+  <li>unicast transport,</li>
+  <li>connection-oriented communication with feature negotiation and application-to-port mapping,</li>
+  <li>signaling of application class for middlebox support (implemented using Service Codes),</li>
+  <li>port multiplexing,</li>
+  <li>uni-or bidirectional communication,</li>
+  <li>message-oriented delivery,</li>
+  <li>unreliable delivery with drop notification,</li>
+  <li>unordered delivery,</li>
+  <li>flow control (implemented using the slow receiver function)</li>
+  <li>partial and full payload error detection (with optional strong integrity check).</li>
+</ul>
+<h1 id="rfc.section.3.7"><a href="#rfc.section.3.7">3.7.</a> <a href="#transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport" id="transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport">Transport Layer Security (TLS) and Datagram TLS (DTLS) as a pseudotransport</a></h1>
+<p id="rfc.section.3.7.p.1">Transport Layer Security (TLS) <a href="#RFC5246">[RFC5246]</a> and Datagram TLS (DTLS) <a href="#RFC6347">[RFC6347]</a> are IETF protocols that provide several security-related features to applications. TLS is designed to run on top of a reliable streaming transport protocol (usually TCP), while DTLS is designed to run on top of a best-effort datagram protocol (UDP or DCCP <a href="#RFC5238">[RFC5238]</a>). At the time of writing, the current version of TLS is 1.2; which is defined in <a href="#RFC5246">[RFC5246]</a>. DTLS provides nearly identical functionality to applications; it is defined in <a href="#RFC6347">[RFC6347]</a> and its current version is also 1.2.  The TLS protocol evolved from the Secure Sockets Layer (SSL) protocols developed in the mid-1990s to support protection of HTTP traffic. Work is currently nearing completion on the definition of TLS version 1.3.</p>
+<p id="rfc.section.3.7.p.2">While older versions of TLS and DTLS are still in use, they provide weaker security guarantees. <a href="#RFC7457">[RFC7457]</a> outlines important attacks on TLS and DTLS.  <a href="#RFC7525">[RFC7525]</a> is a Best Current Practices (BCP) document that describes secure configurations for TLS and DTLS to counter these attacks. The recommendations are applicable for the vast majority of use cases.</p>
+<h1 id="rfc.section.3.7.1"><a href="#rfc.section.3.7.1">3.7.1.</a> <a href="#protocol-description-6" id="protocol-description-6">Protocol Description</a></h1>
+<p id="rfc.section.3.7.1.p.1">Both TLS and DTLS provide the same security features and can thus be discussed together. The features they provide are:</p>
+<p/>
+
+<ul>
+  <li>Confidentiality</li>
+  <li>Data integrity</li>
+  <li>Peer authentication (optional)</li>
+  <li>Perfect forward secrecy (optional)</li>
+</ul>
+<p id="rfc.section.3.7.1.p.3">The authentication of the peer entity can be omitted; a common web use case is where the server is authenticated and the client is not. TLS also provides a completely anonymous operation mode in which neither peer&#8217;s identity is authenticated. It is important to note that TLS itself does not specify how a peering entity&#8217;s identity should be interpreted.  For example, in the common use case of authentication by means of an X.509 certificate, it is the application&#8217;s decision whether the certificate of the peering entity is acceptable for authorization decisions.</p>
+<p id="rfc.section.3.7.1.p.4">Perfect forward secrecy, if enabled and supported by the selected algorithms, ensures that traffic encrypted and captured during a session at time t0 cannot be later decrypted at time t1 (t1 &gt; t0), even if the long-term secrets of the communicating peers are later compromised.</p>
+<p id="rfc.section.3.7.1.p.5">As DTLS is generally used over an unreliable datagram transport such as UDP, applications will need to tolerate lost, re-ordered, or duplicated datagrams.  Like TLS, DTLS conveys application data in a sequence of independent records.  However, because records are mapped to unreliable datagrams, there are several features unique to DTLS that are not applicable to TLS:</p>
+<p/>
+
+<ul>
+  <li>Record replay detection (optional).</li>
+  <li>Record size negotiation (estimates of PMTU and record size expansion factor).</li>
+  <li>Conveyance of IP don&#8217;t fragment (DF) bit settings by application.</li>
+  <li>An anti-DoS stateless cookie mechanism (optional).</li>
+</ul>
+<p id="rfc.section.3.7.1.p.7">Generally, DTLS follows the TLS design as closely as possible.  To operate over datagrams, DTLS includes a sequence number and limited forms of retransmission and fragmentation for its internal operations.  The sequence number may be used for detecting replayed information, according to the windowing procedure described in Section 4.1.2.6 of <a href="#RFC6347">[RFC6347]</a>.  DTLS forbids the use of stream ciphers, which are essentially incompatible when operating on independent encrypted records.</p>
+<h1 id="rfc.section.3.7.2"><a href="#rfc.section.3.7.2">3.7.2.</a> <a href="#interface-description-6" id="interface-description-6">Interface Description</a></h1>
+<p id="rfc.section.3.7.2.p.1">TLS is commonly invoked using an API provided by packages such as OpenSSL, wolfSSL, or GnuTLS. Using such APIs entails the manipulation of several important abstractions, which fall into the following categories: long-term keys and algorithms, session state, and communications/connections. There may also be special APIs required to deal with time and/or random numbers, both of which are needed by a variety of encryption algorithms and protocols.</p>
+<p id="rfc.section.3.7.2.p.2">Considerable care is required in the use of TLS APIs to ensure creation of a secure application.  The programmer should have at least a basic understanding of encryption and digital signature algorithms and their strengths, public key infrastructure (including X.509 certificates and certificate revocation), and the sockets API.  See <a href="#RFC7525">[RFC7525]</a> and <a href="#RFC7457">[RFC7457]</a>, as mentioned above.</p>
+<p id="rfc.section.3.7.2.p.3">As an example, in the case of OpenSSL, the primary abstractions are the library itself and method (protocol), session, context, cipher and connection.  After initializing the library and setting the method, a cipher suite is chosen and used to configure a context object. Session objects may then be minted according to the parameters present in a context object and associated with individual connections. Depending on how precisely the programmer wishes to select different algorithmic or protocol options, various levels of details may be required.</p>
+<h1 id="rfc.section.3.7.3"><a href="#rfc.section.3.7.3">3.7.3.</a> <a href="#transport-features-6" id="transport-features-6">Transport Features</a></h1>
+<p id="rfc.section.3.7.3.p.1">Both TLS and DTLS employ a layered architecture. The lower layer is commonly called the record protocol. It is responsible for:</p>
+<p/>
+
+<ul>
+  <li>message fragmentation,</li>
+  <li>authentication and integrity via message authentication codes (MAC),</li>
+  <li>data encryption,</li>
+  <li>scheduling transmission using the underlying transport protocol.</li>
+</ul>
+<p id="rfc.section.3.7.3.p.3">DTLS augments the TLS record protocol with:</p>
+<p/>
+
+<ul>
+  <li>ordering and replay protection, implemented using sequence numbers.</li>
+</ul>
+<p id="rfc.section.3.7.3.p.5">Several protocols are layered on top of the record protocol.  These include the handshake, alert, and change cipher spec protocols.  There is also the data protocol, used to carry application traffic. The handshake protocol is used to establish cryptographic  and compression parameters when a connection is first set up.  In DTLS, this protocol also has a basic fragmentation and retransmission capability and a cookie-like mechanism to resist DoS attacks.  (TLS compression is not recommended at present). The alert protocol is used to inform the peer of various conditions, most of which are terminal for the connection. The change cipher spec protocol is used to synchronize changes in cryptographic parameters for each peer.</p>
+<p id="rfc.section.3.7.3.p.6">The data protocol, when used with an appropriate cipher, provides:</p>
+<p/>
+
+<ul>
+  <li>authentication of one end or both ends of a connection,</li>
+  <li>confidentiality,</li>
+  <li>cryptographic integrity protection.</li>
+</ul>
+<p id="rfc.section.3.7.3.p.8">Both TLS and DTLS are unicast-only.</p>
+<h1 id="rfc.section.3.8"><a href="#rfc.section.3.8">3.8.</a> <a href="#realtime-transport-protocol-rtp" id="realtime-transport-protocol-rtp">Realtime Transport Protocol (RTP)</a></h1>
+<p id="rfc.section.3.8.p.1">RTP provides an end-to-end network transport service, suitable for applications transmitting real-time data, such as audio, video or data, over multicast or unicast transport services, including TCP, UDP, UDP-Lite, DCCP, TLS and DTLS.</p>
+<h1 id="rfc.section.3.8.1"><a href="#rfc.section.3.8.1">3.8.1.</a> <a href="#protocol-description-7" id="protocol-description-7">Protocol Description</a></h1>
+<p id="rfc.section.3.8.1.p.1">The RTP standard <a href="#RFC3550">[RFC3550]</a> defines a pair of protocols, RTP and the RTP control protocol, RTCP. The transport does not provide connection setup, instead relying on out-of-band techniques or associated control protocols to setup, negotiate parameters or tear down a session.</p>
+<p id="rfc.section.3.8.1.p.2">An RTP sender encapsulates audio/video data into RTP packets to transport media streams. The RFC-series specifies RTP payload formats that allow packets to carry a wide range of media, and specifies a wide range of multiplexing, error control and other support mechanisms.</p>
+<p id="rfc.section.3.8.1.p.3">If a frame of media data is large, it will be fragmented into several RTP packets. Likewise, several small frames may be bundled into a single RTP packet.</p>
+<p id="rfc.section.3.8.1.p.4">An RTP receiver collects RTP packets from the network, validates them for correctness, and sends them to the media decoder input-queue. Missing packet detection is performed by the channel decoder. The play-out buffer is ordered by time stamp and is used to reorder packets. Damaged frames may be repaired before the media payloads are decompressed to display or store the data.  Some uses of RTP are able to exploit the partial payload protection features offered by DCCP and UDP-Lite.</p>
+<p id="rfc.section.3.8.1.p.5">RTCP is a control protocol that works alongside an RTP flow. Both the RTP sender and receiver will send RTCP report packets. This is used to periodically send control information and report performance. Based on received RTCP feedback, an RTP sender can adjust the transmission, e.g., perform rate adaptation at the application layer in the case of congestion.</p>
+<p id="rfc.section.3.8.1.p.6">An RTCP receiver report (RTCP RR) is returned to the sender periodically to report key parameters (e.g, the fraction of packets lost in the last reporting interval, the cumulative number of packets lost, the highest sequence number received, and the inter-arrival jitter). The RTCP RR packets also contain timing information that allows the sender to estimate the network round trip time (RTT) to the receivers.</p>
+<p id="rfc.section.3.8.1.p.7">The interval between reports sent from each receiver tends to be on the order of a few seconds on average, although this varies with the session rate, and sub-second reporting intervals are possible for high rate sessions.  The interval is randomized to avoid synchronization of reports from multiple receivers.</p>
+<h1 id="rfc.section.3.8.2"><a href="#rfc.section.3.8.2">3.8.2.</a> <a href="#interface-description-7" id="interface-description-7">Interface Description</a></h1>
+<p id="rfc.section.3.8.2.p.1">There is no standard application programming interface defined for RTP or RTCP. Implementations are typically tightly integrated with a particular application, and closely follow the principles of application level framing and integrated layer processing <a href="#ClarkArch">[ClarkArch]</a> in media processing <a href="#RFC2736">[RFC2736]</a>, error recovery and concealment, rate adaptation, and security <a href="#RFC7202">[RFC7202]</a>.  Accordingly, RTP implementations tend to be targeted at particular application domains (e.g., voice-over-IP, IPTV, or video conferencing), with a feature set optimized for that domain, rather than being general purpose implementations of the protocol.</p>
+<h1 id="rfc.section.3.8.3"><a href="#rfc.section.3.8.3">3.8.3.</a> <a href="#transport-features-7" id="transport-features-7">Transport Features</a></h1>
+<p id="rfc.section.3.8.3.p.1">The transport features provided by RTP are:</p>
+<p/>
+
+<ul>
+  <li>unicast, multicast or IPv4 broadcast (provided by lower layer protocol),</li>
+  <li>port multiplexing (provided by lower layer protocol),</li>
+  <li>uni- or bidirectional communication (provided by lower layer protocol),</li>
+  <li>message-oriented delivery with support for media types and other extensions,</li>
+  <li>reliable delivery when using erasure coding or unreliable delivery with drop notification (if supported by lower layer protocol),</li>
+  <li>connection setup with feature negotiation (using associated protocols) and application-to-port mapping (provided by lower layer protocol),</li>
+  <li>segmentation,</li>
+  <li>performance metric reporting (using associated protocols).</li>
+</ul>
+<h1 id="rfc.section.3.9"><a href="#rfc.section.3.9">3.9.</a> <a href="#hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport" id="hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport">Hypertext Transport Protocol (HTTP) over TCP as a pseudotransport</a></h1>
+<p id="rfc.section.3.9.p.1">The Hypertext Transfer Protocol (HTTP) is an application-level protocol widely used on the Internet. It provides object-oriented delivery of discrete data or files.  Version 1.1 of the protocol is specified in <a href="#RFC7230">[RFC7230]</a> <a href="#RFC7231">[RFC7231]</a> <a href="#RFC7232">[RFC7232]</a> <a href="#RFC7233">[RFC7233]</a> <a href="#RFC7234">[RFC7234]</a> <a href="#RFC7235">[RFC7235]</a>, and version 2 in <a href="#RFC7540">[RFC7540]</a>.  HTTP is usually transported over TCP using port 80 and 443, although it can be used with other transports. When used over TCP it inherits TCP&#8217;s properties.</p>
+<p id="rfc.section.3.9.p.2">Application layer protocols may use HTTP as a substrate with an existing method and data formats, or specify new methods and data formats. There are various reasons for this practice listed in <a href="#RFC3205">[RFC3205]</a>; these include being a well-known and well-understood protocol, reusability of existing servers and client libraries, easy use of existing security mechanisms such as HTTP digest authentication <a href="#RFC2617">[RFC2617]</a> and TLS <a href="#RFC5246">[RFC5246]</a>, the ability of HTTP to traverse firewalls makes it work over many types of infrastructure, and in cases where an application server often needs to support HTTP anyway.</p>
+<p id="rfc.section.3.9.p.3">Depending on application need, the use of HTTP as a substrate protocol may add complexity and overhead in comparison to a special-purpose protocol (e.g., HTTP headers, suitability of the HTTP security model, etc.). <a href="#RFC3205">[RFC3205]</a> addresses this issue and provides some guidelines and identifies concerns about the use of HTTP standard port 80 and 443, the use of HTTP URL scheme and interaction with existing firewalls, proxies and NATs.</p>
+<p id="rfc.section.3.9.p.4">Representational State Transfer (REST) <a href="#REST">[REST]</a> is another example of how applications can use HTTP as transport protocol. REST is an architecture style that may be used to build applications using HTTP as a communication protocol.</p>
+<h1 id="rfc.section.3.9.1"><a href="#rfc.section.3.9.1">3.9.1.</a> <a href="#protocol-description-8" id="protocol-description-8">Protocol Description</a></h1>
+<p id="rfc.section.3.9.1.p.1">Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client sends a request containing a request method, URI and protocol version followed by a MIME-like message (see <a href="#RFC7231">[RFC7231]</a> for the differences between an HTTP object and a MIME message), containing information about the client and request modifiers. The message can also contain a message body carrying application data.  The server responds with a status or error code followed by a MIME-like message containing information about the server and information about the data. This may include a message body. It is possible to specify a data format for the message body using MIME media types <a href="#RFC2045">[RFC2045]</a>.  The protocol has additional features, some relevant to pseudo-transport are described below.</p>
+<p id="rfc.section.3.9.1.p.2">Content negotiation, specified in <a href="#RFC7231">[RFC7231]</a>, is a mechanism provided by HTTP to allow selection of a representation for a requested resource. The client and server negotiate acceptable data formats, character sets, data encoding (e.g., data can be transferred compressed using gzip). HTTP can accommodate exchange of messages as well as data streaming (using chunked transfer encoding <a href="#RFC7230">[RFC7230]</a>). It is also possible to request a part of a resource using an object range request <a href="#RFC7233">[RFC7233]</a>. The protocol provides powerful cache control signaling defined in <a href="#RFC7234">[RFC7234]</a>.</p>
+<p id="rfc.section.3.9.1.p.3">The persistent connections of HTTP 1.1 and HTTP 2.0 allow multiple request- response transactions (streams) during the life-time of a single HTTP connection. This reduces overhead during connection establishment and mitigates transport layer slow-start that would have otherwise been incurred for each transaction. HTTP 2.0 connections can multiplex many request/response pairs in parallel on a single transport connection.  Both are important to reduce latency for HTTP&#8217;s primary use case.</p>
+<p id="rfc.section.3.9.1.p.4">HTTP can be combined with security mechanisms, such as TLS (denoted by HTTPS).  This adds protocol properties provided by such a mechanism (e.g., authentication, encryption). The TLS Application-Layer Protocol Negotiation (ALPN) extension <a href="#RFC7301">[RFC7301]</a> can be used to negotiate the HTTP version within the TLS handshake, eliminating the latency incurred by additional round-trip exchanges. Arbitrary cookie strings, included as part of the MIME headers, are often used as bearer tokens in HTTP.</p>
+<h1 id="rfc.section.3.9.2"><a href="#rfc.section.3.9.2">3.9.2.</a> <a href="#interface-description-8" id="interface-description-8">Interface Description</a></h1>
+<p id="rfc.section.3.9.2.p.1">There are many HTTP libraries available exposing different APIs. The APIs provide a way to specify a request by providing a URI, a method, request modifiers and optionally a request body. For the response, callbacks can be registered that will be invoked when the response is received. If HTTPS is used, the API exposes a registration of callbacks for a server that requests client authentication and when certificate verification is needed.</p>
+<p id="rfc.section.3.9.2.p.2">The World Wide Web Consortium (W3C) has standardized the XMLHttpRequest API <a href="#XHR">[XHR]</a>.  This API can be used for sending HTTP/HTTPS requests and receiving server responses. Besides the XML data format, the request and response data format can also be JSON, HTML, and plain text. JavaScript and XMLHttpRequest are ubiquitous programming models for websites, and more general applications, where native code is less attractive.</p>
+<h1 id="rfc.section.3.9.3"><a href="#rfc.section.3.9.3">3.9.3.</a> <a href="#transport-features-8" id="transport-features-8">Transport features</a></h1>
+<p id="rfc.section.3.9.3.p.1">The transport features provided by HTTP, when used as a pseudo-transport, are:</p>
+<p/>
+
+<ul>
+  <li>unicast transport (provided by the lower layer protocol, usually TCP),</li>
+  <li>uni- or bidirectional communication,</li>
+  <li>transfer of objects in multiple streams with object content type negotiation, supporting partial transmission of object ranges,</li>
+  <li>ordered delivery (provided by the lower layer protocol, usually TCP),</li>
+  <li>fully reliable delivery (provided by the lower layer protocol, usually TCP),</li>
+  <li>flow control (provided by the lower layer protocol, usually TCP).</li>
+  <li>congestion control (provided by the lower layer protocol, usually TCP).</li>
+</ul>
+<p id="rfc.section.3.9.3.p.3">HTTPS (HTTP over TLS) additionally provides the following features (as provided by TLS):</p>
+<p/>
+
+<ul>
+  <li>authentication (of one or both ends of a connection),</li>
+  <li>confidentiality,</li>
+  <li>integrity protection.</li>
+</ul>
+<h1 id="rfc.section.3.10"><a href="#rfc.section.3.10">3.10.</a> <a href="#file-delivery-over-unidirectional-transportasynchronous-layered-coding-reliable-multicast-flutealc" id="file-delivery-over-unidirectional-transportasynchronous-layered-coding-reliable-multicast-flutealc">File Delivery over Unidirectional Transport/Asynchronous Layered Coding Reliable Multicast (FLUTE/ALC)</a></h1>
+<p id="rfc.section.3.10.p.1">FLUTE/ALC is an IETF standards track protocol specified in <a href="#RFC6726">[RFC6726]</a> and <a href="#RFC5775">[RFC5775]</a>. It provides object-oriented delivery of discrete data or files.  Asynchronous Layer Coding (ALC) provides an underlying reliable transport service and FLUTE a file-oriented specialization of the ALC service (e.g., to carry associated metadata). The <a href="#RFC6726">[RFC6726]</a> and <a href="#RFC5775">[RFC5775]</a> protocols are non-backward-compatible updates of the <a href="#RFC3926">[RFC3926]</a> and <a href="#RFC3450">[RFC3450]</a> experimental protocols; these experimental protocols are currently largely deployed in the 3GPP Multimedia Broadcast and Multicast Services (MBMS) (see <a href="#MBMS">[MBMS]</a>, section 7) and similar contexts (e.g., the Japanese ISDB-Tmm standard).</p>
+<p id="rfc.section.3.10.p.2">The FLUTE/ALC protocol has been designed to support massively scalable reliable bulk data dissemination to receiver groups of arbitrary size using IP Multicast over any type of delivery network, including unidirectional networks (e.g., broadcast wireless channels). However, the FLUTE/ALC protocol also supports point-to-point unicast transmissions.</p>
+<p id="rfc.section.3.10.p.3">FLUTE/ALC bulk data dissemination has been designed for discrete file or memory-based &#8220;objects&#8221;. Although FLUTE/ALC is not well adapted to byte- and message-streaming, there is an exception: FLUTE/ALC is used to carry 3GPP Dynamic Adaptive Streaming over HTTP (DASH) when scalability is a requirement (see <a href="#MBMS">[MBMS]</a>, section 5.6).</p>
+<p id="rfc.section.3.10.p.4">FLUTE/ALC&#8217;s reliability, delivery mode, congestion control, and flow/rate control mechanisms can be separately controlled to meet different application needs. Section 4.1 of <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a> describes multicast congestion control requirements for UDP.</p>
+<h1 id="rfc.section.3.10.1"><a href="#rfc.section.3.10.1">3.10.1.</a> <a href="#protocol-description-9" id="protocol-description-9">Protocol Description</a></h1>
+<p id="rfc.section.3.10.1.p.1">The FLUTE/ALC protocol works on top of UDP (though it could work on top of any datagram delivery transport protocol), without requiring any connectivity from receivers to the sender. Purely unidirectional networks are therefore supported by FLUTE/ALC. This guarantees scalability to an unlimited number of receivers in a session, since the sender behaves exactly the same regardless of the number of receivers.</p>
+<p id="rfc.section.3.10.1.p.2">FLUTE/ALC supports the transfer of bulk objects such as file or in-memory content, using either a push or an on-demand mode. in push mode, content is sent once to the receivers, while in on-demand mode, content is sent continuously during periods of time that can greatly exceed the average time required to download the session objects (see <a href="#RFC5651">[RFC5651]</a>, section 4.2).</p>
+<p id="rfc.section.3.10.1.p.3">This enables receivers to join a session asynchronously, at their own discretion, receive the content and leave the session.  In this case, data content is typically sent continuously, in loops (also known as &#8220;carousels&#8221;).  FLUTE/ALC also supports the transfer of an object stream, with loose real-time constraints. This is particularly useful to carry 3GPP DASH when scalability is a requirement and unicast transmissions over HTTP cannot be used (<a href="#MBMS">[MBMS]</a>, section 5.6).  In this case, packets are sent in sequence using push mode. FLUTE/ALC is not well adapted to byte- and message-streaming and other solutions could be preferred (e.g., FECFRAME <a href="#RFC6363">[RFC6363]</a> with real-time flows).</p>
+<p id="rfc.section.3.10.1.p.4">The FLUTE file delivery instantiation of ALC provides a metadata delivery service. Each object of the FLUTE/ALC session is described in a dedicated entry of a File Delivery Table (FDT), using an XML format (see <a href="#RFC6726">[RFC6726]</a>, section 3.2).  This metadata can include, but is not restricted to, a URI attribute (to identify and locate the object), a media type attribute, a size attribute, an encoding attribute, or a message digest attribute. Since the set of objects sent within a session can be dynamic, with new objects being added and old ones removed, several instances of the FDT can be sent and a mechanism is provided to identify a new FDT Instance.</p>
+<p id="rfc.section.3.10.1.p.5">Error detection and verification of the protocol control information relies on the on the underlying transport (e.g., UDP checksum).</p>
+<p id="rfc.section.3.10.1.p.6">To provide robustness against packet loss and improve the efficiency of the on-demand mode, FLUTE/ALC relies on packet erasure coding (AL-FEC). AL-FEC encoding is proactive (since there is no feedback and therefore no (N)ACK-based retransmission) and ALC packets containing repair data are sent along with ALC packets containing source data. Several FEC Schemes have been standardized; FLUTE/ALC does not mandate the use of any particular one.  Several strategies concerning the transmission order of ALC source and repair packets are possible, in particular in on-demand mode where it can deeply impact the service provided (e.g., to favor the recovery of objects in sequence, or at the other extreme, to favor the recovery of all objects in parallel), and FLUTE/ALC does not mandate nor recommend the use of any particular one.</p>
+<p id="rfc.section.3.10.1.p.7">A FLUTE/ALC session is composed of one or more channels, associated to different destination unicast and/or multicast IP addresses.  ALC packets are sent in those channels at a certain transmission rate, with a rate that often differs depending on the channel.  FLUTE/ALC does not mandate nor recommend any strategy to select which ALC packet to send on which channel.  FLUTE/ALC can use a multiple rate congestion control building block (e.g., WEBRC) to provide congestion control that is feedback free, where receivers adjust their reception rates individually by joining and leaving channels associated with the session.  To that purpose, the ALC header provides a specific field to carry congestion control specific information.  However FLUTE/ALC does not mandate the use of a particular congestion control mechanism although WEBRC is mandatory to support for the Internet (<a href="#RFC6726">[RFC6726]</a>, section 1.1.4).  FLUTE/ALC is often used over a network path with pre-provisioned capacity <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a> where there are no flows competing for capacity. In this case, a sender-based rate control mechanism and a single channel is sufficient.</p>
+<p><a href="#RFC6584">[RFC6584]</a> provides per-packet authentication, integrity, and anti-replay protection in the context of the ALC and NORM protocols.  Several mechanisms are proposed that seamlessly integrate into these protocols using the ALC and NORM header extension mechanisms.</p>
+<h1 id="rfc.section.3.10.2"><a href="#rfc.section.3.10.2">3.10.2.</a> <a href="#interface-description-9" id="interface-description-9">Interface Description</a></h1>
+<p id="rfc.section.3.10.2.p.1">The FLUTE/ALC specification does not describe a specific application programming interface (API) to control protocol operation.</p>
+<p id="rfc.section.3.10.2.p.2">Open source reference implementations of FLUTE/ALC are available at http://planete-bcast.inrialpes.fr/ (no longer maintained) and http://mad.cs.tut.fi/ (no longer maintained), and these implementations specify and document their own APIs.  Commercial versions are also available, some derived from the above implementations, with their own API.</p>
+<h1 id="rfc.section.3.10.3"><a href="#rfc.section.3.10.3">3.10.3.</a> <a href="#transport-features-9" id="transport-features-9">Transport Features</a></h1>
+<p id="rfc.section.3.10.3.p.1">The transport features provided by FLUTE/ALC are:</p>
+<p/>
+
+<ul>
+  <li>unicast, multicast, anycast or IPv4 broadcast transmission,</li>
+  <li>object-oriented delivery of discrete data or files and associated metadata,</li>
+  <li>fully reliable or partially reliable delivery (of file or in-memory objects), using proactive packet erasure coding (AL-FEC) to recover from packet erasures,</li>
+  <li>ordered or unordered delivery (of file or in-memory objects),</li>
+  <li>error detection (based on the UDP checksum),</li>
+  <li>per-packet authentication,</li>
+  <li>per-packet integrity,</li>
+  <li>per-packet replay protection,</li>
+  <li>congestion control for layered flows (e.g., with WEBRC).</li>
+</ul>
+<h1 id="rfc.section.3.11"><a href="#rfc.section.3.11">3.11.</a> <a href="#nack-oriented-reliable-multicast-norm" id="nack-oriented-reliable-multicast-norm">NACK-Oriented Reliable Multicast (NORM)</a></h1>
+<p id="rfc.section.3.11.p.1">NORM is an IETF standards track protocol specified in <a href="#RFC5740">[RFC5740]</a>.  It provides object-oriented delivery of discrete data or files.</p>
+<p id="rfc.section.3.11.p.2">The protocol was designed to support reliable bulk data dissemination to receiver groups using IP Multicast but also provides for point-to-point unicast operation.  Support for bulk data dissemination includes discrete file or computer memory-based &#8220;objects&#8221; as well as byte- and message-streaming.</p>
+<p id="rfc.section.3.11.p.3">NORM can incorporate packet erasure coding as a part of its selective ARQ in response to negative acknowledgments from the receiver. The packet erasure coding can also be proactively applied for forward protection from packet loss. NORM transmissions are governed by TCP-friendly multicast congestion control (TFMCC, <a href="#RFC4654">[RFC4654]</a>). The reliability, congestion control and flow control mechanisms can be separately controlled to meet different application needs.</p>
+<h1 id="rfc.section.3.11.1"><a href="#rfc.section.3.11.1">3.11.1.</a> <a href="#protocol-description-10" id="protocol-description-10">Protocol Description</a></h1>
+<p id="rfc.section.3.11.1.p.1">The NORM protocol is encapsulated in UDP datagrams and thus provides multiplexing for multiple sockets on hosts using port numbers. For loosely coordinated IP Multicast, NORM is not strictly connection-oriented although per-sender state is maintained by receivers for protocol operation.  <a href="#RFC5740">[RFC5740]</a> does not specify a handshake protocol for connection establishment.  Separate session initiation can be used to coordinate port numbers.  However, in-band &#8220;client-server&#8221; style connection establishment can be accomplished with the NORM congestion control signaling messages using port binding techniques like those for TCP client-server connections.</p>
+<p id="rfc.section.3.11.1.p.2">NORM supports bulk &#8220;objects&#8221; such as file or in-memory content but also can treat a stream of data as a logical bulk object for purposes of packet erasure coding. In the case of stream transport, NORM can support either byte streams or message streams where application-defined message boundary information is carried in the NORM protocol messages. This allows the receiver(s) to join/re-join and recover message boundaries mid-stream as needed. Application content is carried and identified by the NORM protocol with encoding symbol identifiers depending upon the Forward Error Correction (FEC) Scheme <a href="#RFC3452">[RFC3452]</a> configured. NORM uses NACK-based selective ARQ to reliably deliver the application content to the receiver(s). NORM proactively measures round-trip timing information to scale ARQ timers appropriately and to support congestion control. For multicast operation, timer-based feedback suppression is uses to achieve group size scaling with low feedback traffic levels. The feedback suppression is not applied for unicast operation.</p>
+<p id="rfc.section.3.11.1.p.3">NORM uses rate-based congestion control based upon the TCP-Friendly Rate Control (TFRC) <a href="#RFC4324">[RFC4324]</a> principles that are also used in DCCP <a href="#RFC4340">[RFC4340]</a>.  NORM uses control messages to measure RTT and collect congestion event information (e.g., reflecting a loss event or ECN event) from the receiver(s) to support dynamic adjustment or the rate. The TCP-Friendly Multicast Congestion Control (TFMCC) <a href="#RFC4654">[RFC4654]</a> provides extra features to support multicast, but is functionally equivalent to TFRC for unicast.</p>
+<p id="rfc.section.3.11.1.p.4">Error detection and verification of the protocol control information relies on the on the underlying transport(e.g., UDP checksum).</p>
+<p id="rfc.section.3.11.1.p.5">The reliability mechanism is decoupled from congestion control. This allows invocation of alternative arrangements of transport services. For example, to support, fixed-rate reliable delivery or unreliable delivery (that may optionally be &#8220;better than best effort&#8221; via packet erasure coding) using TFRC.  Alternative congestion control techniques may be applied. For example, TFRC rate control with congestion event detection based on ECN.</p>
+<p id="rfc.section.3.11.1.p.6">While NORM provides NACK-based reliability, it also supports a positive acknowledgment (ACK) mechanism that can be used for receiver flow control.  This mechanism is decoupled from the reliability and congestion control, supporting applications with different needs. One example is use of NORM for quasi-reliable delivery, where timely delivery of newer content may be favored over completely reliable delivery of older content within buffering and RTT constraints.</p>
+<h1 id="rfc.section.3.11.2"><a href="#rfc.section.3.11.2">3.11.2.</a> <a href="#interface-description-10" id="interface-description-10">Interface Description</a></h1>
+<p id="rfc.section.3.11.2.p.1">The NORM specification does not describe a specific application programming interface (API) to control protocol operation. A freely-available, open source reference implementation of NORM is available at https://www.nrl.navy.mil/itd/ncs/products/norm, and a documented API is provided for this implementation. While a sockets-like API is not currently documented, the existing API supports the necessary functions for that to be implemented.</p>
+<h1 id="rfc.section.3.11.3"><a href="#rfc.section.3.11.3">3.11.3.</a> <a href="#transport-features-10" id="transport-features-10">Transport Features</a></h1>
+<p id="rfc.section.3.11.3.p.1">The transport features provided by NORM are:</p>
+<p/>
+
+<ul>
+  <li>unicast or multicast transport,</li>
+  <li>unidirectional communication,</li>
+  <li>stream-oriented delivery in a single stream or object-oriented delivery of in-memory data or file bulk content objects,</li>
+  <li>fully reliable (NACK-based) or partially reliable (using erasure coding both proactively and as part of ARQ) delivery,</li>
+  <li>unordered delivery,</li>
+  <li>error detection (relies on UDP checksum),</li>
+  <li>segmentation,</li>
+  <li>data bundling (using Nagle&#8217;s algorithm),</li>
+  <li>flow control (timer-based and/or ack-based),</li>
+  <li>congestion control (also supporting fixed rate reliable or unreliable delivery).</li>
+</ul>
+<h1 id="rfc.section.3.12"><a href="#rfc.section.3.12">3.12.</a> <a href="#internet-control-message-protocol-icmp" id="internet-control-message-protocol-icmp">Internet Control Message Protocol (ICMP)</a></h1>
+<p id="rfc.section.3.12.p.1">The Internet Control Message Protocol (ICMP) <a href="#RFC0792">[RFC0792]</a> for IPv4 and ICMP for IPv6 <a href="#RFC4433">[RFC4433]</a> are IETF standards track protocols.  It is a connection-less unidirectional protocol that delivers individual messages, without error correction, congestion control, or flow control.  Messages may be sent as unicast, IPv4 broadcast or multicast datagrams (IPv4 and IPv6), in addition to anycast datagrams.</p>
+<p id="rfc.section.3.12.p.2">Transport Protocols and upper layer protocols can use received ICMP messages to help them take appropriate decisions when network or endpoint errors are reported.  For example, to implement, ICMP-based Path MTU discovery <a href="#RFC1191">[RFC1191]</a><a href="#RFC1981">[RFC1981]</a> or assist in Packetization Layer Path MTU Discovery (PMTUD) <a href="#RFC4821">[RFC4821]</a>. Such reactions to received messages need to protect from off-path data injection <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>, to avoid an application receiving packets created by an unauthorized third party. An application therefore needs to ensure that all messages are appropriately validated, by checking the payload of the messages to ensure these are received in response to actually transmitted traffic (e.g., a reported error condition that corresponds to a UDP datagram or TCP segment was actually sent by the application). This requires context <a href="#RFC6056">[RFC6056]</a>, such as local state about communication instances to each destination (e.g., in the TCP, DCCP, or SCTP protocols).  This state is not always maintained by UDP-based applications <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<h1 id="rfc.section.3.12.1"><a href="#rfc.section.3.12.1">3.12.1.</a> <a href="#protocol-description-11" id="protocol-description-11">Protocol Description</a></h1>
+<p id="rfc.section.3.12.1.p.1">ICMP is a connection-less unidirectional protocol, It delivers independent messages, called datagrams.  Each message is required to carry a checksum as an integrity check and to protect from mis-delivery to an unintended endpoint.</p>
+<p id="rfc.section.3.12.1.p.2">ICMP messages typically relay diagnostic information from an endpoint <a href="#RFC1122">[RFC1122]</a> or network device <a href="#RFC1716">[RFC1716]</a> addressed to the sender of a flow.  This usually contains the network protocol header of a packet that encountered a reported issue. Some formats of messages can also carry other payload data. Each message carries an integrity check calculated in the same way as for UDP, this checksum is not optional.</p>
+<p id="rfc.section.3.12.1.p.3">The RFC series defines additional IPv6 message formats to support a range of uses.  In the case of IPv6 the protocol incorporates neighbor discovery <a href="#RFC2461">[RFC2461]</a> <a href="#RFC3971">[RFC3971]</a> (provided by ARP for IPv4) and the Multicast Listener Discovery (MLD) <a href="#RFC2710">[RFC2710]</a> group management functions (provided by IGMP for IPv4).</p>
+<p id="rfc.section.3.12.1.p.4">Reliable transmission can not be assumed. A receiving application that is unable to run sufficiently fast, or frequently, may miss messages since there is no flow or congestion control. In addition some network devices rate-limit ICMP messages.</p>
+<h1 id="rfc.section.3.12.2"><a href="#rfc.section.3.12.2">3.12.2.</a> <a href="#interface-description-11" id="interface-description-11">Interface Description</a></h1>
+<p id="rfc.section.3.12.2.p.1">ICMP processing is integrated in many connection-oriented transports, but like other functions needs to be provided by an upper-layer protocol when using UDP and UDP-Lite.</p>
+<p id="rfc.section.3.12.2.p.2">On some stacks, a bound socket also allows a UDP application to be notified when ICMP error messages are received for its transmissions <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<p id="rfc.section.3.12.2.p.3">Any response to ICMP error messages ought to be robust to temporary routing failures (sometimes called &#8220;soft errors&#8221;), e.g., transient ICMP &#8220;unreachable&#8221; messages ought to not normally cause a communication abort <a href="#RFC5461">[RFC5461]</a> <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a>.</p>
+<h1 id="rfc.section.3.12.3"><a href="#rfc.section.3.12.3">3.12.3.</a> <a href="#transport-features-11" id="transport-features-11">Transport Features</a></h1>
+<p id="rfc.section.3.12.3.p.1">ICMP does not provide any transport service directly to applications. Used together with other transport protocols, it provides transmission of control, error, and measurement data between endpoints, or from devices along the path to one endpoint.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#congestion-control" id="congestion-control">Congestion Control</a></h1>
+<p id="rfc.section.4.p.1">Congestion control is critical to the stable operation of the Internet. A variety of mechanisms are used to provide the congestion control needed by many Internet transport protocols. Congestion is detected based on sensing of network conditions, whether through explicit or implicit feedback. The congestion control mechanisms that can be applied by different transport protocols are largely orthogonal to the choice of transport protocol. This section provides an overview of the congestion control mechanisms available to the protocols described in <a href="#existing-transport-protocols">Section 3</a>.</p>
+<p id="rfc.section.4.p.2">Many protocols use a separate window to determine the maximum sending rate that is allowed by the congestion control. The used congestion control mechanism will increase the congestion window if feedback is received that indicates that the currently used network path is not congested, and will reduce the window otherwise. Window-based mechanisms often increase their window slowing over multiple RTTs, while decreasing strongly when the first indication of congestion is received. One example is an Additive Increase Multiplicative Decrease (AIMD) scheme, where the window is increased by a certain number of packets/bytes for each data segment that has been successfully transmitted, while the window decreases multiplicatively on the occurrence of a congestion event. This can lead to a rather unstable, oscillating sending rate, but will resolve a congestion situation quickly. TCP New Reno <a href="#RFC5681">[RFC5681]</a> which is one of the initial proposed schemes for TCP as well as TCP Cubic <a href="#I-D.ietf-tcpm-cubic">[I-D.ietf-tcpm-cubic]</a> which is the default mechanism for TCP in Linux are two examples for window-based AIMD schemes. This approach is also used by DCCP CCID-2 for datagram congestion control.</p>
+<p id="rfc.section.4.p.3">Some classes of applications prefer to use a transport service that allows sending at a more stable rate, that is slowly varied in response to congestion. Rate-based methods offer this type of congestion control and have been  defined based on the loss ratio and observed round trip time, such as TFRC <a href="#RFC5348">[RFC5348]</a> and TFRC-SP <a href="#RFC4828">[RFC4828]</a>. These methods utilize a throughput equation to determine the maximum acceptable rate. Such methods are used with DCCP CCID-3 <a href="#RFC4342">[RFC4342]</a> and CCID-4 <a href="#RFC5622">[RFC5622]</a>, WEBRC <a href="#RFC3738">[RFC3738]</a>, and other applications.</p>
+<p id="rfc.section.4.p.4">Another class of applications prefer a transport service that yields to other (higher-priority) traffic, such as interactive transmissions.  While most traffic in the Internet uses loss-based congestion control and therefore tends to fill the network buffers (to a certain level if Active Queue Management (AQM) is used), low-priority congestion control methods often react to changes in delay as an earlier indication of congestion.  This approach tends to  induce less loss than a loss-based method but does generally not compete well with loss-based traffic across shared bottleneck links. Therefore, methods such as LEDBAT <a href="#RFC6824">[RFC6824]</a>, are deployed in the Internet for scavenger traffic that aim to only utilize otherwise unused capacity.</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#transport-features-12" id="transport-features-12">Transport Features</a></h1>
+<p id="rfc.section.5.p.1">The transport protocol features described in this document can be used as a basis for defining common transport features. A list of candidate features, and the transport protocols supporting them, appears below:</p>
+<p/>
+
+<ul>
+  <li>Control Functions <ul><li>Addressing <ul><li>unicast (TCP, MPTCP, UDP, UDP-Lite, SCTP, DCCP, TLS, RTP, HTTP, ICMP)</li><li>multicast (UDP, UDP-Lite, RTP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.</li><li>IPv4 broadcast (UDP, UDP-Lite, ICMP)</li><li>anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP and DCCP have also been deployed using anycast addressing, with the risk that routing changes may cause connection failure.</li></ul></li><li>Association type <ul><li>connection-oriented (TCP, MPTCP, DCCP, SCTP, TLS, RTP, HTTP, NORM)</li><li>connectionless (UDP, UDP-Lite, FLUTE/ALC)</li></ul></li><li>Multihoming support <ul><li>resilience and mobility (MPTCP, SCTP)</li><li>load-balancing (MPTCP)</li><li>address family multiplexing (MPTCP, SCTP)</li></ul></li><li>Middlebox cooperation <ul><li>application-class signaling to middleboxes (DCCP)</li><li>error condition signaling from middleboxes and routers to endpoints (ICMP)</li></ul></li><li>Signaling <ul><li>control information and error signaling (ICMP)</li><li>application performance reporting (RTP)</li></ul></li></ul></li>
+  <li>Delivery <ul><li>Reliability <ul><li>fully reliable delivery (TCP, MPTCP, SCTP, TLS, HTTP, FLUTE/ALC, NORM)</li><li>partially reliable delivery (SCTP, NORM) <ul><li>using packet erasure coding (RTP, FLUTE/ALC, NORM)</li><li>with specified policy for dropped messages (SCTP)</li></ul></li><li>unreliable delivery (SCTP, UDP, UDP-Lite, DCCP, RTP) <ul><li>with drop notification to sender (SCTP, DCCP, RTP)</li></ul></li><li>error detection <ul><li>checksum for error detection (TCP, MPTCP, UDP, UDP-Lite, SCTP, DCCP, TLS, DTLS, FLUTE/ALC, NORM, ICMP)</li><li>partial payload checksum protection (UDP-Lite, DCCP). Some uses of RTP can exploit partial payload checksum protection feature to provide a corruption tolerant transport service.</li><li>checksum optional (UDP). Possible with IPv4 and in certain cases with IPv6.</li></ul></li></ul></li><li>Ordering <ul><li>ordered delivery (TCP, MPTCP, SCTP, TLS, RTP, HTTP, FLUTE)</li><li>unordered delivery permitted (UDP, UDP-Lite, SCTP, DCCP, RTP, NORM)</li></ul></li><li>Type/framing <ul><li>stream-oriented delivery (TCP, MPTCP, SCTP, TLS, HTTP) <ul><li>with multiple streams per association (SCTP, HTTP2)</li></ul></li><li>message-oriented delivery (UDP, UDP-Lite, SCTP, DCCP, DTLS, RTP)</li><li>object-oriented delivery of discrete data or files and associated metadata (HTTP, FLUTE/ALC, NORM) <ul><li>with partial delivery of object ranges (HTTP)</li></ul></li></ul></li><li>Directionality <ul><li>unidirectional (UDP, UDP-Lite, DCCP, RTP, FLUTE/ALC, NORM)</li><li>bidirectional (TCP, MPTCP, SCTP, TLS, HTTP)</li></ul></li></ul></li>
+  <li>Transmission control <ul><li>flow control (TCP, MPTCP, SCTP, DCCP, TLS, RTP, HTTP)</li><li>congestion control (TCP, MPTCP, SCTP, DCCP, RTP, FLUTE/ALC, NORM). Congestion control can also provided by the transport supporting an upper later transport (e.g., TLS, RTP, HTTP).</li><li>segmentation (TCP, MPTCP, SCTP, TLS, RTP, HTTP, FLUTE/ALC, NORM)</li><li>data/message bundling (TCP, MPTCP, SCTP, TLS, HTTP)</li><li>stream scheduling prioritization (SCTP, HTTP2)</li><li>endpoint multiplexing (MPTCP)</li></ul></li>
+  <li>Security <ul><li>authentication of one end of a connection (TLS, DTLS, FLUTE/ALC)</li><li>authentication of both ends of a connection (TLS, DTLS)</li><li>confidentiality (TLS, DTLS)</li><li>cryptographic integrity protection (TLS, DTLS)</li><li>replay protection (FLUTE/ALC, TLS, DTLS)</li></ul></li>
+</ul>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.6.p.1">This document has no considerations for IANA.</p>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.7.p.1">This document surveys existing transport protocols and protocols providing transport-like services. Confidentiality, integrity, and authenticity are among the features provided by those services. This document does not specify any new features or mechanisms for providing these features. Each RFC referenced by this document discusses the security considerations of the specification it contains.</p>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
+<p id="rfc.section.8.p.1">In addition to the editors, this document is the work of Brian Adamson, Dragana Damjanovic, Kevin Fall, Simone Ferlin-Oliviera, Ralph Holz, Olivier Mehani, Karen Nielsen, Colin Perkins, Vincent Roca, and Michael Tuexen.</p>
+<p/>
+
+<ul>
+  <li><a href="#multipath-tcp-mptcp">Section 3.2</a> on MPTCP was contributed by Simone Ferlin-Oliviera (ferlin@simula.no) and Olivier Mehani (olivier.mehani@nicta.com.au)</li>
+  <li><a href="#user-datagram-protocol-udp">Section 3.3</a> on UDP was contributed by Kevin Fall (kfall@kfall.com)</li>
+  <li><a href="#stream-control-transmission-protocol-sctp">Section 3.5</a> on SCTP was contributed by Michael Tuexen (tuexen@fh-muenster.de) and Karen Nielsen (karen.nielsen@tieto.com)</li>
+  <li><a href="#transport-layer-security-tls-and-datagram-tls-dtls-as-a-pseudotransport">Section 3.7</a> on TLS and DTLS was contributed by Ralph Holz (ralph.holz@nicta.com.au) and Olivier Mehani (olivier.mehani@nicta.com.au)</li>
+  <li><a href="#realtime-transport-protocol-rtp">Section 3.8</a> on RTP contains contributions from Colin Perkins (csp@csperkins.org)</li>
+  <li><a href="#hypertext-transport-protocol-http-over-tcp-as-a-pseudotransport">Section 3.9</a> on HTTP was contributed by Dragana Damjanovic (ddamjanovic@mozilla.com)</li>
+  <li><a href="#file-delivery-over-unidirectional-transportasynchronous-layered-coding-reliable-multicast-flutealc">Section 3.10</a> on FLUTE/ALC was contributed by Vincent Roca (vincent.roca@inria.fr)</li>
+  <li><a href="#nack-oriented-reliable-multicast-norm">Section 3.11</a> on NORM was contributed by Brian Adamson (brian.adamson@nrl.navy.mil)</li>
+</ul>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#acknowledgments" id="acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.9.p.1">Thanks to Joe Touch, Michael Welzl, Spencer Dawkins, Robert Sparks, Paul Hoffman, and the TAPS Working Group for the comments, feedback, and discussion. This work is supported by the European Commission under grant agreement No. 318627 mPlane and from the Horizon 2020 research and innovation program under grant agreements No. 644334 (NEAT) and No. 688421 (MAMI); and by the Swiss State Secretariat for Research and Innovation under contract 15.0268. This support does not imply endorsement.</p>
+<h1 id="rfc.references"><a href="#rfc.references">10.</a> Informative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="RFC0768">[RFC0768]</b>
+      </td>
+      <td class="top"><a>Postel, J.</a>, "<a href="http://tools.ietf.org/html/rfc768">User Datagram Protocol</a>", STD 6, RFC 768, DOI 10.17487/RFC0768, August 1980.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC0792">[RFC0792]</b>
+      </td>
+      <td class="top"><a>Postel, J.</a>, "<a href="http://tools.ietf.org/html/rfc792">Internet Control Message Protocol</a>", STD 5, RFC 792, DOI 10.17487/RFC0792, September 1981.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC0793">[RFC0793]</b>
+      </td>
+      <td class="top"><a>Postel, J.</a>, "<a href="http://tools.ietf.org/html/rfc793">Transmission Control Protocol</a>", STD 7, RFC 793, DOI 10.17487/RFC0793, September 1981.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC0896">[RFC0896]</b>
+      </td>
+      <td class="top"><a>Nagle, J.</a>, "<a href="http://tools.ietf.org/html/rfc896">Congestion Control in IP/TCP Internetworks</a>", RFC 896, DOI 10.17487/RFC0896, January 1984.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1122">[RFC1122]</b>
+      </td>
+      <td class="top"><a>Braden, R.</a>, "<a href="http://tools.ietf.org/html/rfc1122">Requirements for Internet Hosts - Communication Layers</a>", STD 3, RFC 1122, DOI 10.17487/RFC1122, October 1989.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1191">[RFC1191]</b>
+      </td>
+      <td class="top"><a>Mogul, J.</a> and <a>S. Deering</a>, "<a href="http://tools.ietf.org/html/rfc1191">Path MTU discovery</a>", RFC 1191, DOI 10.17487/RFC1191, November 1990.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1716">[RFC1716]</b>
+      </td>
+      <td class="top"><a>Almquist, P.</a> and <a>F. Kastenholz</a>, "<a href="http://tools.ietf.org/html/rfc1716">Towards Requirements for IP Routers</a>", RFC 1716, DOI 10.17487/RFC1716, November 1994.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1981">[RFC1981]</b>
+      </td>
+      <td class="top"><a>McCann, J.</a>, <a>Deering, S.</a> and <a>J. Mogul</a>, "<a href="http://tools.ietf.org/html/rfc1981">Path MTU Discovery for IP version 6</a>", RFC 1981, DOI 10.17487/RFC1981, August 1996.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2018">[RFC2018]</b>
+      </td>
+      <td class="top"><a>Mathis, M.</a>, <a>Mahdavi, J.</a>, <a>Floyd, S.</a> and <a>A. Romanow</a>, "<a href="http://tools.ietf.org/html/rfc2018">TCP Selective Acknowledgment Options</a>", RFC 2018, DOI 10.17487/RFC2018, October 1996.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2045">[RFC2045]</b>
+      </td>
+      <td class="top"><a>Freed, N.</a> and <a>N. Borenstein</a>, "<a href="http://tools.ietf.org/html/rfc2045">Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</a>", RFC 2045, DOI 10.17487/RFC2045, November 1996.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2460">[RFC2460]</b>
+      </td>
+      <td class="top"><a>Deering, S.</a> and <a>R. Hinden</a>, "<a href="http://tools.ietf.org/html/rfc2460">Internet Protocol, Version 6 (IPv6) Specification</a>", RFC 2460, DOI 10.17487/RFC2460, December 1998.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2461">[RFC2461]</b>
+      </td>
+      <td class="top"><a>Narten, T.</a>, <a>Nordmark, E.</a> and <a>W. Simpson</a>, "<a href="http://tools.ietf.org/html/rfc2461">Neighbor Discovery for IP Version 6 (IPv6)</a>", RFC 2461, DOI 10.17487/RFC2461, December 1998.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2617">[RFC2617]</b>
+      </td>
+      <td class="top"><a>Franks, J.</a>, <a>Hallam-Baker, P.</a>, <a>Hostetler, J.</a>, <a>Lawrence, S.</a>, <a>Leach, P.</a>, <a>Luotonen, A.</a> and <a>L. Stewart</a>, "<a href="http://tools.ietf.org/html/rfc2617">HTTP Authentication: Basic and Digest Access Authentication</a>", RFC 2617, DOI 10.17487/RFC2617, June 1999.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2710">[RFC2710]</b>
+      </td>
+      <td class="top"><a>Deering, S.</a>, <a>Fenner, W.</a> and <a>B. Haberman</a>, "<a href="http://tools.ietf.org/html/rfc2710">Multicast Listener Discovery (MLD) for IPv6</a>", RFC 2710, DOI 10.17487/RFC2710, October 1999.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2736">[RFC2736]</b>
+      </td>
+      <td class="top"><a>Handley, M.</a> and <a>C. Perkins</a>, "<a href="http://tools.ietf.org/html/rfc2736">Guidelines for Writers of RTP Payload Format Specifications</a>", BCP 36, RFC 2736, DOI 10.17487/RFC2736, December 1999.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3168">[RFC3168]</b>
+      </td>
+      <td class="top"><a>Ramakrishnan, K.</a>, <a>Floyd, S.</a> and <a>D. Black</a>, "<a href="http://tools.ietf.org/html/rfc3168">The Addition of Explicit Congestion Notification (ECN) to IP</a>", RFC 3168, DOI 10.17487/RFC3168, September 2001.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3205">[RFC3205]</b>
+      </td>
+      <td class="top"><a>Moore, K.</a>, "<a href="http://tools.ietf.org/html/rfc3205">On the use of HTTP as a Substrate</a>", BCP 56, RFC 3205, DOI 10.17487/RFC3205, February 2002.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3260">[RFC3260]</b>
+      </td>
+      <td class="top"><a>Grossman, D.</a>, "<a href="http://tools.ietf.org/html/rfc3260">New Terminology and Clarifications for Diffserv</a>", RFC 3260, DOI 10.17487/RFC3260, April 2002.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3436">[RFC3436]</b>
+      </td>
+      <td class="top"><a>Jungmaier, A.</a>, <a>Rescorla, E.</a> and <a>M. Tuexen</a>, "<a href="http://tools.ietf.org/html/rfc3436">Transport Layer Security over Stream Control Transmission Protocol</a>", RFC 3436, DOI 10.17487/RFC3436, December 2002.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3450">[RFC3450]</b>
+      </td>
+      <td class="top"><a>Luby, M.</a>, <a>Gemmell, J.</a>, <a>Vicisano, L.</a>, <a>Rizzo, L.</a> and <a>J. Crowcroft</a>, "<a href="http://tools.ietf.org/html/rfc3450">Asynchronous Layered Coding (ALC) Protocol Instantiation</a>", RFC 3450, DOI 10.17487/RFC3450, December 2002.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3452">[RFC3452]</b>
+      </td>
+      <td class="top"><a>Luby, M.</a>, <a>Vicisano, L.</a>, <a>Gemmell, J.</a>, <a>Rizzo, L.</a>, <a>Handley, M.</a> and <a>J. Crowcroft</a>, "<a href="http://tools.ietf.org/html/rfc3452">Forward Error Correction (FEC) Building Block</a>", RFC 3452, DOI 10.17487/RFC3452, December 2002.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3550">[RFC3550]</b>
+      </td>
+      <td class="top"><a>Schulzrinne, H.</a>, <a>Casner, S.</a>, <a>Frederick, R.</a> and <a>V. Jacobson</a>, "<a href="http://tools.ietf.org/html/rfc3550">RTP: A Transport Protocol for Real-Time Applications</a>", STD 64, RFC 3550, DOI 10.17487/RFC3550, July 2003.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3738">[RFC3738]</b>
+      </td>
+      <td class="top"><a>Luby, M.</a> and <a>V. Goyal</a>, "<a href="http://tools.ietf.org/html/rfc3738">Wave and Equation Based Rate Control (WEBRC) Building Block</a>", RFC 3738, DOI 10.17487/RFC3738, April 2004.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3758">[RFC3758]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Ramalho, M.</a>, <a>Xie, Q.</a>, <a>Tuexen, M.</a> and <a>P. Conrad</a>, "<a href="http://tools.ietf.org/html/rfc3758">Stream Control Transmission Protocol (SCTP) Partial Reliability Extension</a>", RFC 3758, DOI 10.17487/RFC3758, May 2004.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3828">[RFC3828]</b>
+      </td>
+      <td class="top"><a>Larzon, L-A.</a>, <a>Degermark, M.</a>, <a>Pink, S.</a>, <a>Jonsson, L-E.</a> and <a>G. Fairhurst</a>, "<a href="http://tools.ietf.org/html/rfc3828">The Lightweight User Datagram Protocol (UDP-Lite)</a>", RFC 3828, DOI 10.17487/RFC3828, July 2004.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3926">[RFC3926]</b>
+      </td>
+      <td class="top"><a>Paila, T.</a>, <a>Luby, M.</a>, <a>Lehtonen, R.</a>, <a>Roca, V.</a> and <a>R. Walsh</a>, "<a href="http://tools.ietf.org/html/rfc3926">FLUTE - File Delivery over Unidirectional Transport</a>", RFC 3926, DOI 10.17487/RFC3926, October 2004.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3971">[RFC3971]</b>
+      </td>
+      <td class="top"><a>Arkko, J.</a>, <a>Kempf, J.</a>, <a>Zill, B.</a> and <a>P. Nikander</a>, "<a href="http://tools.ietf.org/html/rfc3971">SEcure Neighbor Discovery (SEND)</a>", RFC 3971, DOI 10.17487/RFC3971, March 2005.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4324">[RFC4324]</b>
+      </td>
+      <td class="top"><a>Royer, D.</a>, <a>Babics, G.</a> and <a>S. Mansour</a>, "<a href="http://tools.ietf.org/html/rfc4324">Calendar Access Protocol (CAP)</a>", RFC 4324, DOI 10.17487/RFC4324, December 2005.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4336">[RFC4336]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a>, <a>Handley, M.</a> and <a>E. Kohler</a>, "<a href="http://tools.ietf.org/html/rfc4336">Problem Statement for the Datagram Congestion Control Protocol (DCCP)</a>", RFC 4336, DOI 10.17487/RFC4336, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4340">[RFC4340]</b>
+      </td>
+      <td class="top"><a>Kohler, E.</a>, <a>Handley, M.</a> and <a>S. Floyd</a>, "<a href="http://tools.ietf.org/html/rfc4340">Datagram Congestion Control Protocol (DCCP)</a>", RFC 4340, DOI 10.17487/RFC4340, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4341">[RFC4341]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a> and <a>E. Kohler</a>, "<a href="http://tools.ietf.org/html/rfc4341">Profile for Datagram Congestion Control Protocol (DCCP) Congestion Control ID 2: TCP-like Congestion Control</a>", RFC 4341, DOI 10.17487/RFC4341, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4342">[RFC4342]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a>, <a>Kohler, E.</a> and <a>J. Padhye</a>, "<a href="http://tools.ietf.org/html/rfc4342">Profile for Datagram Congestion Control Protocol (DCCP) Congestion Control ID 3: TCP-Friendly Rate Control (TFRC)</a>", RFC 4342, DOI 10.17487/RFC4342, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4433">[RFC4433]</b>
+      </td>
+      <td class="top"><a>Kulkarni, M.</a>, <a>Patel, A.</a> and <a>K. Leung</a>, "<a href="http://tools.ietf.org/html/rfc4433">Mobile IPv4 Dynamic Home Agent (HA) Assignment</a>", RFC 4433, DOI 10.17487/RFC4433, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4654">[RFC4654]</b>
+      </td>
+      <td class="top"><a>Widmer, J.</a> and <a>M. Handley</a>, "<a href="http://tools.ietf.org/html/rfc4654">TCP-Friendly Multicast Congestion Control (TFMCC): Protocol Specification</a>", RFC 4654, DOI 10.17487/RFC4654, August 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4820">[RFC4820]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Stewart, R.</a> and <a>P. Lei</a>, "<a href="http://tools.ietf.org/html/rfc4820">Padding Chunk and Parameter for the Stream Control Transmission Protocol (SCTP)</a>", RFC 4820, DOI 10.17487/RFC4820, March 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4821">[RFC4821]</b>
+      </td>
+      <td class="top"><a>Mathis, M.</a> and <a>J. Heffner</a>, "<a href="http://tools.ietf.org/html/rfc4821">Packetization Layer Path MTU Discovery</a>", RFC 4821, DOI 10.17487/RFC4821, March 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4828">[RFC4828]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a> and <a>E. Kohler</a>, "<a href="http://tools.ietf.org/html/rfc4828">TCP Friendly Rate Control (TFRC): The Small-Packet (SP) Variant</a>", RFC 4828, DOI 10.17487/RFC4828, April 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4895">[RFC4895]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Stewart, R.</a>, <a>Lei, P.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/rfc4895">Authenticated Chunks for the Stream Control Transmission Protocol (SCTP)</a>", RFC 4895, DOI 10.17487/RFC4895, August 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4960">[RFC4960]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, "<a href="http://tools.ietf.org/html/rfc4960">Stream Control Transmission Protocol</a>", RFC 4960, DOI 10.17487/RFC4960, September 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5061">[RFC5061]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Xie, Q.</a>, <a>Tuexen, M.</a>, <a>Maruyama, S.</a> and <a>M. Kozuka</a>, "<a href="http://tools.ietf.org/html/rfc5061">Stream Control Transmission Protocol (SCTP) Dynamic Address Reconfiguration</a>", RFC 5061, DOI 10.17487/RFC5061, September 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5097">[RFC5097]</b>
+      </td>
+      <td class="top"><a>Renker, G.</a> and <a>G. Fairhurst</a>, "<a href="http://tools.ietf.org/html/rfc5097">MIB for the UDP-Lite protocol</a>", RFC 5097, DOI 10.17487/RFC5097, January 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5246">[RFC5246]</b>
+      </td>
+      <td class="top"><a>Dierks, T.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/rfc5246">The Transport Layer Security (TLS) Protocol Version 1.2</a>", RFC 5246, DOI 10.17487/RFC5246, August 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5238">[RFC5238]</b>
+      </td>
+      <td class="top"><a>Phelan, T.</a>, "<a href="http://tools.ietf.org/html/rfc5238">Datagram Transport Layer Security (DTLS) over the Datagram Congestion Control Protocol (DCCP)</a>", RFC 5238, DOI 10.17487/RFC5238, May 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5348">[RFC5348]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a>, <a>Handley, M.</a>, <a>Padhye, J.</a> and <a>J. Widmer</a>, "<a href="http://tools.ietf.org/html/rfc5348">TCP Friendly Rate Control (TFRC): Protocol Specification</a>", RFC 5348, DOI 10.17487/RFC5348, September 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5461">[RFC5461]</b>
+      </td>
+      <td class="top"><a>Gont, F.</a>, "<a href="http://tools.ietf.org/html/rfc5461">TCP's Reaction to Soft Errors</a>", RFC 5461, DOI 10.17487/RFC5461, February 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5595">[RFC5595]</b>
+      </td>
+      <td class="top"><a>Fairhurst, G.</a>, "<a href="http://tools.ietf.org/html/rfc5595">The Datagram Congestion Control Protocol (DCCP) Service Codes</a>", RFC 5595, DOI 10.17487/RFC5595, September 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5596">[RFC5596]</b>
+      </td>
+      <td class="top"><a>Fairhurst, G.</a>, "<a href="http://tools.ietf.org/html/rfc5596">Datagram Congestion Control Protocol (DCCP) Simultaneous-Open Technique to Facilitate NAT/Middlebox Traversal</a>", RFC 5596, DOI 10.17487/RFC5596, September 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5622">[RFC5622]</b>
+      </td>
+      <td class="top"><a>Floyd, S.</a> and <a>E. Kohler</a>, "<a href="http://tools.ietf.org/html/rfc5622">Profile for Datagram Congestion Control Protocol (DCCP) Congestion ID 4: TCP-Friendly Rate Control for Small Packets (TFRC-SP)</a>", RFC 5622, DOI 10.17487/RFC5622, August 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5651">[RFC5651]</b>
+      </td>
+      <td class="top"><a>Luby, M.</a>, <a>Watson, M.</a> and <a>L. Vicisano</a>, "<a href="http://tools.ietf.org/html/rfc5651">Layered Coding Transport (LCT) Building Block</a>", RFC 5651, DOI 10.17487/RFC5651, October 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5672">[RFC5672]</b>
+      </td>
+      <td class="top"><a>Crocker, D.</a>, "<a href="http://tools.ietf.org/html/rfc5672">RFC 4871 DomainKeys Identified Mail (DKIM) Signatures -- Update</a>", RFC 5672, DOI 10.17487/RFC5672, August 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5740">[RFC5740]</b>
+      </td>
+      <td class="top"><a>Adamson, B.</a>, <a>Bormann, C.</a>, <a>Handley, M.</a> and <a>J. Macker</a>, "<a href="http://tools.ietf.org/html/rfc5740">NACK-Oriented Reliable Multicast (NORM) Transport Protocol</a>", RFC 5740, DOI 10.17487/RFC5740, November 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5775">[RFC5775]</b>
+      </td>
+      <td class="top"><a>Luby, M.</a>, <a>Watson, M.</a> and <a>L. Vicisano</a>, "<a href="http://tools.ietf.org/html/rfc5775">Asynchronous Layered Coding (ALC) Protocol Instantiation</a>", RFC 5775, DOI 10.17487/RFC5775, April 2010.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5681">[RFC5681]</b>
+      </td>
+      <td class="top"><a>Allman, M.</a>, <a>Paxson, V.</a> and <a>E. Blanton</a>, "<a href="http://tools.ietf.org/html/rfc5681">TCP Congestion Control</a>", RFC 5681, DOI 10.17487/RFC5681, September 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6056">[RFC6056]</b>
+      </td>
+      <td class="top"><a>Larsen, M.</a> and <a>F. Gont</a>, "<a href="http://tools.ietf.org/html/rfc6056">Recommendations for Transport-Protocol Port Randomization</a>", BCP 156, RFC 6056, DOI 10.17487/RFC6056, January 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6083">[RFC6083]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Seggelmann, R.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/rfc6083">Datagram Transport Layer Security (DTLS) for Stream Control Transmission Protocol (SCTP)</a>", RFC 6083, DOI 10.17487/RFC6083, January 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6093">[RFC6093]</b>
+      </td>
+      <td class="top"><a>Gont, F.</a> and <a>A. Yourtchenko</a>, "<a href="http://tools.ietf.org/html/rfc6093">On the Implementation of the TCP Urgent Mechanism</a>", RFC 6093, DOI 10.17487/RFC6093, January 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6525">[RFC6525]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Tuexen, M.</a> and <a>P. Lei</a>, "<a href="http://tools.ietf.org/html/rfc6525">Stream Control Transmission Protocol (SCTP) Stream Reconfiguration</a>", RFC 6525, DOI 10.17487/RFC6525, February 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6347">[RFC6347]</b>
+      </td>
+      <td class="top"><a>Rescorla, E.</a> and <a>N. Modadugu</a>, "<a href="http://tools.ietf.org/html/rfc6347">Datagram Transport Layer Security Version 1.2</a>", RFC 6347, DOI 10.17487/RFC6347, January 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6356">[RFC6356]</b>
+      </td>
+      <td class="top"><a>Raiciu, C.</a>, <a>Handley, M.</a> and <a>D. Wischik</a>, "<a href="http://tools.ietf.org/html/rfc6356">Coupled Congestion Control for Multipath Transport Protocols</a>", RFC 6356, DOI 10.17487/RFC6356, October 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6363">[RFC6363]</b>
+      </td>
+      <td class="top"><a>Watson, M.</a>, <a>Begen, A.</a> and <a>V. Roca</a>, "<a href="http://tools.ietf.org/html/rfc6363">Forward Error Correction (FEC) Framework</a>", RFC 6363, DOI 10.17487/RFC6363, October 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6458">[RFC6458]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Tuexen, M.</a>, <a>Poon, K.</a>, <a>Lei, P.</a> and <a>V. Yasevich</a>, "<a href="http://tools.ietf.org/html/rfc6458">Sockets API Extensions for the Stream Control Transmission Protocol (SCTP)</a>", RFC 6458, DOI 10.17487/RFC6458, December 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6584">[RFC6584]</b>
+      </td>
+      <td class="top"><a>Roca, V.</a>, "<a href="http://tools.ietf.org/html/rfc6584">Simple Authentication Schemes for the Asynchronous Layered Coding (ALC) and NACK-Oriented Reliable Multicast (NORM) Protocols</a>", RFC 6584, DOI 10.17487/RFC6584, April 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6726">[RFC6726]</b>
+      </td>
+      <td class="top"><a>Paila, T.</a>, <a>Walsh, R.</a>, <a>Luby, M.</a>, <a>Roca, V.</a> and <a>R. Lehtonen</a>, "<a href="http://tools.ietf.org/html/rfc6726">FLUTE - File Delivery over Unidirectional Transport</a>", RFC 6726, DOI 10.17487/RFC6726, November 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6773">[RFC6773]</b>
+      </td>
+      <td class="top"><a>Phelan, T.</a>, <a>Fairhurst, G.</a> and <a>C. Perkins</a>, "<a href="http://tools.ietf.org/html/rfc6773">DCCP-UDP: A Datagram Congestion Control Protocol UDP Encapsulation for NAT Traversal</a>", RFC 6773, DOI 10.17487/RFC6773, November 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6824">[RFC6824]</b>
+      </td>
+      <td class="top"><a>Ford, A.</a>, <a>Raiciu, C.</a>, <a>Handley, M.</a> and <a>O. Bonaventure</a>, "<a href="http://tools.ietf.org/html/rfc6824">TCP Extensions for Multipath Operation with Multiple Addresses</a>", RFC 6824, DOI 10.17487/RFC6824, January 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6897">[RFC6897]</b>
+      </td>
+      <td class="top"><a>Scharf, M.</a> and <a>A. Ford</a>, "<a href="http://tools.ietf.org/html/rfc6897">Multipath TCP (MPTCP) Application Interface Considerations</a>", RFC 6897, DOI 10.17487/RFC6897, March 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6935">[RFC6935]</b>
+      </td>
+      <td class="top"><a>Eubanks, M.</a>, <a>Chimento, P.</a> and <a>M. Westerlund</a>, "<a href="http://tools.ietf.org/html/rfc6935">IPv6 and UDP Checksums for Tunneled Packets</a>", RFC 6935, DOI 10.17487/RFC6935, April 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6936">[RFC6936]</b>
+      </td>
+      <td class="top"><a>Fairhurst, G.</a> and <a>M. Westerlund</a>, "<a href="http://tools.ietf.org/html/rfc6936">Applicability Statement for the Use of IPv6 UDP Datagrams with Zero Checksums</a>", RFC 6936, DOI 10.17487/RFC6936, April 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6951">[RFC6951]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a> and <a>R. Stewart</a>, "<a href="http://tools.ietf.org/html/rfc6951">UDP Encapsulation of Stream Control Transmission Protocol (SCTP) Packets for End-Host to End-Host Communication</a>", RFC 6951, DOI 10.17487/RFC6951, May 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7053">[RFC7053]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Ruengeler, I.</a> and <a>R. Stewart</a>, "<a href="http://tools.ietf.org/html/rfc7053">SACK-IMMEDIATELY Extension for the Stream Control Transmission Protocol</a>", RFC 7053, DOI 10.17487/RFC7053, November 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7202">[RFC7202]</b>
+      </td>
+      <td class="top"><a>Perkins, C.</a> and <a>M. Westerlund</a>, "<a href="http://tools.ietf.org/html/rfc7202">Securing the RTP Framework: Why RTP Does Not Mandate a Single Media Security Solution</a>", RFC 7202, DOI 10.17487/RFC7202, April 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7230">[RFC7230]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7231">[RFC7231]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>", RFC 7231, DOI 10.17487/RFC7231, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7232">[RFC7232]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7232">Hypertext Transfer Protocol (HTTP/1.1): Conditional Requests</a>", RFC 7232, DOI 10.17487/RFC7232, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7233">[RFC7233]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a>, <a>Lafon, Y.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7233">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>", RFC 7233, DOI 10.17487/RFC7233, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7234">[RFC7234]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a>, <a>Nottingham, M.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7234">Hypertext Transfer Protocol (HTTP/1.1): Caching</a>", RFC 7234, DOI 10.17487/RFC7234, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7235">[RFC7235]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7235">Hypertext Transfer Protocol (HTTP/1.1): Authentication</a>", RFC 7235, DOI 10.17487/RFC7235, June 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7301">[RFC7301]</b>
+      </td>
+      <td class="top"><a>Friedl, S.</a>, <a>Popov, A.</a>, <a>Langley, A.</a> and <a>E. Stephan</a>, "<a href="http://tools.ietf.org/html/rfc7301">Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</a>", RFC 7301, DOI 10.17487/RFC7301, July 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7323">[RFC7323]</b>
+      </td>
+      <td class="top"><a>Borman, D.</a>, <a>Braden, B.</a>, <a>Jacobson, V.</a> and <a>R. Scheffenegger</a>, "<a href="http://tools.ietf.org/html/rfc7323">TCP Extensions for High Performance</a>", RFC 7323, DOI 10.17487/RFC7323, September 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7414">[RFC7414]</b>
+      </td>
+      <td class="top"><a>Duke, M.</a>, <a>Braden, R.</a>, <a>Eddy, W.</a>, <a>Blanton, E.</a> and <a>A. Zimmermann</a>, "<a href="http://tools.ietf.org/html/rfc7414">A Roadmap for Transmission Control Protocol (TCP) Specification Documents</a>", RFC 7414, DOI 10.17487/RFC7414, February 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7457">[RFC7457]</b>
+      </td>
+      <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/rfc7457">Summarizing Known Attacks on Transport Layer Security (TLS) and Datagram TLS (DTLS)</a>", RFC 7457, DOI 10.17487/RFC7457, February 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7496">[RFC7496]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Seggelmann, R.</a>, <a>Stewart, R.</a> and <a>S. Loreto</a>, "<a href="http://tools.ietf.org/html/rfc7496">Additional Policies for the Partially Reliable Stream Control Transmission Protocol Extension</a>", RFC 7496, DOI 10.17487/RFC7496, April 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7525">[RFC7525]</b>
+      </td>
+      <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/rfc7525">Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</a>", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7540">[RFC7540]</b>
+      </td>
+      <td class="top"><a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="http://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</b>
+      </td>
+      <td class="top"><a>Eggert, L.</a>, <a>Fairhurst, G.</a> and <a>G. Shepherd</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tsvwg-rfc5405bis-16">UDP Usage Guidelines</a>", Internet-Draft draft-ietf-tsvwg-rfc5405bis-16, July 2016.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tsvwg-sctp-dtls-encaps">[I-D.ietf-tsvwg-sctp-dtls-encaps]</b>
+      </td>
+      <td class="top"><a>Tuexen, M.</a>, <a>Stewart, R.</a>, <a>Jesup, R.</a> and <a>S. Loreto</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tsvwg-sctp-dtls-encaps-09">DTLS Encapsulation of SCTP Packets</a>", Internet-Draft draft-ietf-tsvwg-sctp-dtls-encaps-09, January 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tsvwg-sctp-ndata">[I-D.ietf-tsvwg-sctp-ndata]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Tuexen, M.</a>, <a>Loreto, S.</a> and <a>R. Seggelmann</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tsvwg-sctp-ndata-07">Stream Schedulers and User Message Interleaving for the Stream Control Transmission Protocol</a>", Internet-Draft draft-ietf-tsvwg-sctp-ndata-07, July 2016.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tsvwg-natsupp">[I-D.ietf-tsvwg-natsupp]</b>
+      </td>
+      <td class="top"><a>Stewart, R.</a>, <a>Tuexen, M.</a> and <a>I. Ruengeler</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tsvwg-natsupp-09">Stream Control Transmission Protocol (SCTP) Network Address Translation Support</a>", Internet-Draft draft-ietf-tsvwg-natsupp-09, May 2016.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tcpm-cubic">[I-D.ietf-tcpm-cubic]</b>
+      </td>
+      <td class="top"><a>Rhee, I.</a>, <a>Xu, L.</a>, <a>Ha, S.</a>, <a>Zimmermann, A.</a>, <a>Eggert, L.</a> and <a>R. Scheffenegger</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tcpm-cubic-02">CUBIC for Fast Long-Distance Networks</a>", Internet-Draft draft-ietf-tcpm-cubic-02, August 2016.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="XHR">[XHR]</b>
+      </td>
+      <td class="top"><a>van Kesteren, A.</a>, <a>Aubourg, J.</a>, <a>Song, J.</a> and <a>H. Steen</a>, "<a>XMLHttpRequest working draft (http://www.w3.org/TR/XMLHttpRequest/)</a>", 2000.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="REST">[REST]</b>
+      </td>
+      <td class="top"><a>Fielding, R.</a>, "<a>Architectural Styles and the Design of Network-based Software Architectures, Ph. D. (UC Irvine), Chapter 5: Representational State Transfer</a>", 2000.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="POSIX">[POSIX]</b>
+      </td>
+      <td class="top"><a>1-2008, IEEE.</a>, "<a>IEEE Standard for Information Technology -- Portable Operating System Interface (POSIX) Base Specifications, Issue 7</a>", n.d..</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="MBMS">[MBMS]</b>
+      </td>
+      <td class="top"><a>3GPP TSG WS S4, .</a>, "<a>3GPP TS 26.346: Multimedia Broadcast/Multicast Service (MBMS); Protocols and codecs, release 13 (http://www.3gpp.org/DynaReport/26346.htm).</a>", 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="ClarkArch">[ClarkArch]</b>
+      </td>
+      <td class="top"><a>Clark, D.</a> and <a>D. Tennenhouse</a>, "<a>Architectural Considerations for a New Generation of Protocols (Proc. ACM SIGCOMM)</a>", 1990.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.authors">
+  <a href="#rfc.authors">Authors' Addresses</a>
+</h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Godred Fairhurst</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Fairhurst</span>
+	  </span>
+	</span>
+	<span class="org vcardline">University of Aberdeen</span>
+	<span class="adr">
+	  <span class="vcardline">School of Engineering, Fraser Noble Building</span>
+
+	  <span class="vcardline">
+		<span class="locality">Aberdeen AB24 3UE</span>,  
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:gorry@erg.abdn.ac.uk">gorry@erg.abdn.ac.uk</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Brian Trammell</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Trammell</span>
+	  </span>
+	</span>
+	<span class="org vcardline">ETH Zurich</span>
+	<span class="adr">
+	  <span class="vcardline">Gloriastrasse 35</span>
+
+	  <span class="vcardline">
+		<span class="locality">8092 Zurich</span>,  
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline">Switzerland</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:ietf@trammell.ch">ietf@trammell.ch</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Mirja Kuehlewind</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Kuehlewind</span>
+	  </span>
+	</span>
+	<span class="org vcardline">ETH Zurich</span>
+	<span class="adr">
+	  <span class="vcardline">Gloriastrasse 35</span>
+
+	  <span class="vcardline">
+		<span class="locality">8092 Zurich</span>,  
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline">Switzerland</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:mirja.kuehlewind@tik.ee.ethz.ch">mirja.kuehlewind@tik.ee.ethz.ch</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>
