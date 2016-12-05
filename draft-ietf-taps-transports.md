@@ -1,7 +1,7 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-12
+docname: draft-ietf-taps-transports-13
 date: 
 category: info
 ipr: trust200902
@@ -42,9 +42,10 @@ informative:
   RFC0792:
   RFC0793:
   RFC0896:
+  RFC1071:
   RFC1122:
   RFC1191:
-  RFC1716:
+  RFC1812:
   RFC1981:
   RFC2018:
   RFC2045:
@@ -70,7 +71,7 @@ informative:
   RFC4340:
   RFC4341:
   RFC4342:
-  RFC4433:
+  RFC4443:
   RFC4654:
   RFC4820:
   RFC4821:
@@ -94,14 +95,17 @@ informative:
   RFC6056:
   RFC6083:
   RFC6093:
+  RFC6101:
   RFC6525:
   RFC6347:
   RFC6356:
   RFC6363:
   RFC6458:
+  RFC6582:
   RFC6584:
   RFC6726:
   RFC6773:
+  RFC6817:
   RFC6824:
   RFC6897:
   RFC6935:
@@ -127,6 +131,8 @@ informative:
   I-D.ietf-tsvwg-sctp-ndata:
   I-D.ietf-tsvwg-natsupp:
   I-D.ietf-tcpm-cubic:
+  I-D.ietf-rtcweb-transports:
+  I-D.ietf-tls-tls13:
 
   XHR:
     title: "XMLHttpRequest working draft (http://www.w3.org/TR/XMLHttpRequest/)"
@@ -167,7 +173,7 @@ informative:
     date: 1990
 --- abstract
 
-This document describes, surveys, classifies and compares the protocol
+This document describes, surveys, and classifies the protocol
 mechanisms provided by existing IETF protocols, as background for determining
 a common set of transport services. It examines the Transmission Control
 Protocol (TCP), Multipath TCP, the Stream Control Transmission Protocol
@@ -196,15 +202,16 @@ application, or something in between. Examples of features of Transport
 Services are reliable delivery, ordered delivery, content privacy to
 in-path devices, and integrity protection.
 
-The IETF has defined a wide variety of transport protocols beyond TCP and
-UDP, including SCTP, DCCP, MPTCP, and UDP-Lite. Transport services
-may be provided directly by these transport protocols, or layered on top
-of them using protocols such as WebSockets (which runs over TCP), RTP
-(over TCP or UDP) or WebRTC data channels (which run over SCTP over DTLS
-over UDP or TCP). Services built on top of UDP or UDP-Lite typically also
-need to specify additional mechanisms, including a congestion control
-mechanism (such as NewReno, TFRC or LEDBAT).  This extends the set of available
-Transport Services beyond those provided to applications by TCP and UDP.
+The IETF has defined a wide variety of transport protocols beyond TCP and UDP,
+including SCTP, DCCP, MPTCP, and UDP-Lite. Transport services may be provided
+directly by these transport protocols, or layered on top of them using
+protocols such as WebSockets (which runs over TCP), RTP (over TCP or UDP) or
+WebRTC data channels (which run over SCTP over DTLS over UDP or TCP). Services
+built on top of UDP or UDP-Lite typically also need to specify additional
+mechanisms, including a congestion control mechanism (such as NewReno
+{{RFC6582}}, TFRC {{RFC5348}} or LEDBAT {{RFC6817}}).  This extends the set of
+available Transport Services beyond those provided to applications by TCP and
+UDP.
 
 The transport protocols described in this document provide a basis for the
 definition of transport services provided by common protocols, as background
@@ -377,11 +384,13 @@ transmit more immediately, e.g., to reduce latency for interactive sessions.
 TCP provides an "urgent data" function for limited out-of-order delivery of
 the data. This function is deprecated {{RFC6093}}.
 
+A RESET control message may be used to close a TCP session {{RFC0793}}.
+
 A mandatory checksum provides a basic integrity check against misdelivery and
 data corruption over the entire packet. Applications that require end to end
 integrity of data are recommended to include a stronger integrity check of
-their payload data. The TCP checksum does not support partial payload
-protection (as in DCCP/UDP-Lite).
+their payload data. The TCP checksum {{RFC1071}} {{RFC2460}} does not support
+partial payload protection (as in DCCP/UDP-Lite).
 
 TCP supports only unicast connections.
 
@@ -495,10 +504,10 @@ discard of received datagrams, with no indication to the user of the service.
 
 It is possible to create IPv4 UDP datagrams with no checksum, and while this
 is generally discouraged {{RFC1122}} {{I-D.ietf-tsvwg-rfc5405bis}}, certain
-special cases permit this use. These datagrams rely on the IPv4 header checksum
-to protect from misdelivery to an unintended endpoint. IPv6 does not permit UDP
-datagrams with no checksum, although in certain cases this rule may be relaxed
-{{RFC6935}}. 
+special cases permit this use. These datagrams rely on the IPv4 header
+checksum to protect from misdelivery to an unintended endpoint. IPv6 does not
+permit UDP datagrams with no checksum, although in certain cases {{RFC6936}}
+this rule may be relaxed {{RFC6935}}.
 
 UDP does not provide reliability and does not provide retransmission. Messages
 may be re-ordered, lost, or duplicated in transit. Note that due to the
@@ -519,9 +528,6 @@ Fragments are reassembled before delivery to the UDP receiver,
 making this transparent to the user of the transport service.
 When the jumbograms are supported, larger messages may be sent without 
 performing fragmentation.
-
-Applications that need to provide
-fragmentation 
 
 UDP on its own does not provide support for segmentation, receiver flow
 control, congestion control, PathMTU discovery/PLPMTUD, or ECN. Applications
@@ -720,7 +726,7 @@ middleboxes to provide NAT traversal for SCTP over IPv4.
 For legacy NAT traversal, {{RFC6951}} defines the UDP encapsulation of
 SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
 as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
-is used within the WebRTC context.
+is used within the WebRTC {{I-D.ietf-rtcweb-transports}} context.
 
 SCTP has a well-defined API, described in the next subsection.
 
@@ -774,9 +780,8 @@ It allows to manually add and delete local addresses for SCTP associations
 and the enabling of automatic address addition and deletion. Furthermore
 the peer can be given a hint for choosing its primary path.
 
-
-For the following SCTP protocol extensions the BSD Sockets API extension is
-defined in the document specifying the protocol extensions:
+A BSD Sockets API extension has been defined in the documents
+that specify the following SCTP protocol extensions:
 
 - the SCTP Stream Reconfiguration extension defined in {{RFC6525}}.
 The API allows to trigger the reset operation for incoming and
@@ -969,10 +974,11 @@ applications. TLS is designed to run on top of a reliable streaming transport
 protocol (usually TCP), while DTLS is designed to run on top of a best-effort
 datagram protocol (UDP or DCCP {{RFC5238}}). At the time of writing, the
 current version of TLS is 1.2,  defined in {{RFC5246}}; work on TLS version
-1.3 is nearing completion. DTLS provides nearly identical functionality to
-applications; it is defined in {{RFC6347}} and its current version is also
-1.2.  The TLS protocol evolved from the Secure Sockets Layer (SSL) protocols
-developed in the mid-1990s to support protection of HTTP traffic.
+1.3 {{I-D.ietf-tls-tls13}} nearing completion. DTLS provides nearly identical
+functionality to applications; it is defined in {{RFC6347}} and its current
+version is also 1.2.  The TLS protocol evolved from the Secure Sockets Layer
+(SSL) {{RFC6101}} protocols developed in the mid-1990s to support protection
+of HTTP traffic.
 
 While older versions of TLS and DTLS are still in use, they provide weaker
 security guarantees. {{RFC7457}} outlines important attacks on TLS and DTLS.
@@ -1029,9 +1035,7 @@ when operating on independent encrypted records.
 TLS is commonly invoked using an API provided by packages such as OpenSSL,
 wolfSSL, or GnuTLS. Using such APIs entails the manipulation of several
 important abstractions, which fall into the following categories: long-term
-keys and algorithms, session state, and communications/connections. There may
-also be special APIs required to deal with time and/or random numbers, both of
-which are needed by a variety of encryption algorithms and protocols.
+keys and algorithms, session state, and communications/connections.
 
 Considerable care is required in the use of TLS APIs to ensure creation of a secure
 application.  The programmer should have at least a basic understanding of encryption
@@ -1195,16 +1199,15 @@ protocol.
 
 Hypertext Transfer Protocol (HTTP) is a request/response protocol. A client
 sends a request containing a request method, URI and protocol version followed
-by a MIME-like message (see {{RFC7231}} for the differences between an HTTP
-object and a MIME message), containing information about the client and
-request modifiers. The message can also contain a message body carrying application
-data. 
-The server responds with a status or error code followed by a
-MIME-like message containing information about the server and information
-about the data. This may include a message body. It is possible to
-specify a data format for the message body using MIME media types {{RFC2045}}.
-The protocol has additional features, some relevant
-to pseudo-transport are described below.
+message whose design is inspired by MIME (see {{RFC7231}} for the differences
+between an HTTP object and a MIME message), containing information about the
+client and request modifiers. The message can also contain a message body
+carrying application data.  The server responds with a status or error code
+followed by a message containing information about the server and information
+about the data. This may include a message body. It is possible to specify a
+data format for the message body using MIME media types {{RFC2045}}. The
+protocol has additional features, some relevant to pseudo-transport are
+described below.
 
 Content negotiation, specified in {{RFC7231}}, is a mechanism provided by HTTP
 to allow selection of a representation for a requested resource. The client and server
@@ -1228,7 +1231,7 @@ This adds protocol properties provided by such a mechanism (e.g.,
 authentication, encryption). The TLS Application-Layer Protocol Negotiation
 (ALPN) extension {{RFC7301}} can be used to negotiate the HTTP version within
 the TLS handshake, eliminating the latency incurred by additional round-trip
-exchanges. Arbitrary cookie strings, included as part of the MIME headers, are
+exchanges. Arbitrary cookie strings, included as part of the request headers, are
 often used as bearer tokens in HTTP.
 
 ### Interface Description
@@ -1375,13 +1378,9 @@ NORM header extension mechanisms.
 ### Interface Description
 
 The FLUTE/ALC specification does not describe a specific application
-programming interface (API) to control protocol operation.
-
-Open source reference implementations of FLUTE/ALC are available at
-http://planete-bcast.inrialpes.fr/ (no longer maintained) and
-http://mad.cs.tut.fi/ (no longer maintained), and these implementations
-specify and document their own APIs.  Commercial versions are also available,
-some derived from the above implementations, with their own API.
+programming interface (API) to control protocol operation. Although open
+source and commercial implementations have specified APIs, there is no IETF-
+specified API for FLUTE/ALC.
 
 ### Transport Features
 
@@ -1499,7 +1498,7 @@ The transport features provided by NORM are:
 ## Internet Control Message Protocol (ICMP)
 
 The Internet Control Message Protocol (ICMP) [RFC0792] for IPv4 and
-ICMP for IPv6 [RFC4433] are IETF standards track protocols.
+ICMP for IPv6 {{RFC4443}} are IETF standards track protocols.
 It is a connection-less unidirectional protocol that delivers individual
 messages, without error correction, congestion control, or flow control. 
 Messages may be sent as unicast, IPv4 broadcast or multicast datagrams
@@ -1532,7 +1531,7 @@ Each message is required to carry a checksum as an integrity check and to
 protect from mis-delivery to an unintended endpoint.
 
 ICMP messages typically relay diagnostic information from an endpoint
-{{RFC1122}} or network device {{RFC1716}} addressed to the sender of a flow.
+{{RFC1122}} or network device {{RFC1812}} addressed to the sender of a flow.
 This usually contains the network protocol header of a packet that encountered
 a reported issue. Some formats of messages can also carry other payload
 data. Each message carries an integrity check calculated in the same way as
@@ -1629,7 +1628,7 @@ supporting them:
 - Control Functions
   - Addressing
     - unicast (TCP, MPTCP, UDP, UDP-Lite, SCTP, DCCP, TLS, RTP, HTTP, ICMP)
-    - multicast (UDP, UDP-Lite, RTP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.
+    - multicast (UDP, UDP-Lite, RTP, ICMP, FLUTE/ALC, NORM). Note that, as TLS and DTLS are unicast-only, there is no widely deployed mechanism for supporting the features in the Security section below when using multicast addressing.
     - IPv4 broadcast (UDP, UDP-Lite, ICMP)
     - anycast (UDP, UDP-Lite). Connection-oriented protocols such as TCP and DCCP have also been deployed using anycast addressing, with the risk that routing changes may cause connection failure.
   - Association type
