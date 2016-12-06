@@ -1,7 +1,7 @@
 ---
 title: "Services provided by IETF transport protocols and congestion control mechanisms"
 abbrev: TAPS Transports
-docname: draft-ietf-taps-transports-13
+docname: draft-ietf-taps-transports-14
 date: 
 category: info
 ipr: trust200902
@@ -384,7 +384,8 @@ transmit more immediately, e.g., to reduce latency for interactive sessions.
 TCP provides an "urgent data" function for limited out-of-order delivery of
 the data. This function is deprecated {{RFC6093}}.
 
-A RESET control message may be used to close a TCP session {{RFC0793}}.
+A TCP Reset (RST) control message may be used to force a TCP endpoint to
+close a session {{RFC0793}}, aborting the connection.
 
 A mandatory checksum provides a basic integrity check against misdelivery and
 data corruption over the entire packet. Applications that require end to end
@@ -728,6 +729,9 @@ SCTP-packets. Alternatively, SCTP packets can be encapsulated in DTLS packets
 as specified in {{I-D.ietf-tsvwg-sctp-dtls-encaps}}. The latter encapsulation
 is used within the WebRTC {{I-D.ietf-rtcweb-transports}} context.
 
+An SCTP ABORT chunk may be used to force a SCTP endpoint to close a
+session {{RFC4960}}, aborting the connection.
+
 SCTP has a well-defined API, described in the next subsection.
 
 ### Interface Description
@@ -921,6 +925,9 @@ enable endpoints to detect application data corruption.
 
 Receiver flow control is supported, which limits the amount of unacknowledged
 data that can be outstanding at a given time.
+
+A DCCP Reset packet may be used to force a DCCP endpoint to close a session
+{{RFC4340}}, aborting the connection.
 
 DCCP supports negotiation of the congestion control profile between endpoints, 
 to provide plug-and-play congestion control mechanisms. 
